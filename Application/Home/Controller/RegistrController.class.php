@@ -15,42 +15,42 @@ class RegistrController extends Controller {
        $check_phone = preg_match($pattern, $phone);
        if($check_phone == 0){
             $data = array(
-                'code'=>1,
+                'status'=>1,
                 'msg'=>'电话号码格式有误',
                 );
            $this->ajaxReturn($data);
         }
         if(!$type){
             $data = array(
-                'code'=>2,
+                'status'=>2,
                 'msg'=>'注册类型不能为空',
                 );
            $this->ajaxReturn($data);
         }
         if(!$job){
             $data = array(
-                'code'=>3,
+                'status'=>3,
                 'msg'=>'职位不能不能为空',
                 );
            $this->ajaxReturn($data);
         }
         if(!$pwd){
             $data = array(
-                'code'=>4,
+                'status'=>4,
                 'msg'=>'密码不能为空',
                 );
            $this->ajaxReturn($data);
         }
         if(!$code){
             $data = array(
-                'code'=>5,
+                'status'=>5,
                 'msg'=>'验证码不能为空',
                 );
            $this->ajaxReturn($data);
         }
         if($pwd != $confirmPwd){
             $data = array(
-                'code'=>6,
+                'status'=>6,
                 'msg'=>'两次密码不一致',
                 );
            $this->ajaxReturn($data);
@@ -59,7 +59,7 @@ class RegistrController extends Controller {
         $session_code = session('telCode');
         if ($code != $session_code) {
         	$data = array(
-                'code'=>7,
+                'status'=>7,
                 'msg'=>'手机验证码不对',
                 );
            $this->ajaxReturn($data);
@@ -68,7 +68,7 @@ class RegistrController extends Controller {
         $check = M('user')->where(array('tel'=>$phone))->find();
         if ($check) {
         	$data = array(
-                'code'=>8,
+                'status'=>8,
                 'msg'=>'手机已被注册',
                 );
            $this->ajaxReturn($data);
@@ -85,13 +85,13 @@ class RegistrController extends Controller {
         $res = M('user')->add($insert);
         if ($res) {
         	$data = array(
-                'code'=>0,
+                'status'=>0,
                 'msg'=>'注册成功',
                 );
            $this->ajaxReturn($data);
         }else{
         	$data = array(
-                'code'=>9,
+                'status'=>9,
                 'msg'=>'注册失败',
                 );
            $this->ajaxReturn($data);
