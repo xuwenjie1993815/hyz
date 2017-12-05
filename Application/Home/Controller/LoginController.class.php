@@ -57,6 +57,47 @@ class LoginController extends Controller {
             }
         }
     }
+    
+    //第三方登陆
+    //login_type 1：微信 2：QQ
+    //login_id 微信openid或者QQid
+    //返回参数 status=>0:登陆成功 1:请绑定手机
+    //通过openid 或者 QQid 找到对应用户，有则直接登陆，没有则要求绑定手机号，如其绑定手机号已存在则绑定到对应user，如不存在则生成一条新user记录
+    public function otherLogin(){
+        $login_type = I('param.login_type'); 
+        $login_id = I('param.login_id'); 
+        $where['status'] = 1;
+        switch ($login_type) {
+            case 1:
+                $where['openid'] = $login_id;
+                break;
+            case 2:
+                $where['qqid'] = $login_id;
+                break;
+            default:
+                break;
+        }
+        $user_info = M('user')->where($where)->find();
+        if (!$user_info) {
+            $data["status"] = 1;
+            $data["msg"] = '请绑定手机';
+            $this->ajaxReturn($data);
+            die;
+        }
+        session("user_id",$user_info["user_id"]);
+        session("user_name",$user_info["user_name"]);
+        session("real_name",$user_info["real_name"]);
+        $data["status"] = 0;
+        $data["msg"] = '登陆成功';
+        $data["log_name"] = $user_info["user_name"];
+        $this->ajaxReturn($data);
+    }
+    
+    //账号绑定
+    public function bangding(){
+        
+    }
+
     //生成验证码
     Public function verify(){
         import('Org.Util.Verify');
