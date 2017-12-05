@@ -18,7 +18,7 @@ class LoginController extends Controller {
         $verify = I('param.verify_code');
         // $error_url=U("login/index");
         $error_url='';
-        $res = array('status'=>0);
+        $res = array('status'=>1);
         //如果连续登录失败四次以上则验证验证码
         $val = session('login_n');
         $val++;
