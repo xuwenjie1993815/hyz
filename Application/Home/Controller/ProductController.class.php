@@ -1,7 +1,6 @@
 <?php
 namespace Home\Controller;
 use Think\Controller;
-use LT\ThinkSDK\ThinkOauth;
 class ProductController extends Controller {
 	//获取商品列表
 	public function getProductList()
