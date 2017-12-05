@@ -2,6 +2,14 @@
 namespace Home\Controller;
 use Think\Controller;
 class LoginController extends Controller {
+    public function index(){
+		if($_SESSION["user_id"]){
+			$this->redirect("Index");
+		}else{
+            $this->display();
+		}
+    }
+    
     //登录
     //接收参数 username userpwd verify_code
     public function checkLogin(){
@@ -49,9 +57,22 @@ class LoginController extends Controller {
             }
         }
     }
-
-    //验证验证码
-    public function check_verify($code, $id = ''){
-
+    //生成验证码
+    Public function verify(){
+        import('Org.Util.Verify');
+        $Verify = new \Verify([
+            'fontSize' => 15,
+            'length' => 4,
+            'codeSet' => '0123456789',
+            'useNoise' => false,
+        ]);
+        $Verify->entry();
+    }
+    
+    //检测验证码是否正确
+    function check_verify($code, $id = ''){
+        import('Org.Util.Verify');
+        $Verify = new \Verify();
+        return $Verify->check($code, $id);
     }
 }
