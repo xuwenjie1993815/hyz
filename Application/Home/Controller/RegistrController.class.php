@@ -74,12 +74,14 @@ class RegistrController extends Controller {
            $this->ajaxReturn($data);
         }
         //添加数据到数据库
+        $salt= rand(1000,9999);
         $insert = array(
         		'tel'=>$phone,
         		'user_type'=>$type,
         		'job'=>$job,
-        		'pass'=>md5(md5($pwd)),
+        		'pass'=>md5($pwd.$salt),
         		'ctime'=>time(),
+        		'salt'=>$salt,
         		'status'=>1,
         	);
         $res = M('user')->add($insert);
