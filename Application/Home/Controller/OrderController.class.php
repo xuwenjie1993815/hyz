@@ -15,7 +15,7 @@ class OrderController extends Controller{
             die;
         }
         //确认数据
-        if (!$product_id) {
+        if (!$product_id || !$period_id) {
             $ret['status'] = 2;
             $ret['msg'] = '加入失败';
             $this->ajaxReturn($ret);
