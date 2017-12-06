@@ -102,7 +102,7 @@ class  userModel extends Model {
 		}else{
 			$adminmsg = M("user")->where("user_id=".$_SESSION["user_id"])->find();
 			$titles="我的信息";
-			return array('status' => 0,'data' => array('data' => $adminmsg,'msgtitle'=>$titles));
+			return array('status' => 1,'data' => array('data' => $adminmsg,'msgtitle'=>$titles));
 		}
 	}
 
