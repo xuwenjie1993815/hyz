@@ -41,7 +41,7 @@ class ProductController extends Controller {
 				
 				break;
 		}
-		$res = M('period')->alias("a")->field('images,period_time,product_info,target_num,now_num')->join("left join hyz_product as b on a.p_id = b.product_id")->where($where)->order($order_by)->select();
+		$res = M('period')->alias("a")->field('period_id,images,period_time,product_info,target_num,now_num')->join("left join hyz_product as b on a.p_id = b.product_id")->where($where)->order($order_by)->select();
 		foreach ($res as $key => $value) {
 			$res[$key]['surplus_num']=$res[$key]['target_num']-$res[$key]['now_num'];
 		}
@@ -60,6 +60,29 @@ class ProductController extends Controller {
 
         	$this->ajaxReturn($data);
 		}
-		
 	}
+	//商品详情
+	public function getDetail()
+	{
+		$product_id = I('product_id');
+		$product_id = addslashes($product_id);
+		$res = M('period')->alias("a")->field('images,period_time,product_info,target_num,now_num,price')->join("left join hyz_product as b on a.p_id = b.product_id")->where(array('period_id'=>$product_id))->find();
+		$res['surplus_num']=$res['target_num']-$res['now_num'];
+		if ($res) {
+			$data = array(
+                'status'=>0,
+                'msg'=>$res
+           	);
+
+        	$this->ajaxReturn($data);
+		}else{
+			$data = array(
+                'status'=>1,
+                'msg'=>'没有该商品'
+           	);
+
+        	$this->ajaxReturn($data);
+		}
+	}
+	//
 }
