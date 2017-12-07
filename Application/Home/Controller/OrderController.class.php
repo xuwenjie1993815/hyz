@@ -96,7 +96,48 @@ class OrderController extends Controller{
         die;
     }
     
-    //生成订单
+    //结算生成订单,订单确认
+    //根据user_id查询其购物车信息，返回付款信息
+    public function confirm_order(){
+        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $order_type = $_POST['order_type'];
+        //确认用户登陆
+        if (!$user_id) {
+            $ret['status'] = 1;
+            $ret['msg'] = '请先登陆';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        if ($order_type = 1) {
+            $where['c.user_id'] = $user_id;
+            $where['c.status'] = 1;
+            $where['pe.status_period'] = 1;
+            $join_a = "hyz_product AS p ON c.product_id = p.product_id";
+            $join_b = "hyz_period AS pe ON c.product_id = pe.p_id";
+            $order = "c.ctime desc";
+            $res = M('cart')->alias("c")->join($join_a)->join($join_b)->field('c.*, pe.target_num , pe.now_num , pe.period_time , p.product_name ,p.price ,p.product_info')->where($where)->order($order)->select();
+            $price = 0;
+            foreach ($res as $k => $v){
+                $price += $v['price']*$v['product_num'];
+            }
+            //生成未支付的订单
+            $order_data['order_sn'] = D('Support')->orderNumber();
+            $order_data['user_id'] = $user_id;
+            $order_data['order_type'] = $order_type;
+//            $order_data['order_product_id'] = ;
+        }
+        
+        
+        
+        
+    }
+    
+    //订单支付
+    public function submit_order(){
+        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $pay_type = $_POST['pay_type'];
+        
+    }
     
     //订单列表
 }

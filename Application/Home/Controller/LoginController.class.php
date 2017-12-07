@@ -57,7 +57,7 @@ class LoginController extends Controller {
         $user_info = M('user')->where($where)->find();
         if (!$user_info) {
             $data["status"] = 1;
-            $data["msg"] = '请绑定手机';
+            $data["msg"] = '未绑定手机';
             $this->ajaxReturn($data);
             die;
         }
