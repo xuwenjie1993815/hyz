@@ -1,6 +1,8 @@
 <?php
 namespace Think\Model;
+namespace Common\Model;
 use Think\Model;
+
 class  SupportModel extends Model {
     public function orderNumber()
     {
