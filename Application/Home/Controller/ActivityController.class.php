@@ -47,8 +47,6 @@ class ActivityController extends Controller {
 	//活动报名信息录入接口
 	public function enrollment()
 	{
-		$orderNumber = D('Support')->orderNumber();
-		echo $orderNumber;die;
 		$user_id = I('user_id');
 		$activity_id = I('activity_id');
 		$name = I('name');
@@ -149,12 +147,25 @@ class ActivityController extends Controller {
 		//生成订单
 		//获取订单金额
 		$price = M('activity')->field('price')->where(array('activity_id'=>$activity_id))->find();
-
+		$order_sn = D('Support')->orderNumber();
+		$order_arr =array(
+				'order_sn'=>$order_sn,
+				'user_id'=>$user_id,
+				'order_type'=>2,
+				'activity_id'=>$activity_id,
+				'product_num'=>1,
+				'order_money'=>$price['price'],
+				'order_status'=>0,
+				'order_time'=>time(),
+				'shipping_status'=>0,
+			);
+		$order_id = M('order')->add($order_arr);
 		//插入数据
 		$indata = array(
 					'apply_type'=>1,
 					'activity_id'=>$activity_id,
 					'user_id'=>$user_id,
+					'order_id'=>$order_id,
 					'apply_real_name'=>$name,
 					'sex'=>$sex,
 					'age'=>$age,
