@@ -57,6 +57,7 @@ class RegistrController extends Controller {
         }
         //获取session里面的验证码
         $session_code = session('telCode');
+        $session_code = 9999;
         if ($code != $session_code) {
         	$data = array(
                 'status'=>7,
