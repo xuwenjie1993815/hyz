@@ -4,7 +4,7 @@ use Think\Controller;
 class OrderController extends Controller{
     //加入购物车
     //status 0:成功 1:未登录 2:失败
-    public function addPart(){
+    public function addCart(){
         $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
         $num = $_REQUEST['num'];
         $product_id = $_REQUEST['product_id'];
@@ -54,7 +54,6 @@ class OrderController extends Controller{
     
     //获取购物车列表
     public function cartList(){
-        session('user_id',11);
         $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
         //确认用户登陆
         if (!$user_id) {
@@ -74,7 +73,7 @@ class OrderController extends Controller{
             $data = array('status'=>0,'msg'=>$res);
             $this->ajaxReturn($data);
         }else{
-            $data = array('status'=>1,'msg'=>'没有商品');
+            $data = array('status'=>2,'msg'=>'没有商品');
             $this->ajaxReturn($data);
         }
     }
@@ -82,8 +81,9 @@ class OrderController extends Controller{
 
     //清空购物车
     public function cleanCart(){
+        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
         //确认用户登陆
-        if (!$_SESSION['user_id']) {
+        if (!$user_id) {
             $ret['status'] = 1;
             $ret['msg'] = '请先登陆';
             $this->ajaxReturn($ret);

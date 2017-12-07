@@ -16,45 +16,22 @@ class LoginController extends Controller {
         $username = I('param.username');
         $pass = I('param.userpwd');
         $verify = I('param.verify_code');
-        // $error_url=U("login/index");
-        $error_url='';
         $res = array('status'=>1);
-        //如果连续登录失败四次以上则验证验证码
-        $val = session('login_n');
-        $val++;
-        session('login_n', $val);
-        if($val >= 4){
+        if($verify){
             if(!$this->check_verify($verify)){
-                if(IS_AJAX){
-                    $res['msg'] = '验证码错误';
-                    $this->ajaxReturn($res);
-                }else{
-                    $this->error('验证码错误', $error_url);
-                }
+                $res['status'] = 2;
+                $res['msg'] = '验证码错误';
             }
         }
-
-        $data = D('User')->login($username,MD5($pass),$pass);
-        if($data['status']==1){
-            $url=U("Index/index");
-            if(!empty($_POST['jump_url'])){
-                $url=$_POST['jump_url'];
-            }
-
-            if(IS_AJAX){
-                $res['msg'] = '登录成功';
-                $this->ajaxReturn($res);
-            }else{
-                $this->success("登录成功",$url);
-            }
+        $data = D('User')->login($username,$pass);
+        if($data['status']==0){
+            $res['status'] = 0;
+            $res['name'] = $data['name'];
+            $res['log_name'] = $data['log_name'];
+            $res['msg'] = '登录成功';
         }else{
-            if(IS_AJAX){
-                $res['msg'] = $data["info"];
-                $this->ajaxReturn($res);
-            }else{
-                if($val == 3) $this->redirect('login/index');
-                else $this->error($data["info"], $error_url);
-            }
+            $res['status'] = 1;
+            $res['msg'] = '登录失败';
         }
     }
     
@@ -120,11 +97,11 @@ class LoginController extends Controller {
         }
         $ret = M('user')->where($where)->save($data);
         if ($ret) {
-            session("user_id",$user["user_id"]);
-            session("user_name",$user["user_name"]);
-            session("real_name",$user["real_name"]);
+//            session("user_id",$user["user_id"]);
+//            session("user_name",$user["user_name"]);
+//            session("real_name",$user["real_name"]);
             $data["status"] = 0;
-            $data["msg"] = '登陆成功';
+            $data["msg"] = '绑定成功';
             $data["log_name"] = $user["user_name"];
             $this->ajaxReturn($data);
         }

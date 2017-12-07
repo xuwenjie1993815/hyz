@@ -2,14 +2,14 @@
 /**
  * 用户model
  */
-namespace Think\Model;
+namespace Common\Model;
 use Think\Model;
 class  userModel extends Model {
     //独立用户model
     //登录 注册 信息修改 修改密码
 
 	//登录
-	public function login($username,$pass,$pass_md){
+	public function login($username,$pass){
 		// $where["user_name"] = array("eq",$username);
 		// $where['telephone'] = $username;
 
@@ -23,7 +23,7 @@ class  userModel extends Model {
 		}
 
 		if ($result['salt']) {
-			if ($result["pass"] != md5($pass_md.$result['salt'])) {
+			if ($result["pass"] != md5($pass.$result['salt'])) {
 				$data["status"] = 1;
 				$data["info"] = "用户名或密码错误";
 				return $data;
@@ -46,7 +46,7 @@ class  userModel extends Model {
 		session("user_name",$result["user_name"]);
 		session("real_name",$result["real_name"]);
 		$data["status"] = 0;
-		$data["info"] = "登录中";
+		$data["msg"] = "登录成功";
 		$data["name"] = $result['real_name'];
 		$data["log_name"] = $username;
 		return $data;
