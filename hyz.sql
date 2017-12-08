@@ -10,11 +10,10 @@ Target Server Type    : MYSQL
 Target Server Version : 50617
 File Encoding         : 65001
 
-Date: 2017-12-08 18:43:51
+Date: 2017-12-08 22:05:01
 */
 
 SET FOREIGN_KEY_CHECKS=0;
-
 -- ----------------------------
 -- Table structure for `hyz_activity`
 -- ----------------------------
@@ -50,13 +49,13 @@ CREATE TABLE `hyz_apply` (
   `user_id` int(10) DEFAULT NULL COMMENT '申请人',
   `apply_real_name` varchar(10) CHARACTER SET utf8 DEFAULT NULL COMMENT '申请人真实姓名',
   `sex` tinyint(1) DEFAULT NULL COMMENT '性别',
-  `age` int(1) DEFAULT NULL COMMENT '年龄',
+  `age` int(3) DEFAULT NULL COMMENT '年龄',
   `id_card_no` varchar(30) CHARACTER SET utf8 DEFAULT NULL COMMENT '身份证',
   `tel` varchar(15) CHARACTER SET utf8 DEFAULT NULL COMMENT '手机号',
   `company` varchar(30) CHARACTER SET utf8 DEFAULT NULL COMMENT '单位',
   `job` varchar(30) DEFAULT NULL COMMENT '职位',
   `ctime` int(11) DEFAULT NULL COMMENT '申请时间',
-  `apply_status` tinyint(1) DEFAULT '0' COMMENT '申请状态 1:通过 2:拒绝',
+  `apply_status` int(1) DEFAULT '0' COMMENT '申请状态 1:通过 2:未支付',
   `remark` varchar(255) CHARACTER SET utf8 DEFAULT NULL COMMENT '用户申请备注',
   `admin_remark` varchar(255) CHARACTER SET utf8 DEFAULT NULL COMMENT '管理员审核备注',
   `province` varchar(30) CHARACTER SET utf8 DEFAULT NULL COMMENT '省',
@@ -64,12 +63,16 @@ CREATE TABLE `hyz_apply` (
   `county` varchar(30) CHARACTER SET utf8 DEFAULT NULL COMMENT '区',
   `address` varchar(255) CHARACTER SET utf8 DEFAULT NULL COMMENT '详细地址',
   `other_info` text CHARACTER SET utf8 COMMENT '其他定制信息 如：（演唱：独唱）',
+  `like_num` int(11) DEFAULT NULL COMMENT '点赞数',
+  `like_userid` varchar(255) DEFAULT NULL COMMENT '点赞的人',
   PRIMARY KEY (`apply_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of hyz_apply
 -- ----------------------------
+INSERT INTO hyz_apply VALUES ('2', '1', '1', '1', '1', 'rr', '1', '26', null, null, null, null, null, '1', null, null, null, null, null, '渝北', '{\"qumu\":\"jjj\",\"xs\":\"ddd\"}', '36', '1');
+INSERT INTO hyz_apply VALUES ('3', '1', '1', '2', '3', 'dd', '2', '55', null, null, null, null, null, '1', null, null, null, null, null, '兼备', '{\"qumu\":\"jjjjfss\",\"xs\":\"lll\"}', '55', '1,3');
 
 -- ----------------------------
 -- Table structure for `hyz_bank_account`
@@ -92,6 +95,24 @@ CREATE TABLE `hyz_bank_account` (
 
 -- ----------------------------
 -- Records of hyz_bank_account
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `hyz_cart`
+-- ----------------------------
+DROP TABLE IF EXISTS `hyz_cart`;
+CREATE TABLE `hyz_cart` (
+  `cart_id` int(10) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) DEFAULT NULL,
+  `product_id` int(10) DEFAULT NULL COMMENT '商品id',
+  `product_num` smallint(5) DEFAULT NULL COMMENT '商品数量',
+  `period_id` int(10) DEFAULT NULL COMMENT '商品期数',
+  `status` tinyint(1) DEFAULT NULL COMMENT '0:已删除 1:正常',
+  PRIMARY KEY (`cart_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of hyz_cart
 -- ----------------------------
 
 -- ----------------------------
@@ -143,6 +164,8 @@ CREATE TABLE `hyz_order` (
   `tel` varchar(30) CHARACTER SET utf8 DEFAULT NULL COMMENT '收货人电话',
   `delivery_time` int(11) DEFAULT '0' COMMENT '发货时间',
   `order_note` varchar(255) CHARACTER SET utf8 DEFAULT NULL COMMENT '订单备注',
+  `like_num` int(11) DEFAULT NULL,
+  `like_userid` varchar(255) DEFAULT NULL COMMENT '点赞的人',
   PRIMARY KEY (`order_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
@@ -169,9 +192,9 @@ CREATE TABLE `hyz_period` (
 -- ----------------------------
 -- Records of hyz_period
 -- ----------------------------
-INSERT INTO `hyz_period` VALUES ('1', '1', '100', '50', '1', null, '1', null);
-INSERT INTO `hyz_period` VALUES ('2', '2', '321', '100', '1', null, '1', null);
-INSERT INTO `hyz_period` VALUES ('3', '1', '321', '60', '2', null, '2', null);
+INSERT INTO hyz_period VALUES ('1', '1', '100', '50', '1', null, '1', null);
+INSERT INTO hyz_period VALUES ('2', '2', '321', '100', '1', null, '1', null);
+INSERT INTO hyz_period VALUES ('3', '1', '321', '60', '2', null, '2', null);
 
 -- ----------------------------
 -- Table structure for `hyz_product`
@@ -193,9 +216,9 @@ CREATE TABLE `hyz_product` (
 -- ----------------------------
 -- Records of hyz_product
 -- ----------------------------
-INSERT INTO `hyz_product` VALUES ('1', '自行车', '654.00', null, '1', null, '0', '1', '神奇的自行车');
-INSERT INTO `hyz_product` VALUES ('2', '洗衣机', '2199.00', null, '1', null, '0', '2', null);
-INSERT INTO `hyz_product` VALUES ('3', '冰箱', '3126.00', null, '1', null, '0', '2', null);
+INSERT INTO hyz_product VALUES ('1', '自行车', '654.00', null, '1', null, '0', '1', '神奇的自行车');
+INSERT INTO hyz_product VALUES ('2', '洗衣机', '2199.00', null, '1', null, '0', '2', null);
+INSERT INTO hyz_product VALUES ('3', '冰箱', '3126.00', null, '1', null, '0', '2', null);
 
 -- ----------------------------
 -- Table structure for `hyz_shop`
@@ -219,6 +242,19 @@ CREATE TABLE `hyz_shop` (
 
 -- ----------------------------
 -- Records of hyz_shop
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `hyz_support`
+-- ----------------------------
+DROP TABLE IF EXISTS `hyz_support`;
+CREATE TABLE `hyz_support` (
+  `id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of hyz_support
 -- ----------------------------
 
 -- ----------------------------

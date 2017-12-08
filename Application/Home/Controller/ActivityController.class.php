@@ -174,7 +174,7 @@ class ActivityController extends Controller {
 					'company'=>$company,
 					'job'=>$job,
 					'ctime'=>time(),
-					'apply_status'=>1,
+					'apply_status'=>2,
 					'address'=>$address,
 					'other_info'=>$djson
 			);
@@ -251,5 +251,35 @@ class ActivityController extends Controller {
                 'msg'=>$res
            	);
         $this->ajaxReturn($data);
+	}
+	//节目单
+	public function programmesList()
+	{
+		$activity_id = I('activity_id');
+		if (!$activity_id) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'活动ID不能为空'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		$activity_id = addslashes($activity_id);
+		//$activity_id=1;
+		$res = M('apply')->field('sex,apply_real_name,address,like_num,like_userid,other_info')->where(array('activity_id'=>$activity_id,'apply_status'=>'1'))->select();
+		foreach ($res as $k=> $v) {
+			$res[$k]['performance'] = json_decode($v['other_info'],1);
+			$res[$k]['performance'] = $res[$k]['performance']['qumu'];
+			unset($res[$k]['other_info']);
+		}
+		$data = array(
+                'status'=>0,
+                'msg'=>$res
+           	);
+        $this->ajaxReturn($data);
+	}
+	//点赞
+	public function activityLike()
+	{
+		
 	}
 }
