@@ -54,7 +54,7 @@ class ActivityController extends Controller {
 		$age = I('age');
 		$job = I('job');
 		$card = I('card');
-		$phone = I('name');
+		$phone = I('phone');
 		$company = I('company');
 		$address = I('address');
 		$djson = I('djson');
@@ -193,4 +193,39 @@ class ActivityController extends Controller {
         	$this->ajaxReturn($data);
 		}
 	}
+	//检查是否已经报名
+	public function checkEnrol()
+	{
+		$user_id = I('user_id');
+		$activity_id = I('activity_id');
+		if (!$user_id) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'用户ID不能为空'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		if (!$activity_id) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'活动ID不能为空'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		$check = M('apply')->field('apply_id')->where(array('activity_id'=>$activity_id,'user_id'=>$user_id))->find();
+		if ($check) {
+			$data = array(
+                'status'=>2,
+                'msg'=>'已经报名'
+           	);
+        	$this->ajaxReturn($data);
+		}else{
+			$data = array(
+                'status'=>0,
+                'msg'=>'可以报名'
+           	);
+        	$this->ajaxReturn($data);
+		}
+	}
+	//
 }
