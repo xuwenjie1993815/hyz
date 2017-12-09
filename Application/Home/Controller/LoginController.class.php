@@ -127,4 +127,7 @@ class LoginController extends Controller {
         $Verify = new \Verify();
         return $Verify->check($code, $id);
     }
+    
+    //忘记密码
+    
 }

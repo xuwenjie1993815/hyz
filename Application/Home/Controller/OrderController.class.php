@@ -132,7 +132,7 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
-        M('cart')->where(array('user_id' => $_SESSION['user_id'],'status' => 1))->save(array('status' => 0));
+        M('cart')->where(array('user_id' => $user_id,'status' => 1))->save(array('status' => 0));
         $ret['status'] = 0;
         $ret['msg'] = '清空成功';
         $this->ajaxReturn($ret);
@@ -195,7 +195,7 @@ class OrderController extends Controller{
                 $r = $model->table($db_prefix . 'order')->add($order_data);
                 if (!$r) throw_exception('操作失败');
                 //生成订单成功  购物车清空
-                M('cart')->where(array('user_id' => $_SESSION['user_id'],'status' => 1))->save(array('status' => 0));
+                M('cart')->where(array('user_id' => $user_id,'status' => 1))->save(array('status' => 0));
             }
             $model->commit();
             $this->ajaxReturn(array(
