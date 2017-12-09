@@ -182,6 +182,7 @@ class OrderController extends Controller{
     //商品订单列表(全部，已参与，待兑奖，我的评论)
     //order_status 1已参与商品订单 2已兑奖商品订单 （为null则获取全部订单）
     public function orderList(){
+        session('user_id',3);
         $order_status = $_POST['order_status'];
         $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
@@ -206,11 +207,21 @@ class OrderController extends Controller{
         }else{
             $where['o.order_status'] != 3;
         }
-        $res = M('order')->alias("o")->join($join_a)->join($join_b)->field('o.*, pe.target_num , pe.now_num , pe.period_time , p.product_name ,p.price ,p.product_info,p.images')->where($where)->order($order)->select();
-        
+        $res = M('order')->alias("o")->join($join_a)->join($join_b)->field('o.*, pe.* , p.product_name ,p.price ,p.product_info,p.images')->where($where)->order($order)->select();
+        //列表需要数据 订单title order_info(类型  数量  金额  图片  时间  状态)   order_id order_img  order_price order_sn order_time 
+        foreach ($res as $k => $v){
+            $data[$k]['title'] = $v['period_name'];//title
+            $data[$k]['images'] = $v['images'];//商品图片
+            $data[$k]['order_price'] = $v['order_money'];//金额
+            $data[$k]['product_num'] = $v['product_num'];//数量
+            $data[$k]['period_time'] = $v['period_time'];//活动期数
+            $data[$k]['order_status'] = $v['order_status'];//订单状态
+            $data[$k]['order_time'] = $v['order_time'];//订单时间
+            $data[$k]['order_type'] = $v['order_type'];//订单类型
+        }
         
         //活动抽奖订单apply order activity
-        $join_a = "hyz_apply AS a ON a.apply_id = o.apply_id";
+        $join_a = "hyz_apply AS a ON a.order_id = o.order_id";
         $join_b = "hyz_activity AS ac ON ac.activity_id = o.activity_id";
         $order = "o.order_time desc";
         $where_apply['a.apply_type'] = 1;
@@ -218,23 +229,35 @@ class OrderController extends Controller{
         $where_apply['o.order_type'] = 2;//参与活动订单
         $field_apply = 'o.*, ac.*,a.*';
         $res_apply = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
-        
+        foreach ($res_apply as $k => $v){
+            $data_apply[$k]['title'] = $v['activity_name'];//title
+            $data_apply[$k]['images'] = $v['images'];//商品图片
+            $data_apply[$k]['order_price'] = $v['order_money'];//金额
+            $data_apply[$k]['product_num'] = $v['product_num'];//数量
+            $data_apply[$k]['period_time'] = $v['period_time'];//活动期数
+            $data_apply[$k]['order_status'] = $v['order_status'];//订单状态
+            $data_apply[$k]['order_time'] = $v['order_time'];//订单时间
+            $data_apply[$k]['order_type'] = $v['order_type'];//订单类型
+        }
         //点赞抽奖订单apply order activity
+        $join_a = "hyz_apply AS a ON a.apply_id = o.apply_id";
         $where_apply['o.order_type'] = 3;//参与点赞订单
         $field_apply = 'o.*, ac.*,a.*';
         $res_dz = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
-        
-        //三种不同订单的数据组装
-        foreach ($res as $k => $v){
-            $data[$k]['num'] = $v['product_num'];//商品数量,支持数量
-            $data[$k]['period_time'] = $v['period_time'];//活动期数
-            $data[$k]['images'] = $v['images'];//商品图片
-            $data[$k]['period_name'] = $v['period_name'];//活动名
-            $data[$k]['order_price'] = $v['period_price'] * $v['product_num'];//金额
+        foreach ($res_dz as $k => $v){
+            $data_dz[$k]['title'] = $v['title'];//title
+            $data_dz[$k]['images'] = $v['images'];//商品图片
+            $data_dz[$k]['order_price'] = $v['order_money'];//金额
+            $data_dz[$k]['product_num'] = $v['product_num'];//数量
+            $data_dz[$k]['period_time'] = $v['period_time'];//活动期数
+            $data_dz[$k]['order_status'] = $v['order_status'];//订单状态
+            $data_dz[$k]['order_time'] = $v['order_time'];//订单时间
+            $data_dz[$k]['order_type'] = $v['order_type'];//订单类型
         }
+       $order_list = array_merge($data,$data_apply,$data_dz);
         
         
-        if (!$data) {
+        if (!$order_list) {
             $ret['status'] = 1;
             $ret['msg'] = '空列表';
             $this->ajaxReturn($ret);
@@ -242,7 +265,7 @@ class OrderController extends Controller{
         }else{
             $ret['status'] = 0;
             $ret['msg'] = '获取成功';
-            $ret['order_lisr'] = $data;
+            $ret['order_lisr'] = $order_list;
             $this->ajaxReturn($ret);
             die;
         }
