@@ -1,9 +1,10 @@
 <?php
-namespace Think\Model;
+//namespace Think\Model;
 namespace Common\Model;
 use Think\Model;
 
 class  SupportModel extends Model {
+    protected $autoCheckFields = false; //关闭检测字段
 	//生成唯一订单编号
     public function orderNumber()
     {

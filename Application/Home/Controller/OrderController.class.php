@@ -192,18 +192,39 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
+       
+        //有三种类型的商品  商品抽奖订单（关联product period order）  活动抽奖订单（apply order activity）  点赞抽奖订单（apply order activity）
+        //商品抽奖订单
+        $join_a = "hyz_product AS p ON o.order_product_id = p.product_id";
+        $join_b = "hyz_period AS pe ON o.order_product_id = pe.p_id";
+        $order = "o.order_time desc";
         $where['o.user_id'] = $user_id;
         $where['pe.status_period'] = 1;
-        $where['o.order_type'] = 1;
+        $where['o.order_type'] = 1;//商品抽奖订单
         if ($order_status){
             $where['o.order_status'] = $order_status;
         }else{
             $where['o.order_status'] != 3;
         }
-        $join_a = "hyz_product AS p ON o.order_product_id = p.product_id";
-        $join_b = "hyz_period AS pe ON o.order_product_id = pe.p_id";
-        $order = "o.order_time desc";
         $res = M('order')->alias("o")->join($join_a)->join($join_b)->field('o.*, pe.target_num , pe.now_num , pe.period_time , p.product_name ,p.price ,p.product_info,p.images')->where($where)->order($order)->select();
+        
+        
+        //活动抽奖订单apply order activity
+        $join_a = "hyz_apply AS a ON a.apply_id = o.apply_id";
+        $join_b = "hyz_activity AS ac ON ac.activity_id = o.activity_id";
+        $order = "o.order_time desc";
+        $where_apply['a.apply_type'] = 1;
+        $where_apply['o.user_id'] = $user_id;
+        $where_apply['o.order_type'] = 2;//参与活动订单
+        $field_apply = 'o.*, ac.*,a.*';
+        $res_apply = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
+        
+        //点赞抽奖订单apply order activity
+        $where_apply['o.order_type'] = 3;//参与点赞订单
+        $field_apply = 'o.*, ac.*,a.*';
+        $res_dz = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
+        
+        //三种不同订单的数据组装
         foreach ($res as $k => $v){
             $data[$k]['num'] = $v['product_num'];//商品数量,支持数量
             $data[$k]['period_time'] = $v['period_time'];//活动期数
@@ -211,6 +232,8 @@ class OrderController extends Controller{
             $data[$k]['period_name'] = $v['period_name'];//活动名
             $data[$k]['order_price'] = $v['period_price'] * $v['product_num'];//金额
         }
+        
+        
         if (!$data) {
             $ret['status'] = 1;
             $ret['msg'] = '空列表';
