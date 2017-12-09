@@ -77,7 +77,50 @@ class OrderController extends Controller{
             $this->ajaxReturn($data);
         }
     }
-
+    
+    //删除购物车商品
+    public function delCart() {
+        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        //确认用户登陆
+        if (!$user_id) {
+            $ret['status'] = 1;
+            $ret['msg'] = '请先登陆';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $cart_id = $_POST['cart_id'];
+        if (!$cart_id) {
+            $ret['status'] = 2;
+            $ret['msg'] = '缺少参数';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $cart_info = M('cart')->where(array('cart_id' => $cart_id))->find();
+        if (!$cart_info) {
+            $ret['status'] = 3;
+            $ret['msg'] = '参数错误';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        if ($cart_info['status'] == 0) {
+            $ret['status'] = 4;
+            $ret['msg'] = '此商品已删除';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $cart_ret = M('cart')->where(array('cart_id' => $cart_id))->save(array('status' => 0));
+        if ($cart_ret) {
+            $ret['status'] = 0;
+            $ret['msg'] = '删除成功';
+            $this->ajaxReturn($ret);
+            die;
+        }  else {
+            $ret['status'] = 5;
+            $ret['msg'] = '删除失败';
+            $this->ajaxReturn($ret);
+            die;
+        }
+    }
 
     //清空购物车
     public function cleanCart(){
@@ -96,16 +139,12 @@ class OrderController extends Controller{
         die;
     }
     
-    //结算生成订单,订单确认
+    //购物车结算生成订单,订单确认
     //根据user_id查询其购物车信息，返回付款信息
     //商品信息数据格式 array(product_id:num)
-    /**
-     *
-     */
-    public function confirm_order(){
+    public function cart_order(){
         $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
-        $order_type = $_POST['order_type'];
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
@@ -113,61 +152,64 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
-        if ($order_type = 1) {
-            $where['c.user_id'] = $user_id;
-            $where['c.status'] = 1;
-            $where['pe.status_period'] = 1;
-            $join_a = "hyz_product AS p ON c.product_id = p.product_id";
-            $join_b = "hyz_period AS pe ON c.product_id = pe.p_id";
-            $order = "c.ctime desc";
-            $res = M('cart')->alias("c")->join($join_a)->join($join_b)->field('c.*, pe.target_num , pe.now_num , pe.period_time, pe.period_price , p.product_name ,p.product_info')->where($where)->order($order)->select();
-            $price = 0;
-            $product_num = 0;
-            $model = M();
-            $db_prefix = C('DB_PREFIX');
-            try{
-                $model->startTrans();
-                foreach ($res as $k => $v){
-                    //返回总金额
-                    $price += $v['period_price']*$v['product_num'];
-                    $product_num += $v['product_num'];
-                    //生成未支付的订单
-                    $order_data['order_sn'] = D('Support')->orderNumber();
-                    $order_data['user_id'] = $user_id;
-                    $order_data['order_type'] = $order_type;
-                    $order_data['order_product_id'] = $v['product_id'];
-                    $order_data['product_num'] = $v['product_num'];
-                    $order_data['order_money'] = $v['period_price']*$v['product_num'];
-                    $order_data['order_status'] = 0;
-                    $order_data['order_time'] = time();
-                    $order_data['addressee'] = $user_info['real_name']?:$user_info['user_name'];
-                    $order_data['province'] = $user_info['province'];
-                    $order_data['city'] = $user_info['city'];
-                    $order_data['county'] = $user_info['county'];
-                    $order_data['address'] = $_POST['address'];
-                    $order_data['tel'] = $user_info['tel'];
-                    $order_data['order_note'] = $user_info['order_note'];
-                    $r = $model->table($db_prefix . 'order')->add($order_data);
-                    if (!$r) throw_exception('操作失败');
-                }
-                $model->commit();
-                $this->ajaxReturn(array(
-                    'status' => 0,
-                    'msg' => '操作成功',
-                    'order_info' => array('order_price' => $price,'product_num' => $product_num,'product_name' => $res[0]['product_name']),
-                ));
-            }catch (Exception $e){
-                $model->rollback();
-                $this->ajaxReturn(array(
-                    'status' => 1,
-                    'msg' => '操作失败',
-                ));
-            }
+        $where['c.user_id'] = $user_id;
+        $where['c.status'] = 1;
+        $where['pe.status_period'] = 1;//判断这期活动是否已经过期
+        $join_a = "hyz_product AS p ON c.product_id = p.product_id";
+        $join_b = "hyz_period AS pe ON c.product_id = pe.p_id";
+        $order = "c.ctime desc";
+        $res = M('cart')->alias("c")->join($join_a)->join($join_b)->field('c.*, pe.target_num , pe.now_num , pe.period_time, pe.period_price , p.product_name ,p.product_info')->where($where)->order($order)->select();
+        if (!$res) {
+            $ret['status'] = 2;
+            $ret['msg'] = '购物车为空';
+            $this->ajaxReturn($ret);
+            die;
         }
-        
-        
-        
-        
+        $price = 0;
+        $product_num = 0;
+        $model = M();
+        $db_prefix = C('DB_PREFIX');
+        try{
+            $model->startTrans();
+            foreach ($res as $k => $v){
+                //返回总金额
+                $price += $v['period_price']*$v['product_num'];
+                $product_num += $v['product_num'];
+                //生成未支付的订单
+                $order_data['order_sn'] = D('Support')->orderNumber();
+                $order_data['user_id'] = $user_id;
+                $order_data['order_type'] = 1;
+                $order_data['period_time'] = $v['period_time'];
+                $order_data['order_product_id'] = $v['product_id'];
+                $order_data['product_num'] = $v['product_num'];
+                $order_data['order_money'] = $v['period_price']*$v['product_num'];
+                $order_data['order_status'] = 0;
+                $order_data['order_time'] = time();
+                $order_data['addressee'] = $user_info['real_name']?:$user_info['user_name'];
+                $order_data['province'] = $user_info['province'];
+                $order_data['city'] = $user_info['city'];
+                $order_data['county'] = $user_info['county'];
+                $order_data['address'] = $_POST['address'];
+                $order_data['tel'] = $user_info['tel'];
+                $order_data['order_note'] = $user_info['order_note'];
+                $r = $model->table($db_prefix . 'order')->add($order_data);
+                if (!$r) throw_exception('操作失败');
+                //生成订单成功  购物车清空
+                M('cart')->where(array('user_id' => $_SESSION['user_id'],'status' => 1))->save(array('status' => 0));
+            }
+            $model->commit();
+            $this->ajaxReturn(array(
+                'status' => 0,
+                'msg' => '操作成功',
+                'order_info' => array('order_price' => $price,'product_num' => $product_num,'product_name' => $res[0]['product_name']),
+            ));
+        }catch (Exception $e){
+            $model->rollback();
+            $this->ajaxReturn(array(
+                'status' => 1,
+                'msg' => '操作失败',
+            ));
+        }
     }
     
     //订单支付todo
