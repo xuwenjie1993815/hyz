@@ -27,12 +27,14 @@ class LoginController extends Controller {
         if($data['status']==0){
             $res['status'] = 0;
             $res['name'] = $data['name'];
-            $res['log_name'] = $data['log_name'];
+            $res['log_name'] = $data['user_info']['user_name'];
+            $res['user_info'] = $data['user_info'];
             $res['msg'] = '登录成功';
         }else{
             $res['status'] = 1;
-            $res['msg'] = '登录失败';
+            $res['msg'] = '账号或密码错误,登录失败';
         }
+        $this->ajaxReturn($res);
     }
     
     //第三方登陆

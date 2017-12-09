@@ -89,7 +89,14 @@ class ProductController extends Controller {
         
 	//商品购买记录列表
         public function productRecord(){
-            $product_id = $_REQUEST['product_id']?:1;
+            $product_id = $_REQUEST['product_id'];
+            if (!$product_id) {
+                $res = array(
+                'status'=>1,
+                'msg'=>'获取失败，参数不完整',
+           	);
+                $this->ajaxReturn($res);die;
+            }
             $where['o.order_product_id'] = $product_id;
             $where['o.order_type'] = 1;
             $join = 'hyz_user AS u ON u.user_id = o.user_id';

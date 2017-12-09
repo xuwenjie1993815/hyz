@@ -179,10 +179,9 @@ class OrderController extends Controller{
     }
     //点赞订单列表
     //活动订单列表
-    //商品订单列表(全部，已参与，待兑奖，我的评论)
+    //订单列表(全部，已参与，待兑奖，我的评论)
     //order_status 1已参与商品订单 2已兑奖商品订单 （为null则获取全部订单）
     public function orderList(){
-        session('user_id',3);
         $order_status = $_POST['order_status'];
         $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
@@ -202,7 +201,7 @@ class OrderController extends Controller{
         $where['o.user_id'] = $user_id;
         $where['pe.status_period'] = 1;
         $where['o.order_type'] = 1;//商品抽奖订单
-        if ($order_status){
+        if ($order_status !== 'All'){
             $where['o.order_status'] = $order_status;
         }else{
             $where['o.order_status'] != 3;
@@ -258,14 +257,14 @@ class OrderController extends Controller{
         
         
         if (!$order_list) {
-            $ret['status'] = 1;
+            $ret['status'] = 2;
             $ret['msg'] = '空列表';
             $this->ajaxReturn($ret);
             die;
         }else{
             $ret['status'] = 0;
             $ret['msg'] = '获取成功';
-            $ret['order_lisr'] = $order_list;
+            $ret['order_list'] = $order_list;
             $this->ajaxReturn($ret);
             die;
         }
