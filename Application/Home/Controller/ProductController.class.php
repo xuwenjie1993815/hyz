@@ -86,5 +86,32 @@ class ProductController extends Controller {
         	$this->ajaxReturn($data);
 		}
 	}
-	//
+        
+	//商品购买记录列表
+        public function productRecord(){
+            $product_id = $_REQUEST['product_id']?:1;
+            $where['o.order_product_id'] = $product_id;
+            $where['o.order_type'] = 1;
+            $join = 'hyz_user AS u ON u.user_id = o.user_id';
+            $order_list = M('order')->alias('o')->join($join)->where($where)->select();
+            //需要数据  购买人  地址  购买时间  头像 购买次数
+            foreach ($order_list as $key => $value) {
+                $data[$key]['user_name'] = $value['user_name'];
+                $data[$key]['address'] = $value['province'].' '.$value['city'].' '.$value['county'].' '.$value['address'];
+                $data[$key]['order_time'] = D('Suppor')->check_time($value['order_time']);
+                $data[$key]['user_img'] = $value['user_img'];
+                $where_user['user_id'] = $value['user_id'];
+                $where_user['order_status'] = array(array('eq',1),array('eq',2),'or');
+                $where_user['order_type'] = 1;
+                $num = M('order')->where($where_user)->count();
+                $data[$key]['num'] = $num;
+            }
+            $res = array(
+                'status'=>0,
+                'msg'=>'获取成功',
+                'data' => $data
+           	);
+
+        	$this->ajaxReturn($res);
+        }
 }
