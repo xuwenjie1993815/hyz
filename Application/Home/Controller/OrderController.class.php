@@ -189,7 +189,7 @@ class OrderController extends Controller{
                 $order_data['province'] = $user_info['province'];
                 $order_data['city'] = $user_info['city'];
                 $order_data['county'] = $user_info['county'];
-                $order_data['address'] = $_POST['address'];
+                $order_data['address'] = $user_info['address'];
                 $order_data['tel'] = $user_info['tel'];
                 $order_data['order_note'] = $user_info['order_note'];
                 $r = $model->table($db_prefix . 'order')->add($order_data);
@@ -206,7 +206,7 @@ class OrderController extends Controller{
         }catch (Exception $e){
             $model->rollback();
             $this->ajaxReturn(array(
-                'status' => 1,
+                'status' => 3,
                 'msg' => '操作失败',
             ));
         }
@@ -349,6 +349,88 @@ class OrderController extends Controller{
             $ret['msg'] = '操作失败';
             $this->ajaxReturn($ret);
             die;
+        }
+    }
+    
+    //立即购买
+    public function buyNow(){
+        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_info = M('user')->where(array('user_id' => $user_id))->find();
+        //确认用户登陆
+        if (!$user_id) {
+            $ret['status'] = 1;
+            $ret['msg'] = '请先登陆';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $product_id = $_POST['product_id'];
+        $period_id = $_POST['period_id'];
+        if (!$product_id || !$period_id) {
+            $ret['status'] = 2;
+            $ret['msg'] = '缺少参数';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        //检查商品状态和活动状态
+        $product_info = M('product')->where(array('product_id' => $period_id))->find();
+        $period_info = M('period')->where(array('period_id' => $period_id))->find();
+        if (!$product_info || !$period_info) {
+            $ret['status'] = 3;
+            $ret['msg'] = '参数错误';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        if ($product_info['status'] == 0) {
+            $ret['status'] = 4;
+            $ret['msg'] = '此商品已下架';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        if ($period_info['status_period'] == 0) {
+            $ret['status'] = 5;
+            $ret['msg'] = '此活动已过期';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        if ($period_info['p_id'] != $period_id) {
+            $ret['status'] = 6;
+            $ret['msg'] = '参数错误';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $model = M();
+        $db_prefix = C('DB_PREFIX');
+        try{
+            $model->startTrans();
+        //生成未支付的订单
+        $order_data['order_sn'] = D('Support')->orderNumber();
+        $order_data['user_id'] = $user_id;
+        $order_data['order_type'] = 1;
+        $order_data['period_time'] = $period_info['period_time'];
+        $order_data['order_product_id'] = $product_id;
+        $order_data['order_money'] = $period_info['period_price'];
+        $order_data['order_status'] = 0;
+        $order_data['order_time'] = time();
+        $order_data['addressee'] = $user_info['real_name']?:$user_info['user_name'];
+        $order_data['province'] = $user_info['province'];
+        $order_data['city'] = $user_info['city'];
+        $order_data['county'] = $user_info['county'];
+        $order_data['address'] = $user_info['address'];
+        $order_data['tel'] = $user_info['tel'];
+        $order_data['order_note'] = $user_info['order_note'];
+        $r = $model->table($db_prefix . 'order')->add($order_data);
+        $model->commit();
+        $this->ajaxReturn(array(
+            'status' => 0,
+            'msg' => '操作成功',
+            'order_info' => array('order_price' => $period_info['period_price'],'product_num' => 1,'product_name' => $period_info['period_name']),
+        ));
+        }catch (Exception $e){
+            $model->rollback();
+            $this->ajaxReturn(array(
+                'status' => 7,
+                'msg' => '操作失败',
+            ));
         }
     }
 
