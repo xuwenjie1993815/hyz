@@ -270,6 +270,46 @@ class OrderController extends Controller{
             die;
         }
     }
+    
+    //取消订单
+    public function cancelOrder() {
+        $order_id = $_REQUEST['order_id'];
+        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_info = M('user')->where(array('user_id' => $user_id))->find();
+        //确认用户登陆
+        if (!$user_id) {
+            $ret['status'] = 1;
+            $ret['msg'] = '请先登陆';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        //检查是否本人删除和订单状态
+        $order_info = M('order')->where(array('order_id' => $order_id))->find();
+        if (!$order_info) {
+            $ret['status'] = 2;
+            $ret['msg'] = '操作错误,订单不存在';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        if ($order_info['user_id'] != $user_id) {
+            $ret['status'] = 3;
+            $ret['msg'] = '操作错误,没有权限删除此订单';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $res = M('order')->where(array('order_id' => $order_id))->save(array('order_status' => 3));
+        if ($res) {
+            $ret['status'] = 0;
+            $ret['msg'] = '删除订单成功';
+            $this->ajaxReturn($ret);
+            die;
+        }else{
+            $ret['status'] = 4;
+            $ret['msg'] = '操作失败';
+            $this->ajaxReturn($ret);
+            die;
+        }
+    }
 
 
 }
