@@ -60,7 +60,7 @@ class CommentController extends Controller{
         }
     }
     //点赞评论
-    public function dzComment() {
+    public function likeComment() {
         $comment_id = $_POST['comment_id'];
         $user_id = $_POST['user_id']?:$_SESSION['user_id'];
         //确认用户登陆
@@ -98,7 +98,7 @@ class CommentController extends Controller{
             $this->ajaxReturn($ret);
             die; 
         }else{
-            $ret['status'] = 3;
+            $ret['status'] = 4;
             $ret['msg'] = '点赞失败';
             $this->ajaxReturn($ret);
             die;
