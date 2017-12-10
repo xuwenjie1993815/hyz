@@ -265,7 +265,7 @@ class ActivityController extends Controller {
 		}
 		$activity_id = addslashes($activity_id);
 		//$activity_id=1;
-		$res = M('apply')->field('sex,apply_real_name,address,like_num,like_userid,other_info')->where(array('activity_id'=>$activity_id,'apply_status'=>'1'))->select();
+		$res = M('apply')->field('apply_id,sex,apply_real_name,address,like_num,like_userid,other_info')->where(array('activity_id'=>$activity_id,'apply_status'=>'1'))->select();
 		foreach ($res as $k=> $v) {
 			$res[$k]['performance'] = json_decode($v['other_info'],1);
 			$res[$k]['performance'] = $res[$k]['performance']['qumu'];
@@ -280,6 +280,72 @@ class ActivityController extends Controller {
 	//点赞
 	public function activityLike()
 	{
-		
+		$apply_id = I('apply_id');
+		$user_id = I('user_id');
+		if (!$apply_id) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'申请ID不能为空'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		if (!$user_id) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'用户ID不能为空'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		$apply_id = addslashes($apply_id);
+		$check = M('apply')->field('apply_id,like_userid,like_num')->where(array('apply_id'=>$apply_id))->find();
+		if (!$check ) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'无效的申请ID'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		$like_userid = $check['like_userid'];
+		$arr = explode(',', $like_userid);
+		$count = array_count_values($arr)[$user_id];//获取该用户点赞次数
+		if ($count<3) {
+			if ($check['like_userid']) {
+				$data_like_userid = $check['like_userid'].$user_id.',';
+			}else{
+				$data_like_userid = ','.$user_id.',';
+			}
+			$update = array(
+					'like_userid'=>$data_like_userid,
+					'like_num'=>$check['like_num']+1,
+				);
+			$res = M('apply')->where(array('apply_id'=>$apply_id))->save($update);
+			$data = array(
+                'status'=>0,
+                'msg'=>$check['like_num']+1,
+                'type'=>'1'//代表免费点赞
+           	);
+        	$this->ajaxReturn($data);
+		}else{
+			//生产订单
+			$order_sn = D('Support')->orderNumber();
+			$order_arr =array(
+					'order_sn'=>$order_sn,
+					'user_id'=>$user_id,
+					'order_type'=>3,
+					'apply_id'=>$apply_id,
+					'product_num'=>1,
+					'order_money'=>'4',//暂定
+					'order_status'=>0,
+					'order_time'=>time(),
+					'shipping_status'=>0,
+				);
+			$order_id = M('order')->add($order_arr);
+			$data = array(
+                'status'=>0,
+                'msg'=>$order_id,
+                'type'=>'2'//支付点赞
+           	);
+        	$this->ajaxReturn($data);
+		}
 	}
 }
