@@ -6,13 +6,13 @@ class ActivityController extends Controller {
 	public function activityList()
 	{
 		$res = M('activity')->field('activity_id,images,title,type')->where(array('status'=>1))->order('ctime desc')->select();
-		if ($res) {
-			$data = array(
+		if ($res) {$data = array(
                 'status'=>0,
                 'msg'=>$res
            	);
 
         	$this->ajaxReturn($data);
+			
 		}else{
 			$data = array(
                 'status'=>1,

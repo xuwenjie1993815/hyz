@@ -27,13 +27,6 @@ class RegistrController extends Controller {
                 );
            $this->ajaxReturn($data);
         }
-        // if(!$job){
-        //     $data = array(
-        //         'status'=>3,
-        //         'msg'=>'职位不能不能为空',
-        //         );
-        //    $this->ajaxReturn($data);
-        // }
         if(!$pwd){
             $data = array(
                 'status'=>4,
