@@ -68,7 +68,7 @@ class OrderController extends Controller{
         $join_a = "hyz_product AS p ON c.product_id = p.product_id";
         $join_b = "hyz_period AS pe ON c.product_id = pe.p_id";
         $order = "c.ctime desc";
-        $res = M('cart')->alias("c")->join($join_a)->join($join_b)->field('c.*, pe.target_num , pe.now_num , pe.period_time , p.product_name ,p.price ,p.product_info')->where($where)->order($order)->select();
+        $res = M('cart')->alias("c")->join($join_a)->join($join_b)->field('c.*, pe.target_num , pe.now_num , pe.period_time , p.product_name ,p.price ,p.product_info,p.images')->where($where)->order($order)->select();
         if ($res) {
             $data = array('status'=>0,'msg'=>$res);
             $this->ajaxReturn($data);
