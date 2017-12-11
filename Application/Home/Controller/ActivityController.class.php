@@ -5,7 +5,7 @@ class ActivityController extends Controller {
 	//活动列表
 	public function activityList()
 	{
-		$res = M('activity')->field('activity_id,images,title')->where(array('status'=>1))->order('ctime desc')->select();
+		$res = M('activity')->field('activity_id,images,title,type')->where(array('status'=>1))->order('ctime desc')->select();
 		if ($res) {
 			$data = array(
                 'status'=>0,
@@ -27,7 +27,7 @@ class ActivityController extends Controller {
 	{
 		$activity_id = I('activity_id');
 		$activity_id = addslashes($activity_id);
-		$res = M('activity')->field('activity_id,images,activity_name,price,now_num,stop_time,activity_info')->where(array('activity_id'=>$activity_id))->find();
+		$res = M('activity')->field('activity_id,target_num,images,activity_name,price,now_num,stop_time,activity_info')->where(array('activity_id'=>$activity_id))->find();
 		if ($res) {
 			$data = array(
                 'status'=>0,
