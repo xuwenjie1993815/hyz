@@ -6,7 +6,7 @@ class CommentController extends Controller{
     public function commentList(){
         //用户名 用户头像 评论时间 评论内容 评论图片 评论点赞数 子评论数量
         $where['c.comment_type'] = 2;//活动评论
-        $where['c.comment_status'] = 1;//活动评论
+        $where['c.comment_status'] = 1;
         $where['u.status'] = 1;
         $join = 'hyz_user AS u ON u.user_id = c.user_id';
         $field = 'c.*,u.user_img,u.user_name';
@@ -18,6 +18,32 @@ class CommentController extends Controller{
         }
         $this->ajaxReturn(array('status' => 1,'msg' => '获取成功','comment_list' => $comment_info));
     }
+
+    //获取我的评论列表
+    public function userCommentList(){
+        $user_id = $_POST['user_id'];
+        //确认用户登陆
+        if (!$user_id) {
+            $ret['status'] = 1;
+            $ret['msg'] = '请先登陆';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        //用户名 用户头像 评论时间 评论内容 评论图片 评论点赞数 子评论数量
+        $where['c.comment_status'] = 1;
+        $where['u.status'] = 1;
+        $where['u.user_id'] = $user_id;
+        $join = 'hyz_user AS u ON u.user_id = c.user_id';
+        $field = 'c.*,u.user_img,u.user_name';
+        $comment_info = M('comment')->alias('c')->join($join)->field($field)->where($where)->select();
+        foreach ($comment_info as $k => $v){
+            $comment_info[$k]['ctime'] = D('Support')->check_time($v['ctime']);
+            //筛选子评论
+            $comment_info[$k]['comment_count'] = M('comment')->where(array('comment_type' => 2,'comment_status' => 1,'pid' => $v['comment_id']))->count();
+        }
+        $this->ajaxReturn(array('status' => 1,'msg' => '获取成功','comment_list' => $comment_info));
+    }
+
     //发表活动评论
     public function createComment() {
         $comment_type = $_POST['comment_type'];

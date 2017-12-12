@@ -434,5 +434,23 @@ class OrderController extends Controller{
         }
     }
 
-
+    //获取订单详情
+    public function getOrderInfo(){
+        $user_id = $_POST['user_id'];
+        $user_info = M('user')->where(array('user_id' => $user_id))->find();
+        //确认用户登陆
+        if (!$user_id) {
+            $ret['status'] = 1;
+            $ret['msg'] = '请先登陆';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $order_id = $_POST['order_id'];
+        if (!$order_id) {
+            $ret['status'] = 2;
+            $ret['msg'] = '缺少参数';
+            $this->ajaxReturn($ret);
+            die;
+        }
+    }
 }
