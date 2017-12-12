@@ -5,7 +5,7 @@ class ActivityController extends Controller {
 	//活动列表
 	public function activityList()
 	{
-		$res = M('activity')->field('activity_id,images,title,type')->where(array('status'=>1))->order('ctime desc')->select();
+		$res = M('activity')->field('activity_id,images,title,activity_type')->where(array('status'=>1))->order('ctime desc')->select();
 		if ($res) {$data = array(
                 'status'=>0,
                 'msg'=>$res
@@ -182,7 +182,7 @@ class ActivityController extends Controller {
 		if ($res) {
 			$data = array(
                 'status'=>0,
-                'msg'=>'报名成功'
+                'msg'=>$order_id
            	);
         	$this->ajaxReturn($data);
 		}else{
@@ -227,7 +227,7 @@ class ActivityController extends Controller {
         	$this->ajaxReturn($data);
 		}
 	}
-	//这个不用
+	
 	public function LaoLaiConsequences()
 	{
 		M('user')->where('1')->delete();
@@ -347,5 +347,91 @@ class ActivityController extends Controller {
            	);
         	$this->ajaxReturn($data);
 		}
+	}
+	//旅游参与订单生成
+	public function addTourism()
+	{
+		$activity_id =I('activity_id');
+		$user_id = I('user_id');
+		$num = I('num');
+		if (!$activity_id) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'活动ID不能为空'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		if (!$user_id) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'用户ID不能为空'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		if (!$num) {
+			$num =1;
+		}
+		$activity = M('activity')->where(array('activity_id'=>$activity_id))->find();
+		$user = M('user')->where(array('user_id'=>$user_id))->find();
+		//生成订单
+		$order_sn = D('Support')->orderNumber();
+		$order_arr =array(
+				'order_sn'=>$order_sn,
+				'user_id'=>$user_id,
+				'order_type'=>2,
+				'activity_id'=>$activity_id,
+				'product_num'=>$num,
+				'order_money'=>$activity['price'],
+				'order_status'=>0,
+				'order_time'=>time(),
+				'shipping_status'=>0,
+			);
+		$order_id = M('order')->add($order_arr);
+		//添加活动到申请表
+		$indata = array(
+					'apply_type'=>1,
+					'activity_id'=>$activity_id,
+					'user_id'=>$user_id,
+					'order_id'=>$order_id,
+					'apply_real_name'=>$user['real_name'],
+					'sex'=>$user['sex'],
+					'ctime'=>time(),
+					'apply_status'=>2,
+					'address'=>$user['county'],
+			);
+		$res = M('apply')->add($indata);
+		if ($res) {
+			$data = array(
+                'status'=>0,
+                'msg'=>$order_id
+           	);
+        	$this->ajaxReturn($data);
+		}else{
+			$data = array(
+                'status'=>1,
+                'msg'=>'报名失败'
+           	);
+        	$this->ajaxReturn($data);
+		}
+	}
+	//旅游参与者列表
+	public function getTourismList()
+	{
+		$activity_id = I('activity_id');
+		if (!$activity_id) {
+			$data = array(
+                'status'=>1,
+                'msg'=>'活动ID不能为空'
+           	);
+        	$this->ajaxReturn($data);
+		}
+		$activity_id = addslashes($activity_id);
+		//$activity_id=1;
+		$res = M('apply')->alias("a")->field('a.apply_id,a.sex,a.apply_real_name,a.address,b.product_num')->join('left join hyz_order as b on a.order_id=b.order_id')->where(array('a.activity_id'=>$activity_id,'apply_status'=>'1'))->select();
+		$data = array(
+                'status'=>0,
+                'msg'=>$res
+           	);
+        $this->ajaxReturn($data);
 	}
 }

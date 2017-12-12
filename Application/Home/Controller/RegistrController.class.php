@@ -1,7 +1,6 @@
 <?php
 namespace Home\Controller;
 use Think\Controller;
-use LT\ThinkSDK\ThinkOauth;
 class RegistrController extends Controller {
 	//注册流程
     public function index(){
@@ -48,6 +47,22 @@ class RegistrController extends Controller {
                 );
            $this->ajaxReturn($data);
         }
+        // $sms_records  =M('sms_records')->field('code,expiration_time')->where(array('phone'=>$phone,'sms_type'=>2))->find();
+        // if ($code != $sms_records['code']) {
+        //   $data = array(
+        //         'status'=>1,
+        //         'msg'=>'验证码错误',
+        //         );
+        //    $this->ajaxReturn($data);
+        // }
+        // $time = time();
+        // if ($time-$sms_records['expiration_time']>600) {
+        //   $data = array(
+        //         'status'=>1,
+        //         'msg'=>'验证码过期',
+        //         );
+        //    $this->ajaxReturn($data);
+        // }
         //获取session里面的验证码
         $session_code = session('telCode');
         $session_code = 9999;
