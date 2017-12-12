@@ -50,7 +50,7 @@ class CommentController extends Controller{
         $source_id = $_POST['source_id'];
         $pid = $_POST['pid'];
         $content = $_POST['content'];
-        $user_id = $_POST['user_id']?:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $images = $_POST['images'];
         //确认用户登陆
         if (!$user_id) {
@@ -88,7 +88,7 @@ class CommentController extends Controller{
     //点赞评论
     public function likeComment() {
         $comment_id = $_POST['comment_id'];
-        $user_id = $_POST['user_id']?:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
