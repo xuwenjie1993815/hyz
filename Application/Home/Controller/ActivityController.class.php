@@ -409,7 +409,7 @@ class ActivityController extends Controller {
 		}else{
 			$data = array(
                 'status'=>1,
-                'msg'=>'报名失败'
+                'msg'=>'参与失败'
            	);
         	$this->ajaxReturn($data);
 		}
