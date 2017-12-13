@@ -13,7 +13,7 @@ class RewardController extends Controller {
             die;
         }
         //中奖信息
-        $reward_info = M('reward')->where(array('period_id' => $period_id))->find();
+        $period_info = M('reward')->where(array('period_id' => $period_id))->find();
         if (!$period_info) {
             $ret['status'] = 2;
             $ret['msg'] = '找不到对应信息';
