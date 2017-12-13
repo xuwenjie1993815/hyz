@@ -5,7 +5,7 @@ class OrderController extends Controller{
     //加入购物车
     //status 0:成功 1:未登录 2:失败
     public function addCart(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $num = $_REQUEST['num'];
         $product_id = $_REQUEST['product_id'];
         $period_id = $_REQUEST['period_id'];
@@ -54,7 +54,7 @@ class OrderController extends Controller{
     
     //获取购物车列表
     public function cartList(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
@@ -80,7 +80,7 @@ class OrderController extends Controller{
     
     //删除购物车商品
     public function delCart() {
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
@@ -124,7 +124,7 @@ class OrderController extends Controller{
 
     //清空购物车
     public function cleanCart(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
@@ -143,7 +143,7 @@ class OrderController extends Controller{
     //根据user_id查询其购物车信息，返回付款信息
     //商品信息数据格式 array(product_id:num)
     public function cart_order(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -214,7 +214,7 @@ class OrderController extends Controller{
     
     //订单支付todo
     public function submit_order(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $order_ids = $_POST['order_ids'];
         $pay_type = $_POST['pay_type'];
         
@@ -225,7 +225,7 @@ class OrderController extends Controller{
     //order_status 1已参与商品订单 2已兑奖商品订单 （为null则获取全部订单）
     public function orderList(){
         $order_status = $_POST['order_status'];
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -319,7 +319,7 @@ class OrderController extends Controller{
     //取消订单
     public function cancelOrder() {
         $order_id = $_REQUEST['order_id'];
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -358,7 +358,7 @@ class OrderController extends Controller{
     
     //立即购买
     public function buyNow(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
