@@ -9,7 +9,6 @@ class LoginController extends Controller {
         $username = I('param.username');
         $pass = I('param.userpwd');
         $verify = I('param.verify_code');
-        $res = array('status'=>1);
         if($verify){
             if(!$this->check_verify($verify)){
                 $res['status'] = 2;
@@ -19,7 +18,6 @@ class LoginController extends Controller {
         $data = D('User')->login($username,$pass);
         if($data['status']==0){
             $res['status'] = 0;
-            $res['name'] = $data['name'];
             $res['log_name'] = $data['user_info']['user_name'];
             $res['user_info'] = $data['user_info'];
             $res['msg'] = '登录成功';
@@ -61,7 +59,7 @@ class LoginController extends Controller {
         session("real_name",$user_info["real_name"]);
         $data["status"] = 0;
         $data["msg"] = '登陆成功';
-        $data["log_name"] = $user_info["user_name"];
+        $data["user_info"] = $user_info;
         $this->ajaxReturn($data);
     }
     

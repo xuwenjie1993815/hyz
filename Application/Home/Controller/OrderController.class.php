@@ -222,7 +222,7 @@ class OrderController extends Controller{
     //点赞订单列表
     //活动订单列表
     //订单列表(全部，已参与，待兑奖，我的评论)
-    //order_status 1已参与商品订单 2已兑奖商品订单 （为null则获取全部订单）
+    //order_status 1已参与商品订单 2已兑奖商品订单 （为All则获取全部订单）
     public function orderList(){
         $order_status = $_POST['order_status'];
         $user_id = $_POST['user_id'];
@@ -451,7 +451,6 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
-        $order_id = $_POST['order_id'];
         if (!$order_id) {
             $ret['status'] = 2;
             $ret['msg'] = '缺少参数';
