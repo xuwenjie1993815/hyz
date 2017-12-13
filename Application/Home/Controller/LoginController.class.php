@@ -2,13 +2,6 @@
 namespace Home\Controller;
 use Think\Controller;
 class LoginController extends Controller {
-    public function index(){
-		if($_SESSION["user_id"]){
-			$this->redirect("Index");
-		}else{
-            $this->display();
-		}
-    }
     
     //登录
     //接收参数 username userpwd verify_code
