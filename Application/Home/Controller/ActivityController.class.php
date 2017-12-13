@@ -297,7 +297,7 @@ class ActivityController extends Controller {
         	$this->ajaxReturn($data);
 		}
 		$apply_id = addslashes($apply_id);
-		$check = M('apply')->field('apply_id,like_userid,like_num')->where(array('apply_id'=>$apply_id))->find();
+		$check = M('apply')->field('apply_id,like_userid,like_num,activity_id')->where(array('apply_id'=>$apply_id))->find();
 		if (!$check ) {
 			$data = array(
                 'status'=>1,
@@ -305,7 +305,11 @@ class ActivityController extends Controller {
            	);
         	$this->ajaxReturn($data);
 		}
-		$like_userid = $check['like_userid'];
+		$activity_id = $check['activity_id'];
+		$apply_user = M('apply')->field('like_userid')->where(array('activity_id'=>$activity_id,'apply_status'=>'1'))->select();
+		foreach ($apply_user as $k => $v) {
+			$like_userid.=$v['like_userid'];
+		}
 		$arr = explode(',', $like_userid);
 		$count = array_count_values($arr)[$user_id];//获取该用户点赞次数
 		if ($count<3) {
