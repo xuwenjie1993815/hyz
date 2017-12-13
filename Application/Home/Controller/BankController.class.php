@@ -2,7 +2,7 @@
 namespace Home\Controller;
 use Think\Controller;
 class BankController extends Controller {
-	//添加银卡卡
+	//添加银行卡
 	public function addBankCard()
 	{
 		$name = I('name');

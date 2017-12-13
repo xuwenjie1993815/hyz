@@ -124,7 +124,7 @@ class PassController extends Controller {
 	{
 		$phone = I('phone');
 		$pwd = I('pwd');
-		$pwd_1 = I('confirm_phone');
+		$pwd_1 = I('confirm_pwd');
 		$pattern = '/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\d{8})$/';
         $check_phone = preg_match($pattern, $phone);
         if($check_phone == 0){
