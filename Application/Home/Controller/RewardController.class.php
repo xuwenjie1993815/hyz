@@ -4,7 +4,7 @@ use Think\Controller;
 class RewardController extends Controller {
     //获取中奖信息
     public function rewardInfo() {
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $period_id = $_POST['period_id'];
         if (!$period_id) {
             $ret['status'] = 1;
@@ -13,7 +13,7 @@ class RewardController extends Controller {
             die;
         }
         //中奖信息
-        $reward_info = M('reward')->where(array('period_id' => $period_id))->find();
+        $period_info = M('reward')->where(array('period_id' => $period_id))->find();
         if (!$period_info) {
             $ret['status'] = 2;
             $ret['msg'] = '找不到对应信息';

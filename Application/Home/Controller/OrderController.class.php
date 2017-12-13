@@ -5,7 +5,7 @@ class OrderController extends Controller{
     //加入购物车
     //status 0:成功 1:未登录 2:失败
     public function addCart(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $num = $_REQUEST['num'];
         $product_id = $_REQUEST['product_id'];
         $period_id = $_REQUEST['period_id'];
@@ -54,7 +54,7 @@ class OrderController extends Controller{
     
     //获取购物车列表
     public function cartList(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
@@ -80,7 +80,7 @@ class OrderController extends Controller{
     
     //删除购物车商品
     public function delCart() {
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
@@ -124,7 +124,7 @@ class OrderController extends Controller{
 
     //清空购物车
     public function cleanCart(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
@@ -143,7 +143,7 @@ class OrderController extends Controller{
     //根据user_id查询其购物车信息，返回付款信息
     //商品信息数据格式 array(product_id:num)
     public function cart_order(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -214,7 +214,7 @@ class OrderController extends Controller{
     
     //订单支付todo
     public function submit_order(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $order_ids = $_POST['order_ids'];
         $pay_type = $_POST['pay_type'];
         
@@ -225,7 +225,7 @@ class OrderController extends Controller{
     //order_status 1已参与商品订单 2已兑奖商品订单 （为null则获取全部订单）
     public function orderList(){
         $order_status = $_POST['order_status'];
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -251,6 +251,7 @@ class OrderController extends Controller{
         $res = M('order')->alias("o")->join($join_a)->join($join_b)->field('o.*, pe.* , p.product_name ,p.price ,p.product_info,p.images')->where($where)->order($order)->select();
         //列表需要数据 订单title order_info(类型  数量  金额  图片  时间  状态)   order_id order_img  order_price order_sn order_time 
         foreach ($res as $k => $v){
+            $data[$k]['order_id'] = $v['order_id'];//order_id
             $data[$k]['title'] = $v['period_name'];//title
             $data[$k]['images'] = $v['images'];//商品图片
             $data[$k]['order_price'] = $v['order_money'];//金额
@@ -271,6 +272,7 @@ class OrderController extends Controller{
         $field_apply = 'o.*, ac.*,a.*';
         $res_apply = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
         foreach ($res_apply as $k => $v){
+            $data_apply[$k]['order_id'] = $v['order_id'];//order_id
             $data_apply[$k]['title'] = $v['activity_name'];//title
             $data_apply[$k]['images'] = $v['images'];//商品图片
             $data_apply[$k]['order_price'] = $v['order_money'];//金额
@@ -286,6 +288,7 @@ class OrderController extends Controller{
         $field_apply = 'o.*, ac.*,a.*';
         $res_dz = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
         foreach ($res_dz as $k => $v){
+            $data_dz[$k]['order_id'] = $v['order_id'];//order_id
             $data_dz[$k]['title'] = $v['title'];//title
             $data_dz[$k]['images'] = $v['images'];//商品图片
             $data_dz[$k]['order_price'] = $v['order_money'];//金额
@@ -294,6 +297,7 @@ class OrderController extends Controller{
             $data_dz[$k]['order_status'] = $v['order_status'];//订单状态
             $data_dz[$k]['order_time'] = $v['order_time'];//订单时间
             $data_dz[$k]['order_type'] = $v['order_type'];//订单类型
+            
         }
        $order_list = array_merge($data,$data_apply,$data_dz);
         
@@ -315,7 +319,7 @@ class OrderController extends Controller{
     //取消订单
     public function cancelOrder() {
         $order_id = $_REQUEST['order_id'];
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -354,7 +358,7 @@ class OrderController extends Controller{
     
     //立即购买
     public function buyNow(){
-        $user_id = $_POST['user_id']?$_POST['user_id']:$_SESSION['user_id'];
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -434,9 +438,11 @@ class OrderController extends Controller{
         }
     }
 
-    //获取订单详情
-    public function getOrderInfo(){
+    //获取待兑奖订单详情
+    public function rewardOrderInfo(){
+        //订单名（period_name） order_time 商家名？  中奖表（reward_number、reward_tel）  商家地址
         $user_id = $_POST['user_id'];
+        $order_id = $_POST['order_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -452,5 +458,29 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
+        //订单中奖信息
+        $reward_info = M('reward')->where(array('order_id' => $order_id))->find();
+        if (!$reward_info || $reward_info['reward_status'] == 0) {
+            $ret['status'] = 3;
+            $ret['msg'] = '没有数据';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $data['shop_name'] = $reward_info['shop_name'];
+        $data['shop_address'] = $reward_info['shop_address'];
+        $data['reward_number'] = $reward_info['reward_number'];
+        $data['reward_tel'] = $reward_info['reward_tel'];
+        //活动信息
+        $period_info = M('period')->field('period_name')->where(array('period_id' => $reward_info['period_id']))->find();
+        $data['period_name'] = $period_info['period_name'];
+        //中奖订单信息
+        $order_info = M('order')->field('order_time')->where(array('order_id' => $reward_info['order_id']))->find();
+        $data['order_time'] = $order_info['order_time'];//下单时间
+        $ret['status'] = 0;
+        $ret['msg'] = '获取成功';
+        $ret['data'] = $data;
+        $this->ajaxReturn($ret);
+        die;
     }
+    
 }

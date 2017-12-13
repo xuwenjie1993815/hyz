@@ -88,7 +88,7 @@ class ProductController extends Controller {
 	}
         
 	//商品购买记录列表
-        public function productRecord(){
+    public function productRecord(){
             $product_id = $_REQUEST['product_id'];
             if (!$product_id) {
                 $res = array(

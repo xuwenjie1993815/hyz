@@ -2,13 +2,6 @@
 namespace Home\Controller;
 use Think\Controller;
 class LoginController extends Controller {
-    public function index(){
-		if($_SESSION["user_id"]){
-			$this->redirect("Index");
-		}else{
-            $this->display();
-		}
-    }
     
     //登录
     //接收参数 username userpwd verify_code
@@ -128,6 +121,31 @@ class LoginController extends Controller {
         return $Verify->check($code, $id);
     }
     
-    //忘记密码
+    //修改密码
+    public function editPwd() {
+        $user_id = $_POST['user_id'];
+        //确认用户登陆
+        if (!$user_id) {
+            $ret['status'] = 1;
+            $ret['msg'] = '请先登陆';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $oldpass = $_POST['oldpass'];
+        $newapass = $_POST['newapass'];
+        $newapass2 = $_POST['newapass2'];
+        if (!$oldpass || !$newapass || !$newapass2) {
+            $ret['status'] = 2;
+            $ret['msg'] = '缺少参数';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $data['user_id'] = $user_id;
+        $data['oldpass'] = $oldpass;
+        $data['newapass'] = $newapass;
+        $data['newapass2'] = $newapass2;
+        $res = D('User')->editPwd($data);
+        $this->ajaxReturn($res);
+    }
     
 }

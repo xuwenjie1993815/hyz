@@ -47,7 +47,7 @@ class  userModel extends Model {
 		session("real_name",$result["real_name"]);
 		$data["status"] = 0;
 		$data["msg"] = "登录成功";
-		$data["user_info"] = $result;
+		$data["user_info"] = array('user_name' => $result['user_name'],'real_name' => $result['real_name'],'user_id' => $result['user_id'],'user_type' => $result['user_type']);
 		return $data;
 	}
 
@@ -66,32 +66,32 @@ class  userModel extends Model {
 	function editPwd($data){
 		if($data){
 			if(!empty($data["newapass"])){
-				$salt = rand(1000,9999);;
+                            $salt = rand(1000,9999);;
 			    $data["pass"] = md5($data["newapass"].$salt);
 			    $data["salt"] = $salt;
 			}
-				if(empty($data["oldpass"])){
+                            if(empty($data["oldpass"])){
 					return array('status' => 1,'msg'=>'请输入原密码');
-			     }
-			     if(empty($data["newapass"])){
+			    }
+			    if(empty($data["newapass"])){
 			     	return array('status' => 1,'msg'=>'请输入新密码');
-			     }
-			     if($data["newapass"]!=$data["newapass2"]){
+			    }
+			    if($data["newapass"]!=$data["newapass2"]){
 			     	return array('status' => 1,'msg'=>'两次输入新密码不一致');
-			     }
-				$res = M("user")->where(array('user_id' => $data['user_id']))->find();
-				if (!$res['salt']) {
-					if($res['pass']!=md5($data["oldpass"])){
-					return array('status' => 1,'msg'=>'原密码错误');
-					}
-				}else{
-					if($res['pass']!=md5($data["oldpass"].$res['salt'])){
-					return array('status' => 1,'msg'=>'原密码错误');
-					}
-				}
-				if ($data['oldpass'] == $data['newapass']) {
-					return array('status' => 1,'msg'=>'新密码不能与近期用过密码相同');
-				}
+			    }
+                            $res = M("user")->where(array('user_id' => $data['user_id']))->find();
+                            if (!$res['salt']) {
+                                    if($res['pass']!=md5($data["oldpass"])){
+                                    return array('status' => 1,'msg'=>'原密码错误');
+                                    }
+                            }else{
+                                    if($res['pass']!=md5($data["oldpass"].$res['salt'])){
+                                    return array('status' => 1,'msg'=>'原密码错误');
+                                    }
+                            }
+                            if ($data['oldpass'] == $data['newapass']) {
+                                    return array('status' => 1,'msg'=>'新密码不能与近期用过密码相同');
+                            }
 			$res = M("user")->where(array('user_id' => $data['user_id']))->save($data);
 			if($res!==false){
 				return array('status' => 0,'msg'=>'操作成功');
@@ -99,9 +99,7 @@ class  userModel extends Model {
 				return array('status' => 1,'msg'=>'操作失败');
 			}
 		}else{
-			$adminmsg = M("user")->where(array('user_id' => $data['user_id']))->find();
-			$titles="我的信息";
-			return array('status' => 1,'data' => array('data' => $adminmsg,'msgtitle'=>$titles));
+			return array('status' => 1,'msg'=>'操作失败');
 		}
 	}
 
