@@ -47,7 +47,7 @@ class  userModel extends Model {
 		session("real_name",$result["real_name"]);
 		$data["status"] = 0;
 		$data["msg"] = "登录成功";
-		$data["user_info"] = array('user_name' => $result['user_name'],'real_name' => $result['real_name'],'user_id' => $result['user_id'],'user_type' => $result['user_type']);
+		$data["user_info"] = array('user_name' => $result['user_name'],'real_name' => $result['real_name'],'user_id' => $result['user_id'],'user_type' => $result['user_type'],'user_img' => $result['user_img']);
 		return $data;
 	}
 

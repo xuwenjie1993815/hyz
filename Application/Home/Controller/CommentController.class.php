@@ -24,7 +24,7 @@ class CommentController extends Controller{
     }
 
     //获取活动评论子评论列表
-    public function CommentPList(){
+    public function commentPList(){
         //用户名 用户头像 评论时间 评论内容 评论图片 评论点赞数 子评论数量
         $pid = $_POST['pid'];
         if (!$pid){
