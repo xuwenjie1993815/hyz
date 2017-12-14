@@ -1,22 +1,22 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : aaa
-Source Server Version : 50553
+Source Server         : yh
+Source Server Version : 50617
 Source Host           : localhost:3306
 Source Database       : hyz
 
 Target Server Type    : MYSQL
-Target Server Version : 50553
+Target Server Version : 50617
 File Encoding         : 65001
 
-Date: 2017-12-09 19:06:14
+Date: 2017-12-14 18:32:43
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for hyz_activity
+-- Table structure for `hyz_activity`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_activity`;
 CREATE TABLE `hyz_activity` (
@@ -31,16 +31,18 @@ CREATE TABLE `hyz_activity` (
   `price` decimal(14,0) DEFAULT NULL COMMENT '价格',
   `now_num` int(11) DEFAULT NULL COMMENT '当前报名人数',
   `title` varchar(50) CHARACTER SET utf8 DEFAULT NULL COMMENT '活动标题',
+  `target_num` int(11) DEFAULT NULL COMMENT '目标人数',
   PRIMARY KEY (`activity_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of hyz_activity
 -- ----------------------------
-INSERT INTO `hyz_activity` VALUES ('1', '1512793771', '1', null, '活动1', '1', '这是一个测试活动', '1512880168', '200', '1', '活动1标题');
+INSERT INTO `hyz_activity` VALUES ('1', '1512793771', '1', null, '活动1', '1', '这是一个测试活动', '1512880168', '200', '1', '活动1标题', null);
+INSERT INTO `hyz_activity` VALUES ('2', '1513064019', '1', null, '旅游', '2', '旅游项目', null, '12', '6', '旅游', '2000');
 
 -- ----------------------------
--- Table structure for hyz_apply
+-- Table structure for `hyz_apply`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_apply`;
 CREATE TABLE `hyz_apply` (
@@ -69,15 +71,16 @@ CREATE TABLE `hyz_apply` (
   `like_num` int(11) DEFAULT NULL COMMENT '点赞数',
   `like_userid` varchar(255) DEFAULT NULL COMMENT '点赞的人',
   PRIMARY KEY (`apply_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of hyz_apply
 -- ----------------------------
 INSERT INTO `hyz_apply` VALUES ('2', '1', '1', '1', '3', '报名人真实姓名', '1', '24', '500112199309110866', '18765438990', '社团部', '部长', '1512794077', '1', '申请参加活动1', '同意参加', '重庆', '重庆', '渝北', '人和立交', '吉他独演', '2.00', null, null);
+INSERT INTO `hyz_apply` VALUES ('3', '1', '2', '4', '1', '杨辉', null, null, null, null, null, null, '1513067523', '1', null, null, null, null, null, '渝北区', null, null, null, null);
 
 -- ----------------------------
--- Table structure for hyz_bank_account
+-- Table structure for `hyz_bank_account`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_bank_account`;
 CREATE TABLE `hyz_bank_account` (
@@ -100,7 +103,7 @@ CREATE TABLE `hyz_bank_account` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for hyz_cart
+-- Table structure for `hyz_cart`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_cart`;
 CREATE TABLE `hyz_cart` (
@@ -120,7 +123,7 @@ CREATE TABLE `hyz_cart` (
 INSERT INTO `hyz_cart` VALUES ('1', '11', '1', '17', '10', null, '1');
 
 -- ----------------------------
--- Table structure for hyz_comment
+-- Table structure for `hyz_comment`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_comment`;
 CREATE TABLE `hyz_comment` (
@@ -141,7 +144,7 @@ CREATE TABLE `hyz_comment` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for hyz_order
+-- Table structure for `hyz_order`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_order`;
 CREATE TABLE `hyz_order` (
@@ -171,7 +174,7 @@ CREATE TABLE `hyz_order` (
   `delivery_time` int(11) DEFAULT '0' COMMENT '发货时间',
   `order_note` varchar(255) CHARACTER SET utf8 DEFAULT NULL COMMENT '订单备注',
   PRIMARY KEY (`order_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of hyz_order
@@ -179,9 +182,10 @@ CREATE TABLE `hyz_order` (
 INSERT INTO `hyz_order` VALUES ('1', '2017120949102495', '3', '2', '1', null, null, null, '1', '200.00', '0.00', null, '1', '1512880168', '1512880168', '0', '0', null, '重庆', '重庆', '渝北区', '人和立交', '15823232323', '0', null);
 INSERT INTO `hyz_order` VALUES ('2', '2017120949102496', '3', '1', null, null, '1', '1', '1', '654.00', '0.00', null, '1', '1512880168', '1512880168', '0', '0', null, '重庆', '重庆', '渝北区', '双龙大道', '15823232323', '0', null);
 INSERT INTO `hyz_order` VALUES ('3', '2017120949102497', '3', '3', '1', '2', null, null, '1', '2.00', '0.00', null, '1', '1512880168', '1512880168', '0', '0', null, '重庆', '重庆', '江北区', '北辰名都', '15823232323', '0', null);
+INSERT INTO `hyz_order` VALUES ('4', '2017121251501015', '1', '2', '2', null, null, null, '2', '12.00', '0.00', null, '0', '1513067523', '0', '0', '0', null, null, null, null, null, null, '0', null);
 
 -- ----------------------------
--- Table structure for hyz_period
+-- Table structure for `hyz_period`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_period`;
 CREATE TABLE `hyz_period` (
@@ -205,7 +209,7 @@ INSERT INTO `hyz_period` VALUES ('2', '2', null, '321', '100', '1', null, '1', n
 INSERT INTO `hyz_period` VALUES ('3', '1', null, '321', '60', '2', null, '2', null);
 
 -- ----------------------------
--- Table structure for hyz_product
+-- Table structure for `hyz_product`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_product`;
 CREATE TABLE `hyz_product` (
@@ -229,7 +233,7 @@ INSERT INTO `hyz_product` VALUES ('2', '洗衣机', '2199.00', null, '1', null, 
 INSERT INTO `hyz_product` VALUES ('3', '冰箱', '3126.00', null, '1', null, '0', '2', null);
 
 -- ----------------------------
--- Table structure for hyz_shop
+-- Table structure for `hyz_shop`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_shop`;
 CREATE TABLE `hyz_shop` (
@@ -253,7 +257,40 @@ CREATE TABLE `hyz_shop` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for hyz_user
+-- Table structure for `hyz_sms_records`
+-- ----------------------------
+DROP TABLE IF EXISTS `hyz_sms_records`;
+CREATE TABLE `hyz_sms_records` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) DEFAULT NULL COMMENT '用户id',
+  `tel` varchar(20) DEFAULT NULL COMMENT '手机号',
+  `sms_type` tinyint(1) DEFAULT '1' COMMENT '短信验证码类型 1找回密码 2：注册',
+  `code` char(6) DEFAULT NULL COMMENT '验证码',
+  `ctime` bigint(20) DEFAULT NULL COMMENT '创建时间',
+  `expiration_time` bigint(20) DEFAULT NULL COMMENT '过期时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of hyz_sms_records
+-- ----------------------------
+INSERT INTO `hyz_sms_records` VALUES ('1', '1', '18883168051', '1', '9999', '1513050423', '1513050423');
+
+-- ----------------------------
+-- Table structure for `hyz_support`
+-- ----------------------------
+DROP TABLE IF EXISTS `hyz_support`;
+CREATE TABLE `hyz_support` (
+  `id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of hyz_support
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `hyz_user`
 -- ----------------------------
 DROP TABLE IF EXISTS `hyz_user`;
 CREATE TABLE `hyz_user` (
@@ -274,13 +311,16 @@ CREATE TABLE `hyz_user` (
   `openid` varchar(255) DEFAULT NULL COMMENT '微信openid',
   `qq` varchar(15) DEFAULT NULL COMMENT 'qq号',
   `job` varchar(50) DEFAULT NULL COMMENT '职位',
+  `user_img` varchar(255) DEFAULT NULL,
+  `user_qq` varchar(50) DEFAULT NULL COMMENT '用户自己填写的qq',
+  `email` varchar(50) DEFAULT NULL COMMENT '用户自己填写的email',
   PRIMARY KEY (`user_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of hyz_user
 -- ----------------------------
-INSERT INTO `hyz_user` VALUES ('1', null, null, null, '18883168051', '14e1b600b1fd579f47433b88e8d85291', null, null, null, null, null, '1', '1', '1512459129', null, null, '111');
-INSERT INTO `hyz_user` VALUES ('2', null, null, null, '13594284610', '4b8ed884a65b3ba32fc5e44cf6a34428', '6246', null, null, null, null, '1', '1', '1512723594', null, null, 'it');
-INSERT INTO `hyz_user` VALUES ('3', null, null, null, '15823232323', '4e4f85ed0e1dff0c9f5c77d9d66875ec', '2841', null, null, null, null, '1', '1', '1512726651', null, null, 'it');
-INSERT INTO `hyz_user` VALUES ('4', null, null, null, '13594284611', '1b94a68fcd0d6886507d1bdcc2114569', '3828', null, null, null, null, '1', '1', '1512815747', null, null, 'it');
+INSERT INTO `hyz_user` VALUES ('1', null, 'jl', 'yh', '18883168051', 'e10adc3949ba59abbe56e057f20f883e', null, null, '重庆市', '重庆市', '渝北区', '1', '1', '1512459129', null, null, 'lol', null, '156105667', '156105667@qq.com');
+INSERT INTO `hyz_user` VALUES ('2', null, null, null, '13594284610', '4b8ed884a65b3ba32fc5e44cf6a34428', '6246', null, null, null, null, '1', '1', '1512723594', null, null, 'it', null, null, null);
+INSERT INTO `hyz_user` VALUES ('3', null, null, null, '15823232323', '4e4f85ed0e1dff0c9f5c77d9d66875ec', '2841', null, null, null, null, '1', '1', '1512726651', null, null, 'it', null, null, null);
+INSERT INTO `hyz_user` VALUES ('4', null, null, null, '13594284611', '1b94a68fcd0d6886507d1bdcc2114569', '3828', null, null, null, null, '1', '1', '1512815747', null, null, 'it', null, null, null);
