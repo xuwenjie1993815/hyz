@@ -1,6 +1,6 @@
 <?php
 
-namespace _Aichejubao\Model;
+namespace Common\Model;
 
 use Think\Model;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace _Aichejubao\Controller;
+namespace Home\Controller;
 use Think\Controller;
 class PayController extends Controller {
 	
