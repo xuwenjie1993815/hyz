@@ -45,7 +45,9 @@ class CommentController extends Controller{
         $join_p = 'hyz_user AS u ON u.user_id = c.user_id';
         $field_p = 'c.*,u.user_img,u.user_name';
         $pid_info = M('comment')->alias('c')->join($join_p)->field($field_p)->where($where_p)->select();
-
+        foreach ($pid_info as $k => $v){
+            $pid_info[$k]['ctime'] = D('Support')->check_time($v['ctime']);
+        }
 //        $pid_info = M('comment')->where(array('commment_id' => $pid))->find();
         $where['c.pid'] = $pid;
         $where['c.comment_type'] = 2;//活动评论
