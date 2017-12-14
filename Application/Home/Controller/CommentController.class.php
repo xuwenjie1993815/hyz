@@ -4,9 +4,17 @@ use Think\Controller;
 class CommentController extends Controller{
     //活动评论列表
     public function commentList(){
+        $source_id = $_POST['source_id'];
+        if (!$source_id){
+            $ret['status'] = 1;
+            $ret['msg'] = '缺少参数';
+            $this->ajaxReturn($ret);
+            die;
+        }
         //用户名 用户头像 评论时间 评论内容 评论图片 评论点赞数 子评论数量
         $where['c.comment_type'] = 2;//活动评论
         $where['c.comment_status'] = 1;
+        $where['c.source_id'] = $source_id;
         $where['u.status'] = 1;
         $join = 'hyz_user AS u ON u.user_id = c.user_id';
         $field = 'c.*,u.user_img,u.user_name';
