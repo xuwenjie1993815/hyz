@@ -265,8 +265,11 @@ class ActivityController extends Controller {
 		}
 		$activity_id = addslashes($activity_id);
 		//$activity_id=1;
-		$res = M('apply')->field('apply_id,sex,apply_real_name,address,like_num,like_userid,other_info')->where(array('activity_id'=>$activity_id,'apply_status'=>'1'))->select();
+		$res = M('apply')->alias('a')->field('a.apply_id,a.sex,a.apply_real_name,a.address,a.like_num,a.like_userid,a.other_info,b.user_img')->join('left join hyz_user as b on a.user_id=b.user_id')->where(array('activity_id'=>$activity_id,'apply_status'=>'1'))->select();
 		foreach ($res as $k=> $v) {
+			if (!$v['like_num']) {
+				$res[$k]['like_num']=0;
+			}
 			$res[$k]['performance'] = json_decode($v['other_info'],1);
 			$res[$k]['performance'] = $res[$k]['performance']['qumu'];
 			unset($res[$k]['other_info']);
