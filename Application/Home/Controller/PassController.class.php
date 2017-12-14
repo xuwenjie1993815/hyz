@@ -182,4 +182,109 @@ class PassController extends Controller {
            $this->ajaxReturn($data);
         }
 	}
+    //完善资料展示页
+    public function userInfo()
+    {
+        $user_id = I('user_id');
+        if (!$user_id) {
+           $data = array(
+                'status'=>1,
+                'msg'=>'用户ID不能为空',
+                );
+           $this->ajaxReturn($data);
+        }
+        $res = M('user')->field('user_img,user_name,real_name,tel,user_qq,email,job')->where(array('user_id'=>$user_id))->find();
+        if ($res) {
+            $data = array(
+                'status'=>0,
+                'msg'=>$res,
+                );
+           $this->ajaxReturn($data);
+        }else{
+            $data = array(
+                'status'=>1,
+                'msg'=>'获取失败',
+                );
+           $this->ajaxReturn($data);
+        }
+    }
+    //完善资料
+    public function editInfo()
+    {
+        $user_id = I('user_id');
+        $user_name = I('user_name');
+        $real_name = I('real_name');
+        $tel = I('tel');
+        $user_qq = I('user_qq');
+        $email = I('email');
+        $job = I('job');
+        if (!$user_id) {
+            $data = array(
+                'status'=>1,
+                'msg'=>'用户id不能为空',
+                );
+           $this->ajaxReturn($data);
+        }
+        if (!$real_name) {
+            $data = array(
+                'status'=>1,
+                'msg'=>'真实姓名不能为空',
+                );
+           $this->ajaxReturn($data);
+        }
+        $pattern = '/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\d{8})$/';
+        $check_phone = preg_match($pattern, $tel);
+        if($check_phone == 0){
+            $data = array(
+                'status'=>1,
+                'msg'=>'电话号码格式有误',
+                );
+           $this->ajaxReturn($data);
+        }
+        if (!$email) {
+            $data = array(
+                'status'=>1,
+                'msg'=>'邮箱不能为空',
+                );
+           $this->ajaxReturn($data);
+        }
+        if (!$job) {
+            $data = array(
+                'status'=>1,
+                'msg'=>'工作岗位或者学校不能为空',
+                );
+           $this->ajaxReturn($data);
+        }
+        if ($_FILES) {
+            $filename = D('support')->upload();
+        }
+        if (!$filename) {
+            $info = M('user')->field('user_img')->where(array('user_id'=>$user_id))->find();
+            $filename = $info['user_img'];
+        }
+        $arr = array(
+                'user_img'=>$filename,
+                'user_name'=>$user_name,
+                'real_name'=>$real_name,
+                'tel'=>$tel,
+                'user_qq'=>$user_qq,
+                'email'=>$email,
+                'job'=>$job,
+            );
+       $res = M('user')->where(array('user_id'=>$user_id))->save($arr);
+       if ($res) {
+            $res_info = M('user')->field('user_img,user_name,real_name,tel,user_qq,email,job')->where(array('user_id'=>$user_id))->find();
+            $data = array(
+                'status'=>0,
+                'msg'=>$res_info,
+                );
+           $this->ajaxReturn($data);
+        }else{
+            $data = array(
+                'status'=>1,
+                'msg'=>'更新失败',
+                );
+           $this->ajaxReturn($data);
+        }
+    }
 }
