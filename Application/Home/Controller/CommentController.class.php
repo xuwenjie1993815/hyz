@@ -141,11 +141,18 @@ class CommentController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
+        //确认用户登陆
+        if (!$comment_id) {
+            $ret['status'] = 5;
+            $ret['msg'] = '缺少参数comment_id';
+            $this->ajaxReturn($ret);
+            die;
+        }
         //确认该用户是否已经点赞过该活动评论,该评论是否已经被删除
         $comment_info = M('comment')->where(array('comment_id' => $comment_id))->find();
-        if ($comment_info['comment_status'] !== 1) {
+        if ($comment_info['comment_status'] != 1) {
             $ret['status'] = 2;
-            $ret['msg'] = '改评论状态不正确，无法点赞';
+            $ret['msg'] = '该评论状态不正确，无法点赞';
             $this->ajaxReturn($ret);
             die;
         }
@@ -157,11 +164,11 @@ class CommentController extends Controller{
                 $this->ajaxReturn($ret);
                 die;
             }
+
             array_unshift($like_users,$user_id);
             $data['like_userid'] = implode(',', $like_users);
         }
         $data['fabulous'] = $comment_info['fabulous'] + 1;
-        $data['like_userid'] = $user_id;
         $re = M('comment')->where(array('comment_id' => $comment_id))->save($data);
         if ($re) {
             $ret['status'] = 0;
