@@ -4,9 +4,17 @@ use Think\Controller;
 class CommentController extends Controller{
     //活动评论列表
     public function commentList(){
+        $source_id = $_POST['source_id'];
+        if (!$source_id){
+            $ret['status'] = 1;
+            $ret['msg'] = '缺少参数';
+            $this->ajaxReturn($ret);
+            die;
+        }
         //用户名 用户头像 评论时间 评论内容 评论图片 评论点赞数 子评论数量
         $where['c.comment_type'] = 2;//活动评论
         $where['c.comment_status'] = 1;
+        $where['c.source_id'] = $source_id;
         $where['u.status'] = 1;
         $join = 'hyz_user AS u ON u.user_id = c.user_id';
         $field = 'c.*,u.user_img,u.user_name';
@@ -26,14 +34,20 @@ class CommentController extends Controller{
     //获取活动评论子评论列表
     public function commentPList(){
         //用户名 用户头像 评论时间 评论内容 评论图片 评论点赞数 子评论数量
-        $pid = $_POST['pid'];
+        $pid = $_POST['pid']?:1;
         if (!$pid){
             $ret['status'] = 1;
             $ret['msg'] = '缺少参数';
             $this->ajaxReturn($ret);
             die;
         }
-        $where['pid'] = $pid;
+        $where_p['c.comment_id'] = $pid;
+        $join_p = 'hyz_user AS u ON u.user_id = c.user_id';
+        $field_p = 'c.*,u.user_img,u.user_name';
+        $pid_info = M('comment')->alias('c')->join($join_p)->field($field_p)->where($where_p)->select();
+
+//        $pid_info = M('comment')->where(array('commment_id' => $pid))->find();
+        $where['c.pid'] = $pid;
         $where['c.comment_type'] = 2;//活动评论
         $where['c.comment_status'] = 1;
         $where['u.status'] = 1;
@@ -45,7 +59,9 @@ class CommentController extends Controller{
             //筛选子评论
 //            $comment_info[$k]['comment_count'] = M('comment')->where(array('comment_type' => 2,'comment_status' => 1,'pid' => $v['comment_id']))->count();
         }
-        $this->ajaxReturn(array('status' => 0,'msg' => '获取成功','comment_list' => $comment_info));
+        $comment_info_a['p_comment_info'] = $pid_info;
+        $comment_info_a['comment_info'] = $comment_info;
+        $this->ajaxReturn(array('status' => 0,'msg' => '获取成功','comment_list' => $comment_info_a));
     }
 
     //获取我的评论列表
