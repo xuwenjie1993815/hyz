@@ -5,7 +5,7 @@ class RewardController extends Controller {
     //获取中奖信息
     public function rewardInfo() {
         $user_id = $_POST['user_id'];
-        $period_id = $_POST['period_id'];
+        $period_id = $_POST['period_id']?:1;
         if (!$period_id) {
             $ret['status'] = 1;
             $ret['msg'] = '缺少参数';
@@ -49,6 +49,15 @@ class RewardController extends Controller {
         $ret['status'] = 0;
         $ret['msg'] = '获取成功';
         $ret['data'] = $data;
-        $this->ajaxReturn($data);
+        $this->ajaxReturn($ret);
+    }
+
+    //首页最新一期获奖信息
+    public function indexRewardInfo(){
+        $reward_info = M('reward')->where(array('reward_status' => '1'))->order('period_id desc')->find();
+        $ret['status'] = 0;
+        $ret['msg'] = '获取成功';
+        $ret['data'] = $reward_info;
+        $this->ajaxReturn($ret)
     }
 }
