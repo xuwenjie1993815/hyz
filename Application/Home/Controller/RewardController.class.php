@@ -55,9 +55,13 @@ class RewardController extends Controller {
     //首页最新一期获奖信息
     public function indexRewardInfo(){
         $reward_info = M('reward')->where(array('reward_status' => '1'))->order('period_id desc')->find();
+        $user_info = M('user')->field('user_name,real_name')->where(array('user_id' => $reward_info['user_id']))->find();
+        $product_info = M('product')->field('product_name,price')->where(array('product_id' => $reward_info['product_id']))->find();
+        $data['user_info'] = $user_info;
+        $data['product_info'] = $product_info;
         $ret['status'] = 0;
         $ret['msg'] = '获取成功';
-        $ret['data'] = $reward_info;
-        $this->ajaxReturn($ret)
+        $ret['data'] = $data;
+        $this->ajaxReturn($ret);
     }
 }
