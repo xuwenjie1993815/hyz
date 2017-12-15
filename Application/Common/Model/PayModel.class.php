@@ -440,5 +440,29 @@ class PayModel extends Model {
        }
        return array('data' => array('list' => $order_list_info_b, 'more' => $more, 'maxPerPage' => $maxPerPage), 'state' => 1, 'errormsg' => 'ok');
     }
+    function h5Pay($body,$order_id,$total_fee)
+    {
+
+        require_once ("WxPay/WxPay.Api.php");
+        $input = new \WxPayUnifiedOrder();
+        //---data
+        $input->SetBody($body);
+        //$input->SetAttach("test");
+        $input->SetOut_trade_no($order_id);
+        $input->SetTotal_fee($total_fee);
+        $input->SetTime_start(date("YmdHis"));
+        $input->SetTime_expire(date("YmdHis", time() + 600));
+        //$input->SetGoods_tag("test");
+        require_once ("WxPay/WxPay.Config.php");
+        $input->SetNotify_url(\WxPayConfig::NOTIFY_URL);
+        $input->SetTrade_type("MWEB");
+        $input->SetScene_info('{"h5_info": {"type":"Wap","wap_url": "https://pay.qq.com","wap_name": "腾讯充值"}} ');
+        //$input->SetOpenid($openId);
+        //---
+        //var_dump($input);
+        //die;
+        $order = \WxPayApi::unifiedOrder($input);
+        return $order;
+    }
 
 }

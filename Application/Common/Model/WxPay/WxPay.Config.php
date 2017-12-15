@@ -38,7 +38,7 @@ class WxPayConfig
 	const SSLKEY_PATH =  "/alidata/www/web/Application/_Jurisant/Model/WxPay/apiclient_key.pem";
 	
 	const LOG_PATH = 	 "/alidata/www/web/Application/_Jurisant/Model/WxPay/logs/";
-	const NOTIFY_URL =   "http://www.aichejubao.com/pay/wx_receive";
+	const NOTIFY_URL =   "http://local.hyz.com/Pay/test1";
 	//=======【curl代理设置】===================================
 	/**
 	 * TODO：这里设置代理机器，只有需要代理的时候才设置，不需要代理，请设置为0.0.0.0和0

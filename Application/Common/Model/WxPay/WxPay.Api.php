@@ -56,8 +56,8 @@ class WxPayApi
 		
 		//签名
 		$inputObj->SetSign();
+		//var_dump($inputObj);die;
 		$xml = $inputObj->ToXml();
-		
 		$startTimeStamp = self::getMillisecond();//请求开始时间
 		$response = self::postXmlCurl($xml, $url, false, $timeOut);
 		$result = WxPayResults::Init($response);
@@ -552,6 +552,14 @@ class WxPayApi
 		//post提交方式
 		curl_setopt($ch, CURLOPT_POST, TRUE);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+		if(stripos($url,"https://")!==FALSE){
+		    curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
+		    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+		}    else    {
+		    curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,TRUE);
+		    curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,2);//严格校验
+		}
 		//运行curl
 		$data = curl_exec($ch);
 		//返回结果

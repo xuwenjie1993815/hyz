@@ -37,4 +37,13 @@ class PayController extends Controller {
 						 );
 		D('support')->exportExcel( $content );
 	}
+	public function h5Pay()
+	{
+		$res =D('Pay')->h5Pay('this a test','fjjfjj',1);
+		$this->ajaxReturn($res);
+	}
+	public function test1()
+	{
+		var_dump($_SERVER);
+	}
 }
