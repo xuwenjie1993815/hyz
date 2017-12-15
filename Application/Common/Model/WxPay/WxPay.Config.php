@@ -26,7 +26,10 @@ class WxPayConfig
     const MCHID = 		'1332621801';
     const KEY = 		'eUWtvEIVChFMEwSgyJ34DpRnqyw3jz78';
     const APPSECRET = 	'f6e4e0b8896c51d305b8a7046e849f4d';
-	
+//    const APPID = 		'wx50cff4e0fe2989c8';
+//    const MCHID = 		'1294486701';
+//    const KEY = 		'acjb24iHRUg923ierhiH999her23Hg0e';
+//    const APPSECRET = 	'f6e4e0b8896c51d305b8a7046e849f4d';
 	//=======【证书路径设置】=====================================
 	/**
 	 * TODO：设置商户证书路径
@@ -36,9 +39,9 @@ class WxPayConfig
 	 */
 	const SSLCERT_PATH = "/alidata/www/web/Application/_Jurisant/Model/WxPay/apiclient_cert.pem";
 	const SSLKEY_PATH =  "/alidata/www/web/Application/_Jurisant/Model/WxPay/apiclient_key.pem";
-	
+
 	const LOG_PATH = 	 "/alidata/www/web/Application/_Jurisant/Model/WxPay/logs/";
-	const NOTIFY_URL =   "http://www.aichejubao.com/pay/wx_receive";
+	const NOTIFY_URL =   "http://www.hyz.com/pay/wx_receive";
 	//=======【curl代理设置】===================================
 	/**
 	 * TODO：这里设置代理机器，只有需要代理的时候才设置，不需要代理，请设置为0.0.0.0和0

@@ -729,6 +729,11 @@ class WxPayUnifiedOrder extends WxPayDataBase
 	{
 		$this->values['openid'] = $value;
 	}
+
+    public function SetScene_info($value)
+    {
+        $this->values['scene_info'] = $value;
+    }
 	/**
 	* 获取trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识。下单前需要调用【网页授权获取用户信息】接口获取到用户的Openid。 的值
 	* @return 值
@@ -2981,4 +2986,5 @@ class WxPayBizPayUrl extends WxPayDataBase
 	{
 		return array_key_exists('product_id', $this->values);
 	}
+
 }
