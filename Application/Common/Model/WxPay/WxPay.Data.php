@@ -279,7 +279,12 @@ class WxPayNotifyReply extends  WxPayDataBase
  *
  */
 class WxPayUnifiedOrder extends WxPayDataBase
-{	
+{
+	//这个是自己加的
+	public function SetScene_info($value)
+	{
+	    $this->values['scene_info'] = $value;
+	}
 	/**
 	* 设置微信分配的公众账号ID
 	* @param string $value 
