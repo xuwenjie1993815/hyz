@@ -20,5 +20,6 @@ return array(
     'LOAD_EXT_CONFIG' => 'sdk_config',
     'URL_ROUTE_RULES' => array( //定义路由规则
         'form/:id\d'    => 'Home/Form/edit'
-    )
+    ),
+    'CONFIG_PATH' => 'Application/Common/Model/Wxpay',
 );

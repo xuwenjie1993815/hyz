@@ -5,7 +5,6 @@ namespace Common\Model;
 use Think\Model;
 
 class PayModel extends Model {
-
     private $request;
 
     function __initial() {
@@ -15,9 +14,9 @@ class PayModel extends Model {
     //获取配置文件
     function getConfig_array($key = NULL) {
         if ($key) {
-            $configSearch = C("CONFIG_PATH") . "/Model/pay-" . $key . ".config.php";
+            $configSearch = C("CONFIG_PATH") . "/pay-" . $key . ".config.php";
         } else {
-            $configSearch = C("CONFIG_PATH") . "/Model/pay.config.php";
+            $configSearch = C("CONFIG_PATH") . "/pay.config.php";
         }
         $match = file_get_contents($configSearch);
         $match = substr($match, 15);
@@ -200,13 +199,15 @@ class PayModel extends Model {
     //--------------------------------------------网页订单支付--------------------------------------------
 
     function wx_jsApiPay($request) {
-        $user_id = D('user')->getUserId();
+//        $user_id = D('user')->getUserId();
+        $user_id = $request['user_id'];
         if (!$user_id) {
-            //return array('state'=>0,'errormsg'=>'not login');
+            return array('state'=>1,'errormsg'=>'not login');
         }
-        $openId = D('user')->getOpenId();
+//        $openId = D('user')->getOpenId();
+        $openId = $request['openId'];
         if (!$openId) {
-            return array('state' => 0, 'errormsg' => 'need openid');
+            return array('state' => 2, 'errormsg' => 'need openid');
             require_once ("WxPay/WxPay.JsApiPay.php");
             $tools = new \JsApiPay();
             $openId = $tools->GetOpenid();
@@ -235,9 +236,12 @@ class PayModel extends Model {
         //$input->SetGoods_tag("test");
         require_once ("WxPay/WxPay.Config.php");
         $input->SetNotify_url(\WxPayConfig::NOTIFY_URL);
-        $input->SetTrade_type("JSAPI");
+        $input->SetTrade_type("MWEB");
         $input->SetOpenid($openId);
+
+        $input->SetScene_info('{"h5_info": {"type":"Wap","wap_url": "https://pay.qq.com","wap_name": "腾讯充值"}}');
         //---
+//        var_dump($input);die;
         $order = \WxPayApi::unifiedOrder($input);
         //var_dump($input,$order);
         $tools = new \JsApiPay();
@@ -439,6 +443,30 @@ class PayModel extends Model {
            $more = 0;
        }
        return array('data' => array('list' => $order_list_info_b, 'more' => $more, 'maxPerPage' => $maxPerPage), 'state' => 1, 'errormsg' => 'ok');
+    }
+    function h5Pay($body,$order_id,$total_fee)
+    {
+
+        require_once ("WxPay/WxPay.Api.php");
+        $input = new \WxPayUnifiedOrder();
+        //---data
+        $input->SetBody($body);
+        //$input->SetAttach("test");
+        $input->SetOut_trade_no($order_id);
+        $input->SetTotal_fee($total_fee);
+        $input->SetTime_start(date("YmdHis"));
+        $input->SetTime_expire(date("YmdHis", time() + 600));
+        //$input->SetGoods_tag("test");
+        require_once ("WxPay/WxPay.Config.php");
+        $input->SetNotify_url(\WxPayConfig::NOTIFY_URL);
+        $input->SetTrade_type("MWEB");
+        $input->SetScene_info('{"h5_info": {"type":"Wap","wap_url": "https://pay.qq.com","wap_name": "腾讯充值"}} ');
+        //$input->SetOpenid($openId);
+        //---
+        //var_dump($input);
+        //die;
+        $order = \WxPayApi::unifiedOrder($input);
+        return $order;
     }
 
 }
