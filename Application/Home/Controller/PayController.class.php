@@ -11,7 +11,7 @@ class PayController extends Controller {
 	//---------------------------
 	public function wx_webcode(){//微信APP支付
 		$pay = D("Pay");
-		$this->ajaxReturn($pay->wx_jsApiPay($_REQUEST));
+//		$this->ajaxReturn($pay->wx_jsApiPay($_REQUEST));
 	}
     //---------------------------
     public function wx_qrcode(){//微信二维码支付
