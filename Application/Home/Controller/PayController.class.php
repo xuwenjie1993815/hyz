@@ -46,6 +46,11 @@ class PayController extends Controller {
 	}
 	public function test1()
 	{
-		var_dump($_SERVER);
+		var_dump($GLOBALS);
+	}
+	public function alipay()
+	{
+		$res =D('Pay')->alipay('564122','fjjfjj',1,'kkk');
+		//$this->ajaxReturn($res);
 	}
 }
