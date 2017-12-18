@@ -24,6 +24,7 @@ class CommentController extends Controller{
                 unset($comment_info[$k]);
                 continue;
             }
+            $comment_info[$k]['images'] = explode(',',$v['images']);
             $comment_info[$k]['ctime'] = D('Support')->check_time($v['ctime']);
             //筛选子评论
             $comment_info[$k]['comment_count'] = M('comment')->where(array('comment_type' => 2,'comment_status' => 1,'pid' => $v['comment_id']))->count();
@@ -113,6 +114,7 @@ class CommentController extends Controller{
         }
         if ($_FILES) {
             $images = D('Support')->upload();
+            $images = implode(',',$images);
         }
         $data['comment_type'] = $comment_type;
         $data['source_id'] = $source_id;
