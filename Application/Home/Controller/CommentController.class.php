@@ -98,7 +98,6 @@ class CommentController extends Controller{
         $pid = $_POST['pid'];
         $content = $_POST['content'];
         $user_id = $_POST['user_id'];
-        $images = $_POST['images'];
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
@@ -111,6 +110,9 @@ class CommentController extends Controller{
             $ret['msg'] = '缺少参数';
             $this->ajaxReturn($ret);
             die;
+        }
+        if ($_FILES) {
+            $images = D('Support')->upload();
         }
         $data['comment_type'] = $comment_type;
         $data['source_id'] = $source_id;
