@@ -256,7 +256,8 @@ class PassController extends Controller {
            $this->ajaxReturn($data);
         }
         if ($_FILES) {
-            $filename = D('support')->upload();
+            $upload = D('support')->upload();
+            $filename = $upload[0];
         }
         if (!$filename) {
             $info = M('user')->field('user_img')->where(array('user_id'=>$user_id))->find();

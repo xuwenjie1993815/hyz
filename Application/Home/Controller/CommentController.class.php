@@ -116,6 +116,7 @@ class CommentController extends Controller{
             $images = D('Support')->upload();
             $images = implode(',',$images);
         }
+        $images = implode(',', $images);
         $data['comment_type'] = $comment_type;
         $data['source_id'] = $source_id;
         $data['ctime'] = time();
