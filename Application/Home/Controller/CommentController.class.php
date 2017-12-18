@@ -114,6 +114,7 @@ class CommentController extends Controller{
         if ($_FILES) {
             $images = D('Support')->upload();
         }
+        $images = implode(',', $images);
         $data['comment_type'] = $comment_type;
         $data['source_id'] = $source_id;
         $data['ctime'] = time();

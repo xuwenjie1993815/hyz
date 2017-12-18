@@ -500,7 +500,7 @@ class PayModel extends Model {
             $payRequestBuilder->setTimeExpress($timeout_express);
             $payResponse = new \AlipayTradeService($config);
             $result=$payResponse->wapPay($payRequestBuilder,$config['return_url'],$config['notify_url']);
-            var_dump($result);
+            //var_dump($result);
             return ;
         }
     }
