@@ -34,15 +34,15 @@ class LoginController extends Controller {
     //返回参数 status=>0:登陆成功 1:请绑定手机
     //通过openid 或者 QQid 找到对应用户，有则直接登陆，没有则要求绑定手机号，如其绑定手机号已存在则绑定到对应user，如不存在则提示注册
     public function otherLogin(){
-        $login_type = I('param.login_type'); 
-        $login_id = I('param.login_id'); 
+        $login_type = I('param.login_type');
+        $login_id = I('param.login_id');
         $where['status'] = 1;
         switch ($login_type) {
             case 1:
                 $where['openid'] = $login_id;
                 break;
             case 2:
-                $where['qqid'] = $login_id;
+                $where['qq'] = $login_id;
                 break;
             default:
                 break;
@@ -50,16 +50,13 @@ class LoginController extends Controller {
         $user_info = M('user')->where($where)->find();
         if (!$user_info) {
             $data["status"] = 1;
-            $data["msg"] = '未绑定手机';
+            $data["msg"] = '账户未绑定';
             $this->ajaxReturn($data);
             die;
         }
-        session("user_id",$user_info["user_id"]);
-        session("user_name",$user_info["user_name"]);
-        session("real_name",$user_info["real_name"]);
         $data["status"] = 0;
         $data["msg"] = '登陆成功';
-        $data["user_info"] = $user_info;
+        $data["user_info"] = array('user_id' => $user_info['user_id'],'user_name' => $user_info['user_name'],'real_name' => $user_info['real_name'],'tel' => $user_info['tel'],'qq' => $user_info['qq'],'user_img' => $user_info['user_img']);
         $this->ajaxReturn($data);
     }
     
@@ -83,19 +80,17 @@ class LoginController extends Controller {
                 $data['openid'] = $login_id;
                 break;
             case 2:
-                $data['qqid'] = $login_id;
+                $data['qq'] = $login_id;
                 break;
             default:
                 break;
         }
         $ret = M('user')->where($where)->save($data);
+        $user_info = M('user')->where($where)->find();
         if ($ret) {
-//            session("user_id",$user["user_id"]);
-//            session("user_name",$user["user_name"]);
-//            session("real_name",$user["real_name"]);
             $data["status"] = 0;
             $data["msg"] = '绑定成功';
-            $data["log_name"] = $user["user_name"];
+            $data["user_info"] = array('user_id' => $user_info['user_id'],'user_name' => $user_info['user_name'],'real_name' => $user_info['real_name'],'tel' => $user_info['tel'],'qq' => $user_info['qq'],'user_img' => $user_info['user_img']);
             $this->ajaxReturn($data);
         }
     }
