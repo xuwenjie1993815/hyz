@@ -262,7 +262,7 @@ class OrderController extends Controller{
     //order_status 1已参与商品订单 2已兑奖商品订单 （为All则获取全部订单）
     public function orderList(){
         $order_status = $_POST['order_status'];
-        $user_id = $_POST['user_id'];
+        $user_id = $_POST['user_id']?:9;
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -280,13 +280,15 @@ class OrderController extends Controller{
         $where['o.user_id'] = $user_id;
         $where['pe.status_period'] = 1;
         $where['o.order_type'] = 1;//商品抽奖订单
-        if ($order_status !== 'All'){
+        if ($order_status) {
             $where['o.order_status'] = $order_status;
         }else{
-            $where['o.order_status'] != 3;
+            $where['o.order_status'] = array('neq',3);
         }
+        
         $res = M('order')->alias("o")->join($join_a)->join($join_b)->field('o.*, pe.* , p.product_name ,p.price ,p.product_info,p.images')->where($where)->order($order)->select();
         //列表需要数据 订单title order_info(类型  数量  金额  图片  时间  状态)   order_id order_img  order_price order_sn order_time 
+        $data = array();
         foreach ($res as $k => $v){
             $data[$k]['order_id'] = $v['order_id'];//order_id
             $data[$k]['title'] = $v['period_name'];//title
@@ -308,6 +310,7 @@ class OrderController extends Controller{
         $where_apply['o.order_type'] = 2;//参与活动订单
         $field_apply = 'o.*, ac.*,a.*';
         $res_apply = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
+        $data_apply = array();
         foreach ($res_apply as $k => $v){
             $data_apply[$k]['order_id'] = $v['order_id'];//order_id
             $data_apply[$k]['title'] = $v['activity_name'];//title
@@ -324,6 +327,7 @@ class OrderController extends Controller{
         $where_apply['o.order_type'] = 3;//参与点赞订单
         $field_apply = 'o.*, ac.*,a.*';
         $res_dz = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
+        $data_dz = array();
         foreach ($res_dz as $k => $v){
             $data_dz[$k]['order_id'] = $v['order_id'];//order_id
             $data_dz[$k]['title'] = $v['title'];//title
@@ -337,7 +341,22 @@ class OrderController extends Controller{
             
         }
        $order_list = array_merge($data,$data_apply,$data_dz);
-        
+       //时间排序
+        $last_names = array_column($order_list, 'order_time');
+        array_multisort($last_names,SORT_DESC,$order_list);
+        foreach ($order_list as $key => $value) {
+        	switch ($value['order_type']) {
+        		case '1':
+        			$order_list[$key]['order_type_name'] = '商品订单';
+        			break;
+        		case '2':
+        			$order_list[$key]['order_type_name'] = '活动订单';
+        			break;
+        		case '3':
+        			$order_list[$key]['order_type_name'] = '点赞订单';
+        			break;
+        	}
+        }
         
         if (!$order_list) {
             $ret['status'] = 2;
