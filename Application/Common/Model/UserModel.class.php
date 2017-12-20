@@ -29,7 +29,7 @@ class  userModel extends Model {
 				return $data;
 			}
 		}else{
-			if ($result["pass"] != $pass) {
+			if ($result["pass"] != md5($pass)) {
 				$data["status"] = 1;
 				$data["info"] = "用户名或密码错误";
 				return $data;
