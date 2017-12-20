@@ -180,7 +180,7 @@ class OrderController extends Controller{
     //根据user_id查询其购物车信息，返回付款信息
     //商品信息数据格式 array(product_id:num)
     public function cart_order(){
-        $user_id = $_POST['user_id'];
+        $user_id = $_POST['user_id']?:2;
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -235,10 +235,17 @@ class OrderController extends Controller{
                 M('cart')->where(array('user_id' => $user_id,'status' => 1))->save(array('status' => 0));
             }
             $model->commit();
+            foreach ($res as $k => $v){
+                $res_info[$k]['product_name'] = $v['product_name'];//商品名
+                $res_info[$k]['product_info'] = $v['product_info'];//商品详情
+                $res_info[$k]['period_time'] = $v['period_time'];//期数
+                $res_info[$k]['period_price'] = $v['period_price'];//单价
+                $res_info[$k]['product_num'] = $v['product_num'];//数量
+            }
             $this->ajaxReturn(array(
                 'status' => 0,
                 'msg' => '操作成功',
-                'order_info' => array('order_price' => $price,'product_num' => $product_num,'product_name' => $res[0]['product_name']),
+                'order_info' => array('order_price' => $price,'product_num' => $product_num,'product_name' => $res[0]['product_name'],'order_info' => $res_info),
             ));
         }catch (Exception $e){
             $model->rollback();
