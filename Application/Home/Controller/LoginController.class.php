@@ -62,8 +62,9 @@ class LoginController extends Controller {
     
     //账号绑定
     public function bangding(){
-        $login_type = I('param.login_type'); 
+        $login_type = I('param.login_type');
         $login_id = I('param.login_id');
+        $pwd = I('param.pwd');
         $tel = I('param.tel');
         //如其绑定手机号已存在则绑定到对应user并登录，如不存在提示注册
         $where['tel'] = $tel;
@@ -75,16 +76,53 @@ class LoginController extends Controller {
             $this->ajaxReturn($data);
             die;
         }
-        switch ($login_type) {
-            case 1:
-                $data['openid'] = $login_id;
-                break;
-            case 2:
-                $data['qq'] = $login_id;
-                break;
-            default:
-                break;
+        if (!$pwd || !$tel){
+            $data["status"] = 2;
+            $data["msg"] = '缺少参数';
+            $this->ajaxReturn($data);
+            die;
         }
+        if ($user['salt']){
+            $pass = md5($user['pass'].$user['salt']);
+            if ($pass != md5($pwd.$user['salt'])){
+                $data["status"] = 3;
+                $data["msg"] = '密码错误';
+                $this->ajaxReturn($data);
+                die;
+            }
+        }else{
+            if ($user['pass'] != md5($pwd)){
+                $data["status"] = 3;
+                $data["msg"] = '密码错误';
+                $this->ajaxReturn($data);
+                die;
+            }
+        }
+        if ($login_type){
+            switch ($login_type) {
+                case 1:
+                    $data['openid'] = $login_id;
+                    if ($user['openid']){
+                        $data["status"] = 4;
+                        $data["msg"] = '已绑定过此登录方式';
+                        $this->ajaxReturn($data);
+                        die;
+                    }
+                    break;
+                case 2:
+                    $data['qq'] = $login_id;
+                    if ($user['qq']){
+                        $data["status"] = 4;
+                        $data["msg"] = '已绑定过此登录方式';
+                        $this->ajaxReturn($data);
+                        die;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
         $ret = M('user')->where($where)->save($data);
         $user_info = M('user')->where($where)->find();
         if ($ret) {
