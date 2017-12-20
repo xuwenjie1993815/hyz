@@ -9,6 +9,9 @@ class OrderController extends Controller{
         $num = $_REQUEST['num'];
         $product_id = $_REQUEST['product_id'];
         $period_id = $_REQUEST['period_id'];
+        if (!$num){
+            $num = 1;
+        }
         //确认用户登陆
         if (!$user_id) {
             $ret['status'] = 1;
@@ -23,19 +26,47 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
+        $period_info = M('period')->where(array('period_id' => $period_id))->find();
+        if ($period_info['status_period'] != '1' || !$period_info){
+            $ret['status'] = 3;
+            $ret['msg'] = '加入失败,商品期数不存在或已删除';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        if ($period_info['now_num'] >= $period_info['target_num']){
+            $ret['status'] = 4;
+            $ret['msg'] = '活动目标数量已达到，无法添加';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        if ($period_info['p_id'] != $product_id){
+            $ret['status'] = 5;
+            $ret['msg'] = '加入失败,参数错误';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $product_info = M('product')->where(array('product_id' => $product_id))->find();
+        if ($product_info['status'] != '1' || !$product_info){
+            $ret['status'] = 6;
+            $ret['msg'] = '加入失败,商品不存在或已删除';
+            $this->ajaxReturn($ret);
+            die;
+        }
         //查看当前操作者的cart里是否有此product_id，有则数量加$num，没有就新增一条数据
         $where['user_id'] = $user_id;
         $where['product_id'] = $product_id;
+        $where['period_id'] = $period_id;
         $where['status'] = 1;
         $user_cart = M('cart')->where($where)->find();
         if ($user_cart){
-            $data['product_num'] = $user_cart['product_num'] + $num?:1;
+            $data['product_num'] = $user_cart['product_num'] + $num;
             $res_status = M('cart')->where($where)->save($data);
         }else{
             $data['user_id'] = $user_id;
             $data['product_id'] = $product_id;
-            $data['product_num'] = $num?:1;
+            $data['product_num'] = $num;
             $data['period_id'] = $period_id;
+            $data['ctime'] = time();
             $data['status'] = 1;
             $res_status = M('cart')->where($where)->add($data);
         }
@@ -105,6 +136,12 @@ class OrderController extends Controller{
         if ($cart_info['status'] == 0) {
             $ret['status'] = 4;
             $ret['msg'] = '此商品已删除';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        if ($cart_info['user_id'] != $user_id) {
+            $ret['status'] = 4;
+            $ret['msg'] = '参数错误';
             $this->ajaxReturn($ret);
             die;
         }
