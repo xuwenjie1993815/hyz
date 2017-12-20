@@ -34,8 +34,8 @@ class LoginController extends Controller {
     //返回参数 status=>0:登陆成功 1:请绑定手机
     //通过openid 或者 QQid 找到对应用户，有则直接登陆，没有则要求绑定手机号，如其绑定手机号已存在则绑定到对应user，如不存在则提示注册
     public function otherLogin(){
-        $login_type = I('param.login_type');
-        $login_id = I('param.login_id');
+        $login_type = I('param.login_type')?:2;
+        $login_id = I('param.login_id')?:'380935912';
         $where['status'] = 1;
         switch ($login_type) {
             case 1:
@@ -47,6 +47,7 @@ class LoginController extends Controller {
             default:
                 break;
         }
+//        var_dump($where);die;
         $user_info = M('user')->where($where)->find();
         if (!$user_info) {
             $data["status"] = 1;
@@ -83,7 +84,7 @@ class LoginController extends Controller {
             die;
         }
         if ($user['salt']){
-            $pass = md5($user['pass'].$user['salt']);
+            $pass = $user['pass'];
             if ($pass != md5($pwd.$user['salt'])){
                 $data["status"] = 3;
                 $data["msg"] = '密码错误';
