@@ -180,7 +180,7 @@ class OrderController extends Controller{
     //根据user_id查询其购物车信息，返回付款信息
     //商品信息数据格式 array(product_id:num)
     public function cart_order(){
-        $user_id = $_POST['user_id']?:2;
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -245,7 +245,7 @@ class OrderController extends Controller{
             $this->ajaxReturn(array(
                 'status' => 0,
                 'msg' => '操作成功',
-                'order_info' => array('order_price' => $price,'product_num' => $product_num,'product_name' => $res[0]['product_name'],'order_info' => $res_info),
+                'order_info' => array('order_price' => $price,'product_num' => $product_num,'order_info' => $res_info),
             ));
         }catch (Exception $e){
             $model->rollback();
@@ -348,6 +348,14 @@ class OrderController extends Controller{
             
         }
        $order_list = array_merge($data,$data_apply,$data_dz);
+       $order_price = 0;
+       $product_num = 0;
+       foreach ($order_list as $k => $v){
+           if ($v['order_status'] == 0) {
+               $order_price += $v['order_price'];
+               $product_num += $v['product_num'];
+           }
+       }
        //时间排序
         $last_names = array_column($order_list, 'order_time');
         array_multisort($last_names,SORT_DESC,$order_list);
@@ -374,6 +382,8 @@ class OrderController extends Controller{
             $ret['status'] = 0;
             $ret['msg'] = '获取成功';
             $ret['order_list'] = $order_list;
+            $ret['order_price'] = $order_price;
+            $ret['product_num'] = $product_num;
             $this->ajaxReturn($ret);
             die;
         }
