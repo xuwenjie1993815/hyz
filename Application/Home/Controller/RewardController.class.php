@@ -5,7 +5,7 @@ class RewardController extends Controller {
     //获取中奖信息
     public function rewardInfo() {
         $user_id = $_POST['user_id'];
-        $period_id = $_POST['period_id']?:1;
+        $period_id = $_POST['period_id'];
         if (!$period_id) {
             $ret['status'] = 1;
             $ret['msg'] = '缺少参数';
@@ -64,4 +64,6 @@ class RewardController extends Controller {
         $ret['data'] = $data;
         $this->ajaxReturn($ret);
     }
+
+    //用户待兑奖列表
 }

@@ -266,10 +266,10 @@ class OrderController extends Controller{
     //点赞订单列表
     //活动订单列表
     //订单列表(全部，已参与，待兑奖，我的评论)
-    //order_status 1已参与商品订单 2已兑奖商品订单 （为All则获取全部订单）
+    //order_status 0待支付 1已参与商品订单 2已兑奖商品订单 （为All则获取全部订单）
     public function orderList(){
         $order_status = $_POST['order_status'];
-        $user_id = $_POST['user_id']?:9;
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -278,7 +278,7 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
-       
+
         //有三种类型的商品  商品抽奖订单（关联product period order）  活动抽奖订单（apply order activity）  点赞抽奖订单（apply order activity）
         //商品抽奖订单
         $join_a = "hyz_product AS p ON o.order_product_id = p.product_id";
@@ -292,9 +292,9 @@ class OrderController extends Controller{
         }else{
             $where['o.order_status'] = array('neq',3);
         }
-        
+
         $res = M('order')->alias("o")->join($join_a)->join($join_b)->field('o.*, pe.* , p.product_name ,p.price ,p.product_info,p.images')->where($where)->order($order)->select();
-        //列表需要数据 订单title order_info(类型  数量  金额  图片  时间  状态)   order_id order_img  order_price order_sn order_time 
+        //列表需要数据 订单title order_info(类型  数量  金额  图片  时间  状态)   order_id order_img  order_price order_sn order_time
         $data = array();
         foreach ($res as $k => $v){
             $data[$k]['order_id'] = $v['order_id'];//order_id
@@ -307,7 +307,7 @@ class OrderController extends Controller{
             $data[$k]['order_time'] = $v['order_time'];//订单时间
             $data[$k]['order_type'] = $v['order_type'];//订单类型
         }
-        
+
         //活动抽奖订单apply order activity
         $join_a = "hyz_apply AS a ON a.order_id = o.order_id";
         $join_b = "hyz_activity AS ac ON ac.activity_id = o.activity_id";
@@ -345,7 +345,7 @@ class OrderController extends Controller{
             $data_dz[$k]['order_status'] = $v['order_status'];//订单状态
             $data_dz[$k]['order_time'] = $v['order_time'];//订单时间
             $data_dz[$k]['order_type'] = $v['order_type'];//订单类型
-            
+
         }
        $order_list = array_merge($data,$data_apply,$data_dz);
        $order_price = 0;
@@ -372,7 +372,7 @@ class OrderController extends Controller{
         			break;
         	}
         }
-        
+
         if (!$order_list) {
             $ret['status'] = 2;
             $ret['msg'] = '空列表';
@@ -388,7 +388,7 @@ class OrderController extends Controller{
             die;
         }
     }
-    
+
     //取消订单
     public function cancelOrder() {
         $order_id = $_REQUEST['order_id'];
@@ -530,29 +530,104 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
+
+        $order_info = M('order')->where(array('order_id' => $order_id))->find();
+        $order_status = $order_info['status'];
+        //订单基本信息
+        //有三种类型的商品  商品抽奖订单（关联product period order）  活动抽奖订单（apply order activity）  点赞抽奖订单（apply order activity）
+        if ($order_info['order_type'] == 1){
+            $product_info = M('product')->where(array('product_id' => $order_info['order_product_id']))->find();
+            $period_info = M('period')->where(array('period_time' => $order_info['period_time']))->find();
+            $data['order_id'] = $order_info['order_id'];//order_id
+            $data['title'] = $period_info['period_name'];//title
+            $data['images'] = $product_info['images'];//商品图片
+            $data['order_price'] = $order_info['order_money'];//金额
+            $data['product_num'] = $order_info['product_num'];//数量
+            $data['period_time'] = $order_info['period_time'];//活动期数
+            $data['order_status'] = $order_info['order_status'];//订单状态
+            $data['order_time'] = $order_info['order_time'];//订单时间
+            $data['order_type'] = $order_info['order_type'];//订单类型
+        }
+        //活动抽奖订单apply order activity
+        if ($order_info['order_type'] == 2){
+            $activity_info = M('activity')->where(array('activity_id' => $order_info['activity_id']))->find();
+            $data['order_id'] = $order_info['order_id'];//order_id
+            $data['title'] = $activity_info['activity_name'];//title
+            $data['images'] = $activity_info['images'];//商品图片
+            $data['order_price'] = $order_info['order_money'];//金额
+            $data['product_num'] = $order_info['product_num'];//数量
+            $data['period_time'] = $order_info['period_time'];//活动期数
+            $data['order_status'] = $order_info['order_status'];//订单状态
+            $data['order_time'] = $order_info['order_time'];//订单时间
+            $data['order_type'] = $order_info['order_type'];//订单类型
+        }
+        //点赞抽奖订单apply order activity
+        if ($order_info['order_type'] == 3){
+            $apply_info = M('apply')->where(array('apply_id' => $order_info['apply_id']))->find();
+            $activity_info = M('activity')->where(array('activity_id' => $apply_info['activity_id']))->find();
+            $data['order_id'] = $order_info['order_id'];//order_id
+            $data['title'] = $activity_info['title'];//title
+            $data['images'] = $activity_info['images'];//商品图片
+            $data['order_price'] = $order_info['order_money'];//金额
+            $data['product_num'] = $order_info['product_num'];//数量
+            $data['period_time'] = $order_info['period_time'];//活动期数
+            $data['order_status'] = $order_info['order_status'];//订单状态
+            $data['order_time'] = $order_info['order_time'];//订单时间
+            $data['order_type'] = $order_info['order_type'];//订单类型
+        }
+       // ------------------------------------------------------------------------------------------------------------------
         //订单中奖信息
         $reward_info = M('reward')->where(array('order_id' => $order_id))->find();
-        if (!$reward_info || $reward_info['reward_status'] == 0) {
-            $ret['status'] = 3;
-            $ret['msg'] = '没有数据';
-            $this->ajaxReturn($ret);
-            die;
+        if ($reward_info){
+            $data_re['shop_name'] = $reward_info['shop_name'];
+            $data_re['shop_address'] = $reward_info['shop_address'];
+            $data_re['reward_number'] = $reward_info['reward_number'];
+            $data_re['reward_tel'] = $reward_info['reward_tel'];
+            //活动信息
+            $period_info = M('period')->field('period_name')->where(array('period_id' => $reward_info['period_id']))->find();
+            $data_re['period_name'] = $period_info['period_name'];
+            $data_re['order_time'] = $order_info['order_time'];//下单时间
+            $data['reward_info'] = $data_re;
         }
-        $data['shop_name'] = $reward_info['shop_name'];
-        $data['shop_address'] = $reward_info['shop_address'];
-        $data['reward_number'] = $reward_info['reward_number'];
-        $data['reward_tel'] = $reward_info['reward_tel'];
-        //活动信息
-        $period_info = M('period')->field('period_name')->where(array('period_id' => $reward_info['period_id']))->find();
-        $data['period_name'] = $period_info['period_name'];
-        //中奖订单信息
-        $order_info = M('order')->field('order_time')->where(array('order_id' => $reward_info['order_id']))->find();
-        $data['order_time'] = $order_info['order_time'];//下单时间
+        switch ($data['order_type']) {
+            case '1':
+                $data['order_type'] = '商品订单';
+                break;
+            case '2':
+                $data['order_type'] = '活动订单';
+                break;
+            case '3':
+                $data['order_type'] = '点赞订单';
+                break;
+        }
+        switch ($data['order_status']) {
+            case '0':
+                $data['order_status'] = '已下单,未付款';
+                break;
+            case '1':
+                $data['order_status'] = '已付款';
+                break;
+            case '2':
+                $data['order_status'] = '已中奖,待兑奖';
+                break;
+            case '3':
+                $data['order_status'] = '无效';
+                break;
+            case '4':
+                $data['order_status'] = '已兑奖';
+                break;
+            case '5':
+                $data['order_status'] = '未中奖';
+                break;
+        }
         $ret['status'] = 0;
         $ret['msg'] = '获取成功';
         $ret['data'] = $data;
         $this->ajaxReturn($ret);
         die;
     }
+
+
+
     
 }
