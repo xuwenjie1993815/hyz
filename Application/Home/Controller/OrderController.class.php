@@ -537,7 +537,7 @@ class OrderController extends Controller{
         //有三种类型的商品  商品抽奖订单（关联product period order）  活动抽奖订单（apply order activity）  点赞抽奖订单（apply order activity）
         if ($order_info['order_type'] == 1){
             $product_info = M('product')->where(array('product_id' => $order_info['order_product_id']))->find();
-            $period_info = M('period')->where(array('period_time' => $order_info['period_time']))->find();
+            $period_info = M('period')->where(array('period_time' => $order_info['period_time'],'p_id' => $order_info['order_product_id']))->find();
             $data['order_id'] = $order_info['order_id'];//order_id
             $data['title'] = $period_info['period_name'];//title
             $data['images'] = $product_info['images'];//商品图片
