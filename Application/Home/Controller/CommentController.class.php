@@ -4,7 +4,7 @@ use Think\Controller;
 class CommentController extends Controller{
     //活动评论列表
     public function commentList(){
-        $source_id = $_POST['source_id'];
+        $source_id = $_POST['source_id']?:1;
         if (!$source_id){
             $ret['status'] = 1;
             $ret['msg'] = '缺少参数';
@@ -26,6 +26,11 @@ class CommentController extends Controller{
             }
             $comment_info[$k]['images'] = explode(',',$v['images']);
             $comment_info[$k]['ctime'] = D('Support')->check_time($v['ctime']);
+            // if(base64_encode(base64_decode($v['content'])) ? true : false){
+            //     $comment_info[$k]['content'] = base64_decode($v['content']);
+            // }else{
+            //     $comment_info[$k]['content'] = $v['content'];
+            // }
             //筛选子评论
             $comment_info[$k]['comment_count'] = M('comment')->where(array('comment_type' => 2,'comment_status' => 1,'pid' => $v['comment_id']))->count();
         }
@@ -59,6 +64,11 @@ class CommentController extends Controller{
         $comment_info = M('comment')->alias('c')->join($join)->field($field)->where($where)->select();
         foreach ($comment_info as $k => $v){
             $comment_info[$k]['ctime'] = D('Support')->check_time($v['ctime']);
+            // if(base64_encode(base64_decode($v['content'])) ? true : false){
+            //     $comment_info[$k]['content'] = base64_decode($v['content']);
+            // }else{
+            //     $comment_info[$k]['content'] = $v['content'];
+            // }
             //筛选子评论
 //            $comment_info[$k]['comment_count'] = M('comment')->where(array('comment_type' => 2,'comment_status' => 1,'pid' => $v['comment_id']))->count();
         }
@@ -86,6 +96,11 @@ class CommentController extends Controller{
         $comment_info = M('comment')->alias('c')->join($join)->field($field)->where($where)->select();
         foreach ($comment_info as $k => $v){
             $comment_info[$k]['ctime'] = D('Support')->check_time($v['ctime']);
+            // if(base64_encode(base64_decode($v['content'])) ? true : false){
+            //     $comment_info[$k]['content'] = base64_decode($v['content']);
+            // }else{
+            //     $comment_info[$k]['content'] = $v['content'];
+            // }
             //筛选子评论
             $comment_info[$k]['comment_count'] = M('comment')->where(array('comment_type' => 2,'comment_status' => 1,'pid' => $v['comment_id']))->count();
         }

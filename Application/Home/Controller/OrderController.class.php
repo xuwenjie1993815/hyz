@@ -175,6 +175,33 @@ class OrderController extends Controller{
         $this->ajaxReturn($ret);
         die;
     }
+
+    //购物车商品数量加
+    public function cartAdd(){
+        $cart_id = $_POST['cart_id'];
+        $num = $_POST['product_num'];
+        if (!$num) {
+            $num = 1;
+        }
+        $res = M('cart')->where(array('cart_id' => $cart_id))->setInc('product_num',$num);
+        $ret['status'] = 0;
+        $ret['msg'] = '增加数量成功';
+        $this->ajaxReturn($ret);
+        die;
+    }
+    //购物车商品数量减
+    public function cartReduce(){
+        $cart_id = $_POST['cart_id'];
+        $num = $_POST['product_num'];
+        if (!$num) {
+            $num = 1;
+        }
+        $res = M('cart')->where(array('cart_id' => $cart_id))->setDec('product_num',$num);
+        $ret['status'] = 0;
+        $ret['msg'] = '减少数量成功';
+        $this->ajaxReturn($ret);
+        die;
+    }
     
     //购物车结算生成订单,订单确认
     //根据user_id查询其购物车信息，返回付款信息
