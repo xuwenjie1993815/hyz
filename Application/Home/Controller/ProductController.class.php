@@ -7,8 +7,9 @@ class ProductController extends Controller {
 	{
 		$type = I('type');//筛选条件
 		$sort = I('sequence');//列表顺序
-		$sort = array('price' => 1,'create_time'=> 0,'period_time'=> 1);
-		foreach (array_values($sort) as $k => $v){
+        $sort = $_REQUEST['sequence'];
+        $sort= json_decode($sort,true);
+		foreach (array_values($sort) as $k => $v){ 
             if ($v == 1) {
                 $p = 'asc';
             }else{

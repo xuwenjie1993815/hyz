@@ -47,32 +47,32 @@ class RegistrController extends Controller {
                 );
            $this->ajaxReturn($data);
         }
-        // $sms_records  =M('sms_records')->field('code,expiration_time')->where(array('phone'=>$phone,'sms_type'=>2))->find();
-        // if ($code != $sms_records['code']) {
-        //   $data = array(
-        //         'status'=>1,
-        //         'msg'=>'验证码错误',
-        //         );
-        //    $this->ajaxReturn($data);
-        // }
-        // $time = time();
-        // if ($time-$sms_records['expiration_time']>600) {
-        //   $data = array(
-        //         'status'=>1,
-        //         'msg'=>'验证码过期',
-        //         );
-        //    $this->ajaxReturn($data);
-        // }
-        //获取session里面的验证码
-        $session_code = session('telCode');
-        $session_code = 9999;
-        if ($code != $session_code) {
-        	$data = array(
+        $sms_records  =M('sms_records')->field('code,expiration_time')->where(array('tel'=>$phone))->order('id desc')->find();
+        if ($code != $sms_records['code']) {
+          $data = array(
                 'status'=>7,
-                'msg'=>'手机验证码不对',
+                'msg'=>'验证码错误',
                 );
            $this->ajaxReturn($data);
         }
+        $time = time();
+        if ($time-$sms_records['expiration_time']>600) {
+          $data = array(
+                'status'=>1,
+                'msg'=>'验证码过期',
+                );
+           $this->ajaxReturn($data);
+        }
+        //获取session里面的验证码
+        // $session_code = session('telCode');
+        // $session_code = 9999;
+        // if ($code != $session_code) {
+        // 	$data = array(
+        //         'status'=>7,
+        //         'msg'=>'手机验证码不对',
+        //         );
+        //    $this->ajaxReturn($data);
+        // }
         //判断是否注册过
         $check = M('user')->where(array('tel'=>$phone))->find();
         if ($check) {

@@ -22,4 +22,5 @@ return array(
         'form/:id\d'    => 'Home/Form/edit'
     ),
     'CONFIG_PATH' => 'Application/Common/Model/Wxpay',
+    'SMS_KEY'=>'yckjsms'
 );

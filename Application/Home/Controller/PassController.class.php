@@ -97,23 +97,22 @@ class PassController extends Controller {
                 );
            $this->ajaxReturn($data);
         }
-        $res  =M('sms_records')->field('code,expiration_time')->where(array('phone'=>$phone,'sms_type'=>1))->find();
-        $res['code']=9999;
-        if ($code != $res['code']) {
-        	$data = array(
+        $sms_records  =M('sms_records')->field('code,expiration_time')->where(array('tel'=>$phone))->order('id desc')->find();
+        if ($code != $sms_records['code']) {
+          $data = array(
                 'status'=>1,
                 'msg'=>'验证码错误',
                 );
            $this->ajaxReturn($data);
         }
-        // $time = time();
-        // if ($time-$res['expiration_time']>600) {
-        // 	$data = array(
-        //         'status'=>1,
-        //         'msg'=>'验证码过期',
-        //         );
-        //    $this->ajaxReturn($data);
-        // }
+        $time = time();
+        if ($time-$sms_records['expiration_time']>600) {
+          $data = array(
+                'status'=>1,
+                'msg'=>'验证码过期',
+                );
+           $this->ajaxReturn($data);
+        }
         $data = array(
                 'status'=>0,
                 'msg'=>'验证成功',

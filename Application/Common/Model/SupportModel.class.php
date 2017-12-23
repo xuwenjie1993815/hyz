@@ -67,5 +67,29 @@ class  SupportModel extends Model {
         return $filename;
       }
     }
+    public function http_post($url,$post_data)
+    {
+       $ch = curl_init();
+       curl_setopt($ch, CURLOPT_URL, $url);
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+       curl_setopt($ch, CURLOPT_POST, 1);
+       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+       $output = curl_exec($ch);
+       curl_close($ch);
+       return $output;
+    }
+    //发送短信
+    public function sms($phone,$content)
+    {
+    	$url='http://api.momingsms.com/?action=send';
+    	$post_data = array(
+    			'username'=>'70212065',
+    			'password'=>md5('15922908880'),
+    			'phone'=>$phone,
+    			'content'=>urlencode($content)
+    		);
+    	$res=$this->http_post($url,$post_data);
+    	return $res;
+    }
 
 }
