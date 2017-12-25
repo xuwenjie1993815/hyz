@@ -122,4 +122,15 @@ class ProductController extends Controller {
 
         	$this->ajaxReturn($res);
         }
+        //即将揭晓
+        public function beingFought()
+        {
+           $info = M('period')->alias('a')->field('a.period_id,b.images,a.target_num,a.now_num')->join('left join hyz_product as b on a.p_id = b.product_id')->where('status_period=1 and target_num !=now_num')->order('target_num-now_num')->limit(3)->select();
+           foreach ($info as $k => $v) {
+               $info[$k]['surplus']= $v['target_num']-$v['now_num'];
+               unset($info[$k]['target_num']);
+               unset($info[$k]['now_num']);
+           }
+           $this->ajaxReturn($info);
+        }
 }
