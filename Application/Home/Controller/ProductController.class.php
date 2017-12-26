@@ -45,6 +45,7 @@ class ProductController extends Controller {
 		$res = M('period')->alias("a")->field('period_id,images,period_time,product_info,target_num,now_num')->join("left join hyz_product as b on a.p_id = b.product_id")->where($where)->order($order_by)->select();
 		foreach ($res as $key => $value) {
 			$res[$key]['surplus_num']=$res[$key]['target_num']-$res[$key]['now_num'];
+            $res[$key]['images'] = explode(',', $value['images']);
 		}
 		if ($res) {
 			$data = array(
@@ -70,6 +71,7 @@ class ProductController extends Controller {
 		$res = M('period')->alias("a")->field('period_id,p_id,images,period_time,product_info,target_num,now_num,price')->join("left join hyz_product as b on a.p_id = b.product_id")->where(array('period_id'=>$product_id))->find();
 		if ($res) {
 			$res['surplus_num']=$res['target_num']-$res['now_num'];
+            $res['images'] = explode(',', $res['images']);
 		}
 		if ($res) {
 			$data = array(
@@ -128,6 +130,7 @@ class ProductController extends Controller {
            $info = M('period')->alias('a')->field('a.period_id,b.images,a.target_num,a.now_num')->join('left join hyz_product as b on a.p_id = b.product_id')->where('status_period=1 and target_num !=now_num')->order('target_num-now_num')->limit(3)->select();
            foreach ($info as $k => $v) {
                $info[$k]['surplus']= $v['target_num']-$v['now_num'];
+               $info[$key]['images'] = explode(',', $v['images']);
                unset($info[$k]['target_num']);
                unset($info[$k]['now_num']);
            }
