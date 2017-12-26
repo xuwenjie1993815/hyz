@@ -180,6 +180,18 @@ class OrderController extends Controller{
     public function cartAdd(){
         $cart_id = $_POST['cart_id'];
         $num = $_POST['product_num'];
+        if(!$cart_id){
+            $ret['status'] = 1;
+            $ret['msg'] = '缺少参数';
+            $this->ajaxReturn($ret);
+        }
+        //状态判断
+        $cart_info = M('cart')->where(array('cart_id' => $cart_id))->find();
+        if (!$cart_info || $cart_info['status'] != 1){
+            $ret['status'] = 2;
+            $ret['msg'] = '参数错误,或已删除';
+            $this->ajaxReturn($ret);
+        }
         if (!$num) {
             $num = 1;
         }
@@ -195,6 +207,24 @@ class OrderController extends Controller{
         $num = $_POST['product_num'];
         if (!$num) {
             $num = 1;
+        }
+        if(!$cart_id){
+            $ret['status'] = 1;
+            $ret['msg'] = '缺少参数';
+            $this->ajaxReturn($ret);
+        }
+        //状态判断
+        $cart_info = M('cart')->where(array('cart_id' => $cart_id))->find();
+        if (!$cart_info || $cart_info['status'] != 1){
+            $ret['status'] = 2;
+            $ret['msg'] = '参数错误,或已删除';
+            $this->ajaxReturn($ret);
+        }
+        //数量判断
+        if ($cart_info['product_num'] - $num < 1){
+            $ret['status'] = 3;
+            $ret['msg'] = '数量不能小于1';
+            $this->ajaxReturn($ret);
         }
         $res = M('cart')->where(array('cart_id' => $cart_id))->setDec('product_num',$num);
         $ret['status'] = 0;
@@ -236,6 +266,14 @@ class OrderController extends Controller{
         try{
             $model->startTrans();
             foreach ($res as $k => $v){
+                //期数目标数量判断
+                if ($v['target_num'] - $v['now_num'] < $v['product_num']){
+                    $ret['status'] = 4;
+                    $D_num = $v['target_num']-$v['now_num'];
+                    $ret['msg'] = '购买商品'."'".$v['product_name']."'".'的数量超过目标期数,改商品最多还能购买'.$D_num.'件';
+                    $this->ajaxReturn($ret);
+                    die;
+                }
                 //返回总金额
                 $price += $v['period_price']*$v['product_num'];
                 $product_num += $v['product_num'];
