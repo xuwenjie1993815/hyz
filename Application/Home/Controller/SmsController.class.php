@@ -4,7 +4,7 @@ use Think\Controller;
 class SmsController extends Controller {
 	public function sms_send()
 	{
-	  $phone= $_POST['phne'];
+	  $phone= $_POST['phone'];
 	  $sign = $_POST['sign'];
 	  $time = $_POST['time'];
 	  $pattern = '/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\d{8})$/';
