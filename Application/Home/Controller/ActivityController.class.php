@@ -148,6 +148,7 @@ class ActivityController extends Controller {
 		//获取订单金额
 		$price = M('activity')->field('price')->where(array('activity_id'=>$activity_id))->find();
 		$order_sn = D('Support')->orderNumber();
+		$lottery_code = 10000001+rand(10,99);
 		$order_arr =array(
 				'order_sn'=>$order_sn,
 				'user_id'=>$user_id,
@@ -158,6 +159,7 @@ class ActivityController extends Controller {
 				'order_status'=>0,
 				'order_time'=>time(),
 				'shipping_status'=>0,
+				'lottery_code'=>$lottery_code
 			);
 		$order_id = M('order')->add($order_arr);
 		//插入数据
@@ -335,6 +337,7 @@ class ActivityController extends Controller {
 		}else{
 			//生产订单
 			$order_sn = D('Support')->orderNumber();
+			$lottery_code = 10000001+rand(10,99);
 			$order_arr =array(
 					'order_sn'=>$order_sn,
 					'user_id'=>$user_id,
@@ -345,6 +348,7 @@ class ActivityController extends Controller {
 					'order_status'=>0,
 					'order_time'=>time(),
 					'shipping_status'=>0,
+					'lottery_code'=>$lottery_code
 				);
 			$order_id = M('order')->add($order_arr);
 			$data = array(
@@ -382,6 +386,7 @@ class ActivityController extends Controller {
 		$user = M('user')->where(array('user_id'=>$user_id))->find();
 		//生成订单
 		$order_sn = D('Support')->orderNumber();
+		$lottery_code = 10000001+rand(10,99);
 		$order_arr =array(
 				'order_sn'=>$order_sn,
 				'user_id'=>$user_id,
@@ -392,6 +397,7 @@ class ActivityController extends Controller {
 				'order_status'=>0,
 				'order_time'=>time(),
 				'shipping_status'=>0,
+				'lottery_code'=>$lottery_code
 			);
 		$order_id = M('order')->add($order_arr);
 		//添加活动到申请表
