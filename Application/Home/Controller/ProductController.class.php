@@ -136,4 +136,22 @@ class ProductController extends Controller {
            }
            $this->ajaxReturn($info);
         }
+        //注意事项
+        public function attention()
+        {
+           $period_id =I('period_id');
+           if (!$period_id) {
+               $data = array(
+                'status'=>1,
+                'msg'=>'期数ID不能为空'
+                );
+            $this->ajaxReturn($data);
+           }
+           $period = M('period')->field('attention')->where(array('period_id'=>$period_id))->find();
+           $data = array(
+                'status'=>0,
+                'msg'=>$period['attention'],
+                );
+            $this->ajaxReturn($data);
+        }
 }
