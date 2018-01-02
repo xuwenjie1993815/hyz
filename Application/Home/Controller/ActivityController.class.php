@@ -247,7 +247,7 @@ class ActivityController extends Controller {
         	$this->ajaxReturn($data);
 		}
 		$activity_id = addslashes($activity_id);
-		$res = M('activity')->field('activity_id,images,activity_info')->where(array('activity_id'=>$activity_id))->find();
+		$res = M('activity')->field('activity_id,images,activity_info,like_info')->where(array('activity_id'=>$activity_id))->find();
 		$data = array(
                 'status'=>0,
                 'msg'=>$res

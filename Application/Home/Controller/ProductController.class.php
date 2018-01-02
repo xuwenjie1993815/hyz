@@ -7,8 +7,16 @@ class ProductController extends Controller {
 	{
 		$type = I('type');//筛选条件
 		$sort = I('sequence');//列表顺序
-        $sort = $_REQUEST['sequence'];
-        $sort= json_decode($sort,true);
+    $sort = $_REQUEST['sequence'];
+    $sort= json_decode($sort,true);
+    $page = I('page');
+    $pageSize = I('pageSize');
+    if (!$page) {
+      $page =1;
+    }
+    if (!$pageSize) {
+      $pageSize =10;
+    }
 		foreach (array_values($sort) as $k => $v){ 
             if ($v == 1) {
                 $p = 'asc';
@@ -42,7 +50,8 @@ class ProductController extends Controller {
 				
 				break;
 		}
-		$res = M('period')->alias("a")->field('period_id,images,period_time,product_info,target_num,now_num')->join("left join hyz_product as b on a.p_id = b.product_id")->where($where)->order($order_by)->select();
+    $start = ($page-1)*$pageSize;
+		$res = M('period')->alias("a")->field('period_id,images,period_time,product_info,target_num,now_num')->join("left join hyz_product as b on a.p_id = b.product_id")->where($where)->order($order_by)->limit($start,$pageSize)->select();
 		foreach ($res as $key => $value) {
 			$res[$key]['surplus_num']=$res[$key]['target_num']-$res[$key]['now_num'];
             $res[$key]['images'] = explode(',', $value['images']);
@@ -154,9 +163,10 @@ class ProductController extends Controller {
             $this->ajaxReturn($data);
            }
            $period = M('period')->field('attention')->where(array('period_id'=>$period_id))->find();
+           $attention = explode(',', $period['attention']);
            $data = array(
                 'status'=>0,
-                'msg'=>$period['attention'],
+                'msg'=>$attention,
                 );
             $this->ajaxReturn($data);
         }
