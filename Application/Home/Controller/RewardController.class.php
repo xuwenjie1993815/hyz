@@ -41,6 +41,10 @@ class RewardController extends Controller {
         $data['period_time'] = $period_info['period_time'];
         $data['period_name'] = $period_info['period_name'];
         $data['status_period'] = $period_info['status_period'];
+        //上期商品详情
+        $last_product_id = M('period')->field('p_id')->where(array('period_time' => array('LT',$period_info['period_time'],'status_period' => '1','order_product_id' => array('neq',''))))->find();
+        $last_product_info = M('product')->where(array('product_id' => $last_product_id['p_id']))->find();
+        $data['last_product_info'] = $last_product_info;
         //下期正常众筹的期次
         $next_period_info = M('period')->where(array('period_time' => array('GT',$period_info['period_time'],'status_period' => '1')))->find();
         $data['next_period_time'] = $next_period_info['period_time'];
