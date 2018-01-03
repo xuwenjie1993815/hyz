@@ -534,6 +534,12 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
+        if ($period_info['now_num'] >= $period_info['target_num']) {
+            $ret['status'] = 5;
+            $ret['msg'] = '此活动已达到目标数量,无法购买';
+            $this->ajaxReturn($ret);
+            die;
+        }
         if ($period_info['p_id'] != $period_id) {
             $ret['status'] = 6;
             $ret['msg'] = '参数错误';
