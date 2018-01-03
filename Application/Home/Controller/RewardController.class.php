@@ -5,7 +5,7 @@ class RewardController extends Controller {
     //获取中奖信息
     public function rewardInfo() {
         $user_id = $_POST['user_id'];
-        $period_id = $_POST['period_id'];
+        $period_id = $_POST['period_id']?:1;
         if (!$period_id) {
             $ret['status'] = 1;
             $ret['msg'] = '缺少参数';
@@ -38,6 +38,8 @@ class RewardController extends Controller {
         $data['now_num'] = $period_info['now_num'];
         $data['reward_number'] = $reward_info['reward_number'];
         $data['images'] = $product_info['images'];
+        $data['product_name'] = $product_info['product_name'];
+        $data['price'] = $product_info['price'];
         $data['period_time'] = $period_info['period_time'];
         $data['period_name'] = $period_info['period_name'];
         $data['status_period'] = $period_info['status_period'];
