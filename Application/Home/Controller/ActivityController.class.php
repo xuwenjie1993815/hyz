@@ -27,7 +27,7 @@ class ActivityController extends Controller {
 	{
 		$activity_id = I('activity_id');
 		$activity_id = addslashes($activity_id);
-		$res = M('activity')->field('activity_id,target_num,images,activity_name,price,now_num,stop_time,activity_info,like_info')->where(array('activity_id'=>$activity_id))->find();
+		$res = M('activity')->field('activity_id,target_num,images,activity_name,price,now_num,stop_time,activity_info,like_info,title')->where(array('activity_id'=>$activity_id))->find();
 		if ($res) {
 			$data = array(
                 'status'=>0,
@@ -247,7 +247,7 @@ class ActivityController extends Controller {
         	$this->ajaxReturn($data);
 		}
 		$activity_id = addslashes($activity_id);
-		$res = M('activity')->field('activity_id,images,activity_info,like_info')->where(array('activity_id'=>$activity_id))->find();
+		$res = M('activity')->field('activity_id,images,activity_info,like_info,title')->where(array('activity_id'=>$activity_id))->find();
 		$data = array(
                 'status'=>0,
                 'msg'=>$res
