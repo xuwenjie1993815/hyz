@@ -13,8 +13,8 @@ class RewardController extends Controller {
             die;
         }
         //中奖信息
-        $period_info = M('reward')->where(array('period_id' => $period_id))->find();
-        if (!$period_info) {
+        $reward_info = M('reward')->where(array('period_id' => $period_id))->find();
+        if (!$reward_info) {
             $ret['status'] = 2;
             $ret['msg'] = '找不到对应信息';
             $this->ajaxReturn($ret);
@@ -41,9 +41,10 @@ class RewardController extends Controller {
         $data['period_time'] = $period_info['period_time'];
         $data['period_name'] = $period_info['period_name'];
         $data['status_period'] = $period_info['status_period'];
-        //下期状态
-        $next_period_info = M('period')->where(array('period_time' => $period_info['period_time']+1))->find();
-        $data['next_status_period'] = $next_period_info['status_period'];
+        //下期正常众筹的期次
+        $next_period_info = M('period')->where(array('period_time' => array('GT',$period_info['period_time'],'status_period' => '1')))->find();
+        $data['next_period_time'] = $next_period_info['period_time'];
+        $data['next_period_id'] = $next_period_info['period_id'];
         //晒单量
         $data['comment_num'] = M('comment')->where(array('source_id' => $period_id))->count();
         $ret['status'] = 0;
@@ -67,10 +68,11 @@ class RewardController extends Controller {
 
     //期次列表
     public function getPeriodList(){
-        $period_list = M('period')->field('period_id')->where(array('status_period'=> array('eq',2)))->select();
+        $period_list = M('period')->field('period_id,period_time')->where(array('status_period'=> array('eq',2)))->select();
         foreach ($period_list as $k => $v){
-            $list[] = $v['period_id'];
+            $list[$v['period_time']] = $v['period_id'];
         }
+        $list['period_sum'] = count($period_list);
         $ret['status'] = 0;
         $ret['msg'] = '获取成功';
         $ret['data'] = $list;
