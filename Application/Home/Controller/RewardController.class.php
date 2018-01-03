@@ -65,5 +65,17 @@ class RewardController extends Controller {
         $this->ajaxReturn($ret);
     }
 
+    //期次列表
+    public function getPeriodList(){
+        $period_list = M('period')->field('period_id')->where(array('status_period'=> array('eq',2)))->select();
+        foreach ($period_list as $k => $v){
+            $list[] = $v['period_id'];
+        }
+        $ret['status'] = 0;
+        $ret['msg'] = '获取成功';
+        $ret['data'] = $list;
+        $this->ajaxReturn($ret);
+    }
+
     //用户待兑奖列表
 }

@@ -24,14 +24,19 @@ class CommentController extends Controller{
                 unset($comment_info[$k]);
                 continue;
             }
-            $comment_info[$k]['images'] = explode(',',$v['images']);
+            if ($v['images']){
+                $comment_info[$k]['images'] = explode(',',$v['images']);
+            }else{
+                $comment_info[$k]['images'] = [];
+            }
+
             $comment_info[$k]['ctime'] = D('Support')->check_time($v['ctime']);
             $comment_info[$k]['content'] = $v['content'];
-             if(base64_encode(base64_decode($v['content'])) ? true : false){
-                 $comment_info[$k]['content'] = base64_decode($v['content']);
-             }else{
-                 $comment_info[$k]['content'] = $v['content'];
-             }
+//             if(base64_encode(base64_decode($v['content'])) ? true : false){
+//                 $comment_info[$k]['content'] = base64_decode($v['content']);
+//             }else{
+//                 $comment_info[$k]['content'] = $v['content'];
+//             }
             //筛选子评论
             $comment_info[$k]['comment_count'] = M('comment')->where(array('comment_type' => 2,'comment_status' => 1,'pid' => $v['comment_id']))->count();
         }
@@ -65,11 +70,11 @@ class CommentController extends Controller{
         $comment_info = M('comment')->alias('c')->join($join)->field($field)->where($where)->select();
         foreach ($comment_info as $k => $v){
             $comment_info[$k]['ctime'] = D('Support')->check_time($v['ctime']);
-             if(base64_encode(base64_decode($v['content'])) ? true : false){
-                 $comment_info[$k]['content'] = base64_decode($v['content']);
-             }else{
-                 $comment_info[$k]['content'] = $v['content'];
-             }
+//             if(base64_encode(base64_decode($v['content'])) ? true : false){
+//                 $comment_info[$k]['content'] = base64_decode($v['content']);
+//             }else{
+//                 $comment_info[$k]['content'] = $v['content'];
+//             }
             //筛选子评论
 //            $comment_info[$k]['comment_count'] = M('comment')->where(array('comment_type' => 2,'comment_status' => 1,'pid' => $v['comment_id']))->count();
         }
@@ -97,11 +102,11 @@ class CommentController extends Controller{
         $comment_info = M('comment')->alias('c')->join($join)->field($field)->where($where)->select();
         foreach ($comment_info as $k => $v){
             $comment_info[$k]['ctime'] = D('Support')->check_time($v['ctime']);
-             if(base64_encode(base64_decode($v['content'])) ? true : false){
-                 $comment_info[$k]['content'] = base64_decode($v['content']);
-             }else{
-                 $comment_info[$k]['content'] = $v['content'];
-             }
+//             if(base64_encode(base64_decode($v['content'])) ? true : false){
+//                 $comment_info[$k]['content'] = base64_decode($v['content']);
+//             }else{
+//                 $comment_info[$k]['content'] = $v['content'];
+//             }
             //筛选子评论
             $comment_info[$k]['comment_count'] = M('comment')->where(array('comment_type' => 2,'comment_status' => 1,'pid' => $v['comment_id']))->count();
         }
@@ -113,7 +118,7 @@ class CommentController extends Controller{
         $comment_type = $_POST['comment_type'];
         $source_id = $_POST['source_id'];
         $pid = $_POST['pid'];
-        $content = base64_encode($_POST['content']);
+        $content = $_POST['content'];
         $user_id = $_POST['user_id'];
         //确认用户登陆
         if (!$user_id) {
@@ -128,11 +133,11 @@ class CommentController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
-        if ($_FILES) {
+        if ($_FILES['images0']['size']) {
             $images = D('Support')->upload();
             $images = implode(',',$images);
         }
-        $images = implode(',', $images);
+
         $data['comment_type'] = $comment_type;
         $data['source_id'] = $source_id;
         $data['ctime'] = time();
