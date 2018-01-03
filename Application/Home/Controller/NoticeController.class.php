@@ -16,9 +16,16 @@ class NoticeController extends Controller
             $this->ajaxReturn($ret);
             die;
         }
-        $where['notice_status'] = '1';
-        $where['user_id'] = $user_id;
-        $notice_list = M('notice')->where($where)->select();
+        if ($_POST['type']){
+            $where['n.type'] = $_POST['type'];
+        }
+        $where['n.notice_status'] = '1';
+        $where['n.user_id'] = $user_id;
+        $join = 'hyz_admin as a on a.id = n.shop_id';
+        $notice_list = M('notice')->alias('n')->join($join)->field('n.notice_title,n.content,n.add_time,a.nick_name')->where($where)->select();
+        foreach ($notice_list as $k => $v){
+           $notice_list[$k]['add_time'] = D('Support')->check_time($v['add_time']);
+        }
         $ret['status'] = 0;
         $ret['msg'] = '获取成功';
         $ret['data'] = $notice_list;
@@ -44,8 +51,10 @@ class NoticeController extends Controller
             $this->ajaxReturn($ret);
             die;
         }
-        $where['notice_id'] = $notice_id;
-        $notice_info = M('notice')->where($where)->find();
+        $where['n.notice_id'] = $notice_id;
+        $join = 'hyz_admin as a on a.id = n.shop_id';
+        $notice_info = M('notice')->alias('n')->join($join)->field('n.*,a.nick_name')->where($where)->find();
+        $notice_info['add_time'] = D('Support')->check_time($notice_info['add_time']);
         if (!$notice_info){
             $ret['status'] = 3;
             $ret['msg'] = '获取失败';
@@ -58,7 +67,7 @@ class NoticeController extends Controller
             $this->ajaxReturn($ret);
             die;
         }
-        if($notice_info['user_id'] !== $user_id){
+        if($notice_info['user_id'] != $user_id){
             $ret['status'] = 5;
             $ret['msg'] = '您无权查看';
             $this->ajaxReturn($ret);
