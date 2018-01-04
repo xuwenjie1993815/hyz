@@ -39,6 +39,7 @@ class RewardController extends Controller {
         $data['ctime'] = D('Support')->check_time($reward_info['ctime']);
         $data['now_num'] = $period_info['now_num'];
         $data['target_num'] = $period_info['target_num'];
+        $data['surplus_num'] = $period_info['target_num']-$period_info['now_num'];
         $data['reward_number'] = $reward_info['reward_number'];
         $data['images'] = $product_info['images'];
         $data['product_id'] = $product_info['product_id'];
