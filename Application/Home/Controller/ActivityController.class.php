@@ -57,7 +57,7 @@ class ActivityController extends Controller {
 		$phone = I('phone');
 		$company = I('company');
 		$address = I('address');
-		$djson = I('djson');
+		$djson = htmlspecialchars_decode(I('djson'));
 		if (!$user_id) {
 			$data = array(
                 'status'=>1,
