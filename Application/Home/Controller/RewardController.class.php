@@ -5,7 +5,7 @@ class RewardController extends Controller {
     //获取中奖信息
     public function rewardInfo() {
         $user_id = $_POST['user_id'];
-        $period_id = $_POST['period_id']?:1;
+        $period_id = $_POST['period_id'];
         if (!$period_id) {
             $ret['status'] = 1;
             $ret['msg'] = '缺少参数';
@@ -32,14 +32,20 @@ class RewardController extends Controller {
         $product_info = M('product')->where(array('product_id' => $period_info['p_id']))->find();
         //用户信息
         $user_info = M('user')->where(array('user_id' => $reward_info['user_id']))->find();
+        //订单信息
+        $order_info = M('order')->where(array('order_id' => $reward_info['order_id']))->find();
         $data['user_img'] = $user_info['user_img'];
         $data['user_name'] = $user_info['user_name'];
         $data['ctime'] = D('Support')->check_time($reward_info['ctime']);
         $data['now_num'] = $period_info['now_num'];
+        $data['target_num'] = $period_info['target_num'];
         $data['reward_number'] = $reward_info['reward_number'];
         $data['images'] = $product_info['images'];
+        $data['product_id'] = $product_info['product_id'];
         $data['product_name'] = $product_info['product_name'];
         $data['price'] = $product_info['price'];
+        $data['order_time'] = D('Support')->check_time($order_info['order_time']);
+        $data['period_id'] = $period_info['period_id'];
         $data['period_time'] = $period_info['period_time'];
         $data['period_name'] = $period_info['period_name'];
         $data['status_period'] = $period_info['status_period'];
