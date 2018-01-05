@@ -5,8 +5,9 @@ class ActivityController extends Controller {
 	//活动列表
 	public function activityList()
 	{
-		$res = M('activity')->field('activity_id,images,title,activity_type')->where(array('status'=>1))->order('ctime desc')->select();
-		if ($res) {$data = array(
+		$res = M('activity')->field('activity_id,images,title,activity_type')->where('status=1 and now_num!=target_num'))->order('ctime desc')->select();
+		if ($res) {
+			$data = array(
                 'status'=>0,
                 'msg'=>$res
            	);
