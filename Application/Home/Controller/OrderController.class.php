@@ -396,6 +396,7 @@ class OrderController extends Controller{
         }
         //点赞抽奖订单apply order activity
         $join_a = "hyz_apply AS a ON a.apply_id = o.apply_id";
+        $join_b = "hyz_activity AS ac ON ac.activity_id = a.activity_id";
         $where_apply['o.order_type'] = 3;//参与点赞订单
         $field_apply = 'o.*, ac.*,a.*';
         $res_dz = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
@@ -514,7 +515,7 @@ class OrderController extends Controller{
             die;
         }
         //检查商品状态和活动状态
-        $product_info = M('product')->where(array('product_id' => $period_id))->find();
+        $product_info = M('product')->where(array('product_id' => $product_id))->find();
         $period_info = M('period')->where(array('period_id' => $period_id))->find();
         if (!$product_info || !$period_info) {
             $ret['status'] = 3;
@@ -540,7 +541,7 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
-        if ($period_info['p_id'] != $period_id) {
+        if ($period_info['p_id'] != $product_id) {
             $ret['status'] = 6;
             $ret['msg'] = '参数错误';
             $this->ajaxReturn($ret);
