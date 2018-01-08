@@ -1,0 +1,18 @@
+[ 2018-01-09T00:00:02+08:00 ] 127.0.0.1 /product/getProductList
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+NOTIC: [8] Undefined index: sequence E:\hyz\Application\Home\Controller\ProductController.class.php 第 10 行.
+NOTIC: [2] array_values() expects parameter 1 to be array, null given E:\hyz\Application\Home\Controller\ProductController.class.php 第 20 行.
+NOTIC: [2] Invalid argument supplied for foreach() E:\hyz\Application\Home\Controller\ProductController.class.php 第 20 行.
+NOTIC: [8] Undefined variable: order E:\hyz\Application\Home\Controller\ProductController.class.php 第 28 行.
+NOTIC: [2] Invalid argument supplied for foreach() E:\hyz\Application\Home\Controller\ProductController.class.php 第 28 行.
+NOTIC: [8] Undefined variable: order_arr E:\hyz\Application\Home\Controller\ProductController.class.php 第 31 行.
+NOTIC: [2] implode(): Invalid arguments passed E:\hyz\Application\Home\Controller\ProductController.class.php 第 31 行.
+SQL: SHOW COLUMNS FROM `hyz_period` [ RunTime:0.1810s ]
+NOTIC: [8] Undefined variable: where E:\hyz\Application\Home\Controller\ProductController.class.php 第 54 行.
+SQL: SELECT `period_id`,`images`,`period_time`,`product_info`,`target_num`,`now_num` FROM hyz_period a left join hyz_product as b on a.p_id = b.product_id  WHERE ( target_num != now_num ) LIMIT 0,10   [ RunTime:0.0900s ]
+

@@ -51,8 +51,8 @@ class ProductController extends Controller {
 				break;
 		}
     $start = ($page-1)*$pageSize;
-		$res = M('period')->alias("a")->field('period_id,images,period_time,product_info,target_num,now_num')->join("left join hyz_product as b on a.p_id = b.product_id")->where($where)->order($order_by)->limit($start,$pageSize)->select();
-		foreach ($res as $key => $value) {
+		$res = M('period')->alias("a")->field('period_id,images,period_time,product_info,target_num,now_num')->join("left join hyz_product as b on a.p_id = b.product_id")->where($where)->where('target_num != now_num')->order($order_by)->limit($start,$pageSize)->select();
+                foreach ($res as $key => $value) {
                     if($res[$key]['target_num'] == $res[$key]['now_num']){
 				unset($res[$key]);
 				continue;
