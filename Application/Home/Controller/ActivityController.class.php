@@ -331,7 +331,7 @@ class ActivityController extends Controller {
 			$res = M('apply')->where(array('apply_id'=>$apply_id))->save($update);
 			$data = array(
                 'status'=>0,
-                'msg'=>$check['like_num']+1,
+                'msg'=>$count+1,
                 'type'=>'1'//代表免费点赞
            	);
         	$this->ajaxReturn($data);
