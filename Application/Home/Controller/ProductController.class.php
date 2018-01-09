@@ -51,7 +51,7 @@ class ProductController extends Controller {
 				break;
 		}
     $start = ($page-1)*$pageSize;
-		$res = M('period')->alias("a")->field('period_id,images,period_time,product_info,price,target_num,now_num')->join("left join hyz_product as b on a.p_id = b.product_id")->where($where)->where('target_num != now_num')->order($order_by)->limit($start,$pageSize)->select();
+		$res = M('period')->alias("a")->field('period_id,images,period_time,product_info,price,target_num,now_num,period_price')->join("left join hyz_product as b on a.p_id = b.product_id")->where($where)->where('target_num != now_num')->order($order_by)->limit($start,$pageSize)->select();
 		foreach ($res as $key => $value) {
 			
 			$res[$key]['surplus_num']=$res[$key]['target_num']-$res[$key]['now_num'];
@@ -78,7 +78,7 @@ class ProductController extends Controller {
 	{
 		$product_id = I('product_id');
 		$product_id = addslashes($product_id);
-		$res = M('period')->alias("a")->field('period_id,p_id,images,period_time,product_info,target_num,now_num,price')->join("left join hyz_product as b on a.p_id = b.product_id")->where(array('period_id'=>$product_id))->find();
+		$res = M('period')->alias("a")->field('period_id,p_id,images,period_time,product_info,target_num,now_num,price,period_price')->join("left join hyz_product as b on a.p_id = b.product_id")->where(array('period_id'=>$product_id))->find();
 		if ($res) {
 			$res['surplus_num']=$res['target_num']-$res['now_num'];
             $res['images'] = explode(',', $res['images']);
