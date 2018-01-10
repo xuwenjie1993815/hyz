@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.sings{padding: 15px;box-sizing: border-box;}
+			.sings p,.sings div{font-size: 16px;color: #605F60;}
+			.ling-45{line-height: 36px;}
+			.mui-btn-warning{background: #F95E17;}
+			.color-red{color: #F92626 !important;}
+			.mui-btn{letter-spacing: 2px;font-size: 16px;}
+			.mui-scroll-wrapper{bottom: 0;}
+		</style>
+	</head>
+	<body>
+		<header title="活动详情" data-index = "2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+					<div class="sings" v-cloak>
+						<p>{{myData.activity_name}}</p>
+						<img class="width-100" src="http://img1.imgtn.bdimg.com/it/u=1641239669,2780739600&fm=27&gp=0.jpg" :src="myData.images"/>
+						<p>{{myData.activity_info}}</p>
+						<div class="baoming">
+							<div class="color-red">报名费：{{myData.price}}元</div>
+							<div>已报名：<span class="color-red">{{myData.now_num}}</span>人</div>
+							<div class="mt-15">报名截止时间：{{myData.stop_time | change}}</div>
+						</div>
+						<div style="margin-top: 30px;">
+							<button @click="check(myData.stop_time)" type="button" class="mui-btn mui-btn-warning width-100 ling-45">我要报名</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			
+			var activeId=document.URL.split("?")[1].split("=")[1];
+			mui.post(pulicHttp+"Activity/activityDetail",{activity_id:activeId},function(data){
+					if(data.status==0){
+						
+						var app=new Vue({
+							el:'.sings',
+							data:{
+								myData:data.msg
+							},
+							filters:{
+								change:function(val){
+								    return timestamp(val*1000);
+								}
+							},
+							methods:{
+								check:function(time){
+									if(checkLogin()){
+										login();
+										return;
+									}
+									var _this=this;
+									
+									mui.post(pulicHttp+"Activity/checkEnrol",{user_id:localStorage.userID,activity_id:activeId},function(data){
+										console.log(JSON.stringify(data))
+										
+										if(data.status==0){
+											var newDate=new Date();
+											var newTime=newDate.getTime()/1000;
+											if(time-newTime<0){
+												mui.toast("该活动已过期","提示");return;
+											}else{
+												mui.openWindow({
+												    url:"active_form.html?activeid="+_this.myData.activity_id,
+												    id:"active_form.html?activeid="+_this.myData.activity_id,
+												    extras:{
+												      //自定义扩展参数，可以用来处理页面间传值
+												    },
+												    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+												    show:{
+												      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+												      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+												    },
+												})
+											}
+											
+										}else if(data.status==2){
+											mui.alert("你已经报名","提示");
+										}
+									})
+									
+								}
+							}
+						})
+					}
+				}
+			);
+		})()
+		
+	</script>
+</html>

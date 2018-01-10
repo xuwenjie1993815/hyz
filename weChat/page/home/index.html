@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.mui-slider{height: 50vw;background: url(../../image/loading.jpg) center;}
+			.center_img{border-left: 1px solid #F1F1F1;border-right: 1px solid #F1F1F1;}
+			.list-shopping{width: 50%;border-bottom: 1px solid #F2F0F1;padding: 10px;}
+			.list-shopping-top{height:120px;overflow:hidden;padding: 20px 0;box-sizing: border-box;}
+			.list-shopping img{width: 60%;height: 100%;}
+			.mui-progressbar{height: 4px;background: #EEEBEC;}
+			.mui-progressbar span{background: #EA510E;}
+			.canyu{line-height: 16px;}
+			.sy{height: 20vw;width: 60%;}
+		</style>
+	</head>
+	<body>
+		<div class="mui-bar mui-bar-nav mui-bar-top">
+		    <div class="color-fff flex just-bween ali-item">
+		    	<a href="kinds.html"><div class="fontsize-12"><div class="dingwei"><span class="mui-icon mui-icon-list"></span></div>分类</div></a>
+				<div class="header_title" style="text-indent: 0;">好运兆</div>
+				<a href="location.html"><div class="fontsize-12"><div class="dingwei"><span class="mui-icon mui-icon mui-icon-location"></span></div><span class="dw"></span></div></a>
+		    </div>
+		</div>
+		<div class="mui-content">
+			<!--图片轮播-->
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+				    <div class="mui-slider">
+					  <div class="mui-slider-group mui-slider-loop">
+					    <!--支持循环，需要重复图片节点-->
+					  </div>
+					  <div class="mui-slider-indicator">
+						</div>
+					</div>
+					<div id="shoppings" v-cloak>
+						<ul class="mui-table-view">
+						    <li class="mui-table-view-cell color-org">
+						        <a href="kinds.html" class="mui-navigate-right">即将揭晓</a>
+						    </li>
+						</ul>
+						<div class="flex pa-30 back-fff pb-10">
+							<a class="flex1 mui-text-center" v-for="item in jiexiao" :href="'shopping.html?shoppingid='+item.period_id">
+								<img class="sy mt-10" :src="item.images"/>
+								<div>剩余<span class="color-org">{{item.surplus}}</span>人</div>
+							</a>
+						</div>
+						<ul class="mui-table-view mt-10" v-show="huojiang.user_name">
+							 <li class="mui-table-view-cell color-hui">
+							 	<a href="look.html" class="text_elli">
+									<i class="iconfont icon-xiaoxi color-org mui-icon" style="font-size: 24px;position: relative;top: 4px;right: 5px;"></i>恭喜<span class="color-org">{{huojiang.user_name}}</span>
+									获得{{huojiang.product_name}}一份
+								</a>
+							 </li>
+						</ul>
+						<ul class="mui-table-view mt-10">
+						    <li class="mui-table-view-cell color-org">
+						        <a href="kinds.html" class="mui-navigate-right">最热推荐</a>
+						    </li>
+						</ul>
+						<div class="flex flex-wrap pa-15 back-fff">
+							<a class="list-shopping" v-for="item in listDtate" :href="'shopping.html?shoppingid='+item.period_id">
+								<div class="mui-text-center fontsize-12">
+									<div class="list-shopping-top">
+										<img :src="item.images[0]" />
+										<span class="color-blue">{{item.price}}</span>元
+									</div>
+									<div class="mui-progressbar demo1">
+										<span class="scroo">{{100/(item.target_num/item.now_num)}}</span>
+									</div>
+									<div class="flex just-bween canyu">
+										<div class="mui-text-left fontsize-10">
+											<span>{{item.now_num}}</span>
+											<div>已参与</div>
+										</div>
+										<div class="mui-text-center fontsize-10">
+											<span>{{item.target_num}}</span>
+											<div>总需人数</div>
+										</div>
+										<div class="mui-text-right fontsize-10">
+											<span class="color-blue">{{item.surplus_num}}</span>
+											<div>剩余</div>
+										</div>
+									</div>
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer title="0"></footer>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var app=new Vue({
+				el:'#shoppings',
+				data:{
+					listDtate:JSON.parse(localStorage.getItem("listDtate")),
+					jiexiao:'',
+					huojiang:'',
+				},
+				created:function(){
+					var _this=this;
+					mui.post(pulicHttp+"product/beingFought",function(data){
+//						console.log(222,JSON.stringify(data)) //即将揭晓
+						_this.jiexiao=data;
+					})
+					mui.post(pulicHttp+"Reward/getPeriodList",function(data){
+						if(data.status==0){
+//							console.log(JSON.stringify(data))//获取最新一期信息中奖者
+							localStorage.timeNum=JSON.stringify(data.data);
+							var num=data.data.period_sum;
+							mui.post(pulicHttp+"Reward/rewardInfo",{
+								period_id:JSON.parse(localStorage.timeNum)[num]
+							},function(data){
+								if(data.status==0){
+									_this.huojiang=data.data
+//									console.log(333,JSON.stringify(data))
+								}
+							})
+						}
+					})
+				}
+			})
+			mui.post(pulicHttp+"/Product/getProductList",{
+					type:'1',
+					sequence:'1',
+					page:'1',
+					pageSize:'8'
+			},function(data){
+					console.log(JSON.stringify(data))
+					if(data.status==0){
+						app.listDtate=data.msg;
+						localStorage.setItem("listDtate",JSON.stringify(data.msg));
+						//dom更新后执行操作
+						Vue.nextTick().then(function () {
+						    mui(".scroo").each(function(){
+								var zhi=100-parseFloat(this.innerText);
+								this.style.transform="translate3d(-"+zhi+"%, 0px, 0px)"
+							})
+						})
+					}
+				}
+			);
+			mui.post(pulicHttp+"index/indexCarousel",function(data){
+//				console.log(JSON.stringify(data))//轮播图
+				var img=data.data;
+				var myimg='<div class="mui-slider-item mui-slider-item-duplicate"><a href="shopping.html?shoppingid='+img[0].product_id+'"><img src="'+img[0].imgurl+'" /></a></div>';
+				var silder=''
+				for (var i=0;i<img.length;i++) {
+					myimg+='<div class="mui-slider-item"><a href="shopping.html?shoppingid='+img[i].product_id+'"><img src="'+img[i].imgurl+'" /></a></div>';
+					if(i==0){
+						silder+='<div class="mui-indicator mui-active"></div>'
+					}else{
+						silder+='<div class="mui-indicator"></div>'
+					}
+				}
+				myimg+='<div class="mui-slider-item mui-slider-item-duplicate"><a href="shopping.html?shoppingid='+img[img.length-1].product_id+'"><img src="'+img[img.length-1].imgurl+'" /></a></div>';
+				document.getElementsByClassName("mui-slider-group")[0].innerHTML=myimg;
+				document.getElementsByClassName("mui-slider-indicator")[0].innerHTML=silder;
+				var gallery = mui('.mui-slider');
+				gallery.slider({
+					  interval:3000//自动轮播周期，若为0则不自动播放，默认为0；
+				});
+			})
+			mui.init({
+				swipeBack:false 
+			});
+			
+			document.getElementsByClassName("dw")[0].innerText=localStorage.city||"重庆";
+			
+		})()
+	</script>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>提示</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.shopping_img{width: 100px;height: 100px;}
+			.shopping_img img{width: 80px;height: 80px;margin: 10px;}
+			.list-shopping{padding: 15px;box-sizing: border-box;}
+			.text_elli{height: 21px;white-space: initial;}
+			button{width: 90%;background: #EA5312;color: #fff;border-color: #EA5312;border-radius: 4px;margin:auto;display: block;padding: 0;}
+		</style>
+	</head>
+	<body>
+		<header title="购物车" data-index="2" class="liingight-45"></header>
+		<div class="mui-content">
+			<div class="mui-scroll-wrapper back-fff">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+				  	<div class="all" v-cloak="">
+						<div style="margin-top:50vw;text-align: center;color: #CCCCCC;" v-show="ishow">
+							<span class="iconfont icon-gouwuche1" style="font-size: 50vw;position: relative;"></span>
+							<div class="mt-30">主人，小奴现在的饥肠空空<br />，快去让我的元气满满吧</div>
+						</div>
+						<div v-show="!ishow">
+							<div class="flex list-shopping border-bottom-hui" v-for="(item,key) in listDate">
+								<div class="shopping_img">
+									<img :src="item.images"/>
+								</div>
+								<div class="flex1 pl-10">
+									<div class="flex1 text_elli">[第{{item.period_time}}期]{{item.product_name}}</div>
+									<div class="color-bbb">剩余<span class="color-blue">{{item.target_num-item.now_num}}</span>人次</div>
+									<div class="color-bbb">总共购买{{item.now_num}}人次/<span class="color-org">￥{{item.price}}</span>元</div>
+									<div class="flex just-bween" style="margin-top: 5px;">
+										<div>
+											<div class="mui-numbox" data-numbox-step='1' data-numbox-min='0'>
+											  <div @click="del(key,item.cart_id)" style="position: absolute;left: 0;width: 40px;height: 33px;opacity: 0;z-index: 100;">减</div>
+											  <button class="mui-btn mui-numbox-btn-minus" type="button" @click="del(key,item.cart_id)">-</button>
+											  <input class="mui-numbox-input color-org" type="number" v-model="item.product_num" @change="change"/>
+											  <button class="mui-btn mui-numbox-btn-plus" type="button" @click="add(key,item.carid)">+</button>
+											  <div @click="add(key,item.cart_id)" style="position: absolute;right: 0;top: 0;width: 40px;height: 33px;opacity: 0;z-index: 100;">加</div>
+											</div>
+										</div>
+										<span class="mui-icon mui-icon-trash" style="margin-top: 5px;color: #CDCDCD;" @click="delItem(key,item.cart_id)"></span>
+									</div>
+								</div>
+							</div>
+							<div  v-show="!ishow" class="text-center color-bbb liingight-45">总共购买<span class="color-org">{{kes}}</span>个商品，合计：<span class="color-org">{{allMonye}}</span>元</div>
+							<div  v-show="!ishow">
+								<button @click.stop="jiesuan" type="button" class="liingight-45">结&nbsp;&nbsp;算</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer title="2"></footer>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			
+			if(checkLogin()){
+				login();
+				return;
+			}
+			var shu='';
+			if(localStorage.getItem("shopping")){
+				shu=JSON.parse(localStorage.getItem("shopping"));
+			}
+			var app=new Vue({
+				el:'.all',
+				data:{
+					listDate:shu,
+					kes:0,
+					allMonye:0,
+					ishow:false
+				},
+				methods:{
+					jiesuan:function(){
+						
+						mui.post(pulicHttp+"Order/cart_order",{
+							user_id:localStorage.userID
+						},function(data){
+							
+							if(data.status==0){
+								myOpen("paly.html");
+							}
+						})
+					},
+					change:function(){
+						var _this=this;
+						_this.allMonye=0;
+						_this.kes=0;
+						for(var i in _this.listDate){
+							_this.allMonye += parseInt(_this.listDate[i].product_num)*parseFloat(_this.listDate[i].price);
+							_this.kes+=parseInt(_this.listDate[i].product_num);
+						}
+					},
+					del:function(index,carid){
+						if(this.listDate[index].product_num<=0){
+							mui.toast("不能小于0");return;
+						}
+						var _this=this;
+						
+						mui.post(pulicHttp+"Order/cartReduce",{cart_id:carid},function(data){
+							console.log(JSON.stringify(data))
+							
+							if(data.status==0){
+								_this.listDate[index].product_num--;
+								_this.change();
+							}else{
+								mui.toast(data.msg)
+							}
+						})
+					},
+					add:function(index,carid){
+						var _this=this;
+						
+						mui.post(pulicHttp+"Order/cartAdd",{cart_id:carid},function(data){
+							console.log(JSON.stringify(data))
+							
+							if(data.status==0){
+								_this.listDate[index].product_num++;
+								_this.change();
+							}else{
+								mui.toast(data.msg)
+							}
+						})
+					},
+					delItem:function(ins,num){
+						//删除某个商品
+						var _this=this;
+						mui.confirm('你确定要删除吗，确认？', '提示', ['否', '是'], function(e) {
+		                    if (e.index == 1) {
+		                    	
+		                        mui.post(pulicHttp+"Order/delCart",{
+										user_id:localStorage.userID,
+										cart_id:num,
+									},function(data){
+										
+										console.log(JSON.stringify(data))
+										if(data.status==0){
+											_this.listDate.splice(ins,1);
+											_this.change();
+										}
+										if(_this.listDate.length==0){
+											_this.ishow=true;
+										}
+										mui.toast(data.msg);
+									}
+								);
+		                    }
+		                },"div")
+					}
+				},
+				created:function(){
+					this.change();
+				},
+			})
+			mui.post(pulicHttp+"order/cartList",{
+				user_id:localStorage.userID
+			},function(data){
+				console.log("购物车",JSON.stringify(data))
+				
+				if(data.status==0){
+					app.listDate=data.msg;
+					localStorage.setItem("shopping",JSON.stringify(data.msg))
+					app.change();
+				}else if(data.status==1){
+					//未登录
+					mui.toast(data.msg);
+					mui.later(function(){
+						login();
+					},500);
+				}else if(data.status==2){
+					app.ishow=true;
+					localStorage.setItem("shopping",JSON.stringify({}));
+				}
+			});
+		})()
+	</script>
+</html>

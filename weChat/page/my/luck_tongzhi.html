@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.mui-scroll-wrapper{bottom: 0;}
+			.mr-10{margin-right: 10px;}
+			.mt-5{margin-top: 5px;}
+		</style>
+	</head>
+	<body>
+		<header title="中奖通知" class="liingight-45" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+		    		<div class="flex fl-colum back-fff modal_bottom">
+		    			<div class="border-bottom-hui flex">
+		    				<div class="mr-10"><img src="../../image/lucy.png" width="50" height="50"/></div>
+		    				<div class="flex fl-colum">
+		    					<div class="mt-5">中奖通知</div>
+		    					<div class="color-hui shijians"></div>
+		    				</div>
+		    			</div>
+		    			<div class="mt-10 cont"></div>
+		    		</div>
+		    	</div>
+	    	</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var all=plus.webview.currentWebview();
+			document.querySelector(".shijians").innerHTML=all.add_time;
+			document.querySelector(".cont").innerHTML=all.content
+		})()
+	</script>
+</html>

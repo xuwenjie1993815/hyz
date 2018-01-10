@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.user-data{padding:15px 15px 10px}
+			.head-pl{position: fixed;top: 45px;z-index:99;line-height: 40px;padding: 4px;box-sizing: border-box;box-shadow: 0 1px 4px 2px #E2E4E5;}
+			.head-pl input[type=text]{margin-bottom: 0;}
+			.fb{padding:0 10px;background: #EA5312;color: #fff;height: 32px;line-height: 32px;margin: 4px 5px 0 0;}
+			.mr-10{margin-right: 10px;}
+			.mt-40{margin-top: 53px;}
+			li{background: #fff;margin-bottom: 5px;display: flex;flex-direction: column;padding-bottom: 6px;}
+			.user-img{width: 50px;height: 50px;border-radius: 50%;overflow: hidden;margin-right: 10px;}
+			.mui-scroll-wrapper{bottom: 0;}
+			.plq-text{width:100%;margin: auto;min-height: 120px;border:1px solid #CCCCCC;padding: 5px;}
+			.plq-text span{color: #bbb;}
+			.mui-scroll .mr-10{margin-right: 15px;}
+			.show_img img{width: 32%;}
+			.show_img img:nth-child(3n-1){margin: 0 1%;}
+			.icons{font-size: 24px;position: relative;top: 4px;}
+			#img_show{position: fixed;height: auto;width: 100%;padding: 10px;box-sizing: border-box;background: #fff;top: 90px;z-index: 100;overflow-y: auto;display: none;}
+			#img_show img{width: 32%;}
+			#img_show img:nth-child(2){margin: 0 1%;border-bottom: 1px solid #ccc;}
+		</style>
+	</head>
+	<body>
+		<header title="评论" data-index="2"></header>
+		<div class="mui-content">
+			<div class="head-pl width-100 flex just-arround back-fff">
+    			<input type="text" id="contens" class="flex1 mr-10" placeholder="请输入评论内容..."/>
+    			<!--<div class="mr-10"><span class="mui-icon iconfont icons icon-comiisbiaoqing"></span></div>-->
+    			<div class="mr-10"><span class="mui-icon iconfont icons icon-tupian" style="font-size: 30px;"></span></div>
+    			<div class="fb">发表</div>
+    		</div>
+    		<div id="img_show"></div>
+		    <div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+		    		<div class="pl-list" v-cloak="">
+		    			<ul class="mt-40">
+		    				<li v-for="(item,key) in pinglunList" @click.stop="opens(item.comment_id)">
+		    					<div class="user-data flex">
+		    						<div class="user-img"><img :src="'http://101.201.65.154/Uploads/'+item.user_img" width="50" height="50"/></div>
+		    						<div class="flex fl-colum">
+		    							<div>{{item.user_name}}</div>
+		    							<div>{{item.ctime}}</div>
+		    						</div>
+		    					</div>
+		    					<div class="pa-15">{{item.content}}</div>
+		    					<div class="show_img mt-10 pa-15">
+		    						<img v-for="it in item.images" :src="'http://101.201.65.154/Uploads/'+it"/>
+		    					</div>
+		    					<div class="flex text-center mt-10" style="justify-content: flex-end;">
+		    						<div class="fl-colum mr-10">
+		    							<span class="mui-icon iconfont icon-pinglun"></span>
+		    							<div>{{item.comment_count}}</div>
+		    						</div>
+		    						<div @click.stop="fabulous(item.comment_id,key)" class="fl-colum mr-10">
+		    							<span class="mui-icon iconfont icon-zan"></span>
+		    							<div>{{item.fabulous}}</div>
+		    						</div>
+		    					</div>
+		    				</li>
+		    			</ul>
+		    		</div>
+		    	</div>
+	    	</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var activeid=document.URL.split("?")[1].split("=")[1];
+			mui("div").on("tap",".fb",function(e){
+				e.stopPropagation();
+				if(checkLogin()){
+					login();
+					return;
+				}
+				if(document.getElementById("contens").value==""){
+					mui.toast("发表的内容不能为空");
+					return;
+				}else if(document.getElementById("contens").value.length<6){
+					mui.toast("发表的内容不能少于六个字");
+					return;
+				}
+				
+				//服务端接口路径
+	            var server = pulicHttp+"comment/createComment"
+	            //获取图片元素
+	            var files = document.getElementsByClassName("myimg");
+	            // 上传文件
+	            upload();
+	            function upload(){
+	                var task=plus.uploader.createUpload(server,
+	                    {method:"POST"},
+	                    function(t,status){ //上传完成
+	                        if(status==200){
+	                        	plus.uploader.clear();
+	                        	var o=t.responseText;
+	                        	typeof o=="string"?o=JSON.parse(o):"";
+	                        	console.log(JSON.stringify(o))
+	                        	mui.toast(o.msg);
+	                        	document.getElementById("img_show").style.display="none";
+	                        	document.getElementById("contens").value='';
+	                        	app.chaxun();
+	                        }else{
+	                            mui.alert("评论失败："+status);
+	                        }
+	                        
+	                    }
+	                );  
+	                //添加其他参数
+	                task.addData("comment_type","2");
+	                task.addData("source_id",activeid);
+	                task.addData("content",document.getElementById("contens").value);
+	                task.addData("user_id",localStorage.userID);
+	                for (var i=0;i<files.length;i++) {
+	                	task.addFile(files[i].src,{key:"images"+i});
+	                }
+	                
+	                task.start();
+	            }
+	            
+//				mui.post(pulicHttp+"Comment/createComment",{
+//					comment_type:2,
+//					source_id:activeid,
+//					content:document.getElementById("contens").value,
+//					user_id:localStorage.userID,
+//					images:'http://img0.imgtn.bdimg.com/it/u=2983358032,1731292116&fm=27&gp=0.jpg'
+//				},function(data){
+//					
+//					mui.toast(data.msg);
+//					if(data.status==0){
+//						app.chaxun();
+//					}
+//				})
+			})
+			
+			function galleryImgsSelected(){
+				// 从相册中选择图片
+				var str='';
+			    plus.gallery.pick(function(e){
+			    	lfs=e.files;
+			    	if(lfs.length>0){
+			    		for(var i in lfs){
+				    		str+='<img src='+lfs[i]+' class="myimg" />';
+				    	}
+			    		document.getElementById("img_show").innerHTML=str;
+			    	}
+			    	document.getElementById("img_show").style.display="block";
+			    }, function(e){
+			    },{filter:'image',multiple:true,maximum:3,system:false,onmaxed:function(){
+					plus.nativeUI.alert('最多只能选择3张图片');
+			    }});// 最多选择3张图片
+			}
+			mui("div").on("tap",".icon-tupian",function(e){
+				e.stopPropagation();
+				galleryImgsSelected();
+			})
+			var app=new Vue({
+				el:'.pl-list',
+				data:{
+					pinglunList:''
+				},
+				methods:{
+					chaxun:function(){
+						mui.post(pulicHttp+"Comment/commentList",{source_id:activeid},function(data){
+//							for (var i=0;i<data.comment_list.length;i++) {
+//								if(data.comment_list[i].images){
+//									data.comment_list[i].images=data.comment_list[i].images.split(",")
+//								}
+//							}
+							app.pinglunList=data.comment_list;
+							if(data.status!=0){
+								mui.toast(data.msg);
+							}
+						})
+					},
+					opens:function(ids){
+						mui.openWindow({
+						    url:"pinglun_detile.html",
+						    id:"pinglun_detile.html",
+						    extras:{
+						      //自定义扩展参数，可以用来处理页面间传值
+						      activeid:activeid,
+						      pid:ids,
+						    },
+						    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+						    show:{
+						      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+						      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+						    },
+						})
+					},
+					fabulous:function(ids,ins){
+						var _this=this;
+						
+						mui.post(pulicHttp+"Comment/likeComment",{
+							user_id:localStorage.userID, //用户uuid
+							comment_id:ids //评论id
+						},function(data){
+							
+							mui.toast(data.msg);
+							if(data.status==0){
+								_this.pinglunList[ins].fabulous++;
+							}
+						})
+					}
+				},
+				created:function(){
+					
+					mui.post(pulicHttp+"Comment/commentList",{source_id:activeid},function(data){
+						console.log(JSON.stringify(data))
+						
+//						for (var i=0;i<data.comment_list.length;i++) {
+//							if(data.comment_list[i].images){
+//								data.comment_list[i].images=data.comment_list[i].images.split(",")
+//							}
+//						}
+						app.pinglunList=data.comment_list;
+						if(data.status!=0){
+							mui.toast(data.msg);
+						}
+					})
+				}
+			})
+		})()
+	</script>
+</html>

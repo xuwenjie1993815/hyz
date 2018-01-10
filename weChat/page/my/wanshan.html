@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.mui-table-view{background-color: inherit;}
+			.mui-table-view:after{background-color: inherit;}
+			.mui-table-view-cell{background: #fff;}
+			.mui-table-view-cell:after{left: 0;}
+			.mui-table-view-cell span{color: #EA5312;}
+			input[type=submit]{width: 90%;background: #EA5312;border-color: #EA5312;border-radius: 4px;margin:30px auto;display: block;line-height: 32px;}
+			.touxiang-img{width: 35px;height: 35px;border-radius: 50%;top: 4px;overflow: hidden;}
+			.touxiang-img img{width: 35px;height: 35px;border-radius: 50%;}
+			.pr{position: absolute;right: 30px;}
+			input[type=text]{width: 60%;top: 2px;border: 0;padding: 0 10px;font-size: 15px;}
+			.pr-20{position: absolute;right: 20px;top: 12px;}
+			.pr-40{position: absolute;right: 40px;top: 12px;}
+		</style>
+	</head>
+	<body>
+		<header title="完善资料" class="liingight-45" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+		    		<ul class="mui-table-view mt-10">
+					    <li class="mui-table-view-cell" id="tupian">
+					        <a href="#" class="mui-navigate-right">头像</a>
+					        <div class="touxiang-img pr"><img id="myings"/></div>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a class="mui-navigate-right">昵称</a>
+					        <input type="text" placeholder="请填写" v-model="info.user_name" class="pr mui-text-right"/>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a class="mui-navigate-right">真实姓名<span>*</span></a>
+					        <input type="text" placeholder="请填写" v-model="info.real_name" class="pr mui-text-right"/>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a class="mui-navigate-right">电话<span>*</span></a>
+					       <input type="text" placeholder="请填写" v-model="info.tel" class="pr mui-text-right"/>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a class="mui-navigate-right">QQ</a>
+					        <input type="text" name="" id="" v-model="info.user_qq" placeholder="请填写" class="pr mui-text-right"/>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a class="mui-navigate-right">邮箱<span>*</span></a>
+					        <input type="text" placeholder="请填写" v-model="info.email" class="pr mui-text-right"/>
+					    </li>
+					    <li class="mui-table-view-cell mt-10">
+					        <a class="mui-navigate-right">学校/工作岗位<span>*</span></a>
+					        <input type="text" placeholder="请填写" v-model="info.job" class="pr mui-text-right"/>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a href="addYhangka.html" class="mui-navigate-right" style="z-index: 99;">添加银行卡</a>
+					        <div class="pr-40 color-hui"></div>
+					    </li>
+					    <div class="mui-text-center color-ddd mt-10">提示：带*为必填</div>
+					    <input type="submit" value="确定提交" @click="suer"/>
+					</ul>
+		    	</div>
+	    	</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var info='';
+			if(localStorage.userInfo){
+				info=JSON.parse(localStorage.userInfo)
+			}
+			var app=new Vue({
+				el:'.mui-table-view',
+				data:{
+					info:info,
+					yk:localStorage.backYH
+				},
+				created:function(){
+					var _this=this;
+					mui.post(pulicHttp+"Pass/userInfo",{user_id:localStorage.userID},function(data){
+						console.log(JSON.stringify(data))
+						if(data.status==0){
+							_this.info=data.msg;
+							localStorage.userInfo=JSON.stringify(data.msg);
+							document.getElementById("myings").src='http://101.201.65.154/Uploads/'+data.msg.user_img;
+						}
+					})
+				},
+				methods:{
+					suer:function(){
+						var _this=this;
+						if(_this.info.real_name==''||_this.info.tel==""||_this.info.user_qq==''||_this.info.email==''||_this.info.job==""){
+							mui.toast("带*号为必填");
+							return;
+						}
+						
+						//服务端接口路径
+			            var server = pulicHttp+"Pass/editInfo";
+			            // 上传文件
+			            var files=document.getElementById("myings")
+			            upload();
+			            function upload(){
+			                var task=plus.uploader.createUpload(server,
+			                    {method:"POST"},
+			                    function(t,status){ //上传完成
+			                    	console.log(JSON.stringify(t),status)
+			                        if(status==200){
+			                        	if(typeof t.responseText=="string"){
+			                        		var o=JSON.parse(t.responseText)
+			                        		localStorage.userInfo=JSON.stringify(o.msg);
+			                        	}
+			                        	plus.uploader.clear();
+			                        	mui.toast("修改成功");
+			                        }else{
+			                            mui.toast("修改失败：图片文件请使用小文件");
+			                        }
+			                        
+			                    }
+			                );  
+			                //添加其他参数
+			                task.addData("user_id",localStorage.userID);
+			                task.addData("user_name",_this.info.user_name);
+			                task.addData("real_name",_this.info.real_name);
+			                task.addData("tel",_this.info.tel);
+			                task.addData("user_qq",_this.info.user_qq);
+			                task.addData("email",_this.info.email);
+			                task.addData("job",_this.info.job);
+			                task.addFile(files.src,{key:"user_img"});
+			                task.start();
+			            }
+//						mui.post(pulicHttp+"Pass/editInfo",{
+//							user_id:localStorage.userID,
+//							user_img:_this.info.user_img,
+//							user_name:_this.info.user_name,
+//							real_name:_this.info.real_name,
+//							tel:_this.info.tel,
+//							user_qq:_this.info.user_qq,
+//							email:_this.info.email,
+//							job:_this.info.job,
+//						},function(data){
+//							
+//							console.log(JSON.stringify(data))
+//							if(data.status==0){
+//								localStorage.userInfo=JSON.stringify(data.msg)
+//								mui.toast("修改成功")
+//							}else{
+//								mui.toast("修改失败")
+//							}
+//						})
+					}
+				}
+			})
+			var lfs=null;// 保留上次选择图片列表
+			function galleryImgsSelected(){
+				// 从相册中选择图片
+			    plus.gallery.pick(function(e){
+			    	lfs=e.files;
+			    	document.getElementById("myings").src=lfs[0];
+			    }, function(e){
+			    },{filter:'image',multiple:true,maximum:1,system:false,onmaxed:function(){
+					
+			    }});// 最多选择3张图片
+			}
+			mui("div").on("tap","#tupian",function(e){
+				e.stopPropagation();
+				galleryImgsSelected();
+			})
+		})()
+	</script>
+</html>

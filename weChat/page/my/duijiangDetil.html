@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.pt-5{padding-top: 5px;}
+			li{padding:11px 15px; background-color: #ffffff;margin-bottom: 15px;}
+			.mui-content{padding-bottom: 0;}
+			.mui-scroll-wrapper{bottom: 0;}
+		</style>
+	</head>
+	<body>
+		<header title="订单详情" class="liingight-45" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+		    		<ul class="uls" v-cloak="">
+		    			<li>
+							<div class="flex fl-colum pb-5 border-bottom-hui">
+								<div class="text_elli">{{mydata.title}}</div>
+								<div class="pt-5 mui-text-right color-hui">{{mydata.order_time}}</div>
+							</div>
+							<div class="flex fl-colum pt-5 color-hui">
+								<div>{{mydata.order_status}}</div>
+								<div class="color-org">中奖号码：18888888888</div>
+								<div>联系电话：19988888888</div>
+								<div>商家地址：永川文理学院北门</div>
+							</div>
+						</li>
+		    		</ul>
+		    	</div>
+	    	</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var oder_id=plus.webview.currentWebview().myid;
+			var app=new Vue({
+				el:'.uls',
+				data:{
+					mydata:''
+				},
+				created:function(){
+					var _this=this;
+					
+					mui.post(pulicHttp+"Order/rewardOrderInfo",{
+						user_id:localStorage.userID,
+						order_id:oder_id
+					},function(data){
+						console.log(JSON.stringify(data));
+						
+						_this.mydata=data.data;
+					})
+				}
+			})
+			
+		})()
+	</script>
+</html>

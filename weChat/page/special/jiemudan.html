@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.mui-scroll-wrapper{bottom: 0;}
+			.imgs{width: 130px;height: 60px;}
+			.img_touxiang{width: 60px;height: 60px;border-radius: 50%;margin-right: 10px;}
+			.listy{padding: 10px 15px;box-sizing: border-box;}
+			.jiayou{width: 15vw;}
+			.mui-scroll{min-height: 100%;}
+		</style>
+	</head>
+	<body>
+		<header title="节目单"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper back-fff">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+					<div class="flex border-bottom-hui just-arround liingight-45">
+						<div>表演者</div>
+						<div>表演节目</div>
+						<div>为她加油</div>
+					</div>
+					<div class="flex border-bottom-hui just-bween listy ali-item" v-for="(item,key) in listImg" v-cloak="">
+						<div class="imgs">
+							<div class="flex ali-item">
+								<div><img class="img_touxiang" :src="item.user_img"/></div>
+								<div>
+									<div>{{item.apply_real_name}}</div>
+									<div class="fontsize-12 color-hui">{{item.sex | change}} {{item.address | address}}</div>
+								</div>
+							</div>
+						</div>
+						<div class="flex1">{{item.performance}}</div>
+						<div class="jiayou color-hui mui-text-center" @click="dianzan(key,item.apply_id)">
+							<span class="mui-icon iconfont icon-zan"></span>
+							<div>{{item.like_num}}</div>
+						</div>
+					</div>
+					<!--模板-->
+					<!--<div class="modals">
+						<div class="mui-popup mui-popup-in" style="display: block;"><div class="mui-popup-inner"><div class="mui-popup-title">提示</div><div class="mui-popup-text color-hui"><div>共有3次免费点赞机会<div>你还剩<span id="num1"></span>次免费点赞机会</div><div>超过三次点赞将进行收费</div></div></div></div><div class="mui-popup-buttons"><span class="mui-popup-button">取消</span><span class="mui-popup-button mui-popup-button-bold">确认</span></div></div>
+					</div>-->
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var activeid=document.URL.split("?")[1].split("=")[1];
+			
+			var app=new Vue({
+				el:'.mui-scroll',
+				data:{
+					listImg:''
+				},
+				methods:{
+					dianzan:function(ins,v){
+						var _this=this;
+						if(checkLogin()){
+							login();
+							return;
+						}
+						
+						mui.post(pulicHttp+"Activity/activityLike",{apply_id:v,user_id:localStorage.userID},function(data){
+							
+							if(data.status==0){
+								if(data.type==1){
+									mui.toast("点赞成功");
+									_this.listImg[ins].like_num++;
+									if(data.msg<=3){
+										data.msg=3-parseInt(data.msg);
+									}
+									mui.confirm("共有三次免费点赞次数<br />你还有"+data.msg+"次免费点赞次数<br />超过三次点赞次数将进行收费","提示",["取消","确定"],function(e){
+										
+									},"div")
+								}else if(data.type==2){
+									mui.toast("支付点赞")
+								}
+								
+							}else{
+								mui.toast("点赞失败")
+							}
+							
+						})
+					}
+				},
+				filters:{
+					change:function(vlu){
+						if(vlu==1){
+							return "男"
+						}else{
+							return "女"
+						}
+					},
+					address:function(vlus){
+						if(vlus==undefined){return;}
+						return vlus=vlus.substr(0,3);
+					}
+				}
+			})
+			mui.post(pulicHttp+"Activity/programmesList",{activity_id:activeid},function(data){
+				if(data.status==0){
+					
+					console.log(JSON.stringify(data))
+					app.listImg=data.msg;
+				}
+			})
+		})()
+	</script>
+</html>

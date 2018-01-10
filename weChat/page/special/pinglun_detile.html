@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.user-data{padding:15px 15px 10px}
+			.head-pl{position: fixed;top: 45px;z-index:99;line-height: 40px;}
+			.head-pl input[type=text]{margin-bottom: 0;}
+			.fb{padding:0 10px;background: #EA5312;color: #fff;height: 32px;line-height: 32px;margin: 4px 5px 0 0;}
+			.mr-10{margin-right: 10px;}
+			.mt-40{margin-top: 40px;}
+			li{background: #fff;margin-bottom: 10px;display: flex;flex-direction: column;padding-bottom: 10px;}
+			.user-img{width: 50px;height: 50px;border-radius: 50%;overflow: hidden;margin-right: 10px;}
+			.mui-scroll-wrapper{bottom: 0;}
+			.plq-text{width:100%;margin: auto;min-height: 120px;border:1px solid #CCCCCC;padding: 5px;}
+			.plq-text span{color: #bbb;}
+			.modal_bottom{padding: 10px 15px 0px 15px;}
+			.mui-scroll .mr-10{margin-right: 15px;}
+			.show_img img{width: 32%;}
+			.show_img img:nth-child(3n-1){margin: 0 1%;}
+			.icons{font-size: 24px;position: relative;top: 4px;}
+			#img_showUp{display: none;}
+			#img_showUp img{width: 32%;}
+			#img_showUp img:nth-child(2){margin: 0 1%;}
+			.im{margin-top: 10px;}
+			.im img{width: 31%;}
+			.im img:nth-child(2){margin: 0 2%;}
+		</style>
+	</head>
+	<body>
+		<header title="评论" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+		    		<div class="pl-list mt-10" v-cloak="">
+		    			<ul>
+		    				<li>
+		    					<div class="user-data flex">
+		    						<div class="user-img"><img  :src="'http://101.201.65.154/Uploads/'+p_info.user_img" width="50" height="50"/></div>
+		    						<div class="flex fl-colum">
+		    							<div>{{p_info.user_name}}</div>
+		    							<div>{{p_info.ctime}}</div>
+		    						</div>
+		    					</div>
+		    					<div class="pa-15">{{p_info.content}}</div>
+		    					<div class="show_img mt-10 pa-15">
+		    						<img v-for="item in p_info.images" :src="'http://101.201.65.154/Uploads/'+item"/>
+		    					</div>
+		    					<div class="flex text-center mt-10" style="justify-content: flex-end;">
+		    						<div class="fl-colum mr-10">
+		    							<span class="mui-icon iconfont icon-pinglun color-org"></span>
+		    							<div>{{p_info.comment_count}}</div>
+		    						</div>
+		    						<div class="fl-colum mr-10">
+		    							<span class="mui-icon iconfont icon-zan" @click="fabulous"></span>
+		    							<div>{{p_info.fabulous}}</div>
+		    						</div>
+		    					</div>
+		    					<div class="modal_bottom flex fl-colum">
+		    						<textarea class="plq-text" placeholder="请输入评论内容..." id="contens"></textarea>
+		    						<div class="flex just-bween liingight-45 mt-10">
+		    							<div><span class="mui-icon iconfont icons icon-comiisbiaoqing"></span></div>
+		    							<div id="tupian"><span class="mui-icon iconfont icons icon-tupian" style="font-size: 30px;"></span></div>
+		    							<div><input type="checkbox" id="" /> 匿名</div>
+		    							<div class="fb" @click.stop="fabiao" style="margin: 4px 0 4px 5px;">发表</div>
+		    						</div>
+		    						<div id="img_showUp"></div>
+		    					</div>
+		    					
+		    				</li>
+		    				<li v-for="item in plList">
+		    					<div class="user-data flex">
+		    						<div class="user-img"><img :src="'http://101.201.65.154/Uploads/'+item.user_img" width="50" height="50"/></div>
+		    						<div class="flex fl-colum">
+		    							<div>{{item.user_name}}</div>
+		    							<div>{{item.ctime}}</div>
+		    						</div>
+		    					</div>
+		    					<div class="pa-15">{{item.content}}</div>
+		    					<div class="im pa-15" ><img v-for="it in item.images" :src="'http://101.201.65.154/Uploads/'+it"/></div>
+		    				</li>
+		    			</ul>
+		    		</div>
+		    	</div>
+	    	</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			
+			var self=plus.webview.currentWebview();
+			var app=new Vue({
+				el:'.pl-list',
+				data:{
+					plList:'',
+					p_info:''
+				},
+				methods:{
+					fabiao:function(){
+						if(checkLogin()){
+							login();
+							return;
+						}
+						
+						//服务端接口路径
+			            var server = pulicHttp+"Comment/createComment"
+			            //获取图片元素
+			            var files = document.getElementsByClassName("myimg");
+			            // 上传文件
+			            upload();
+			            function upload(){
+			            var task=plus.uploader.createUpload(server,
+			                    {method:"POST"},
+			                    function(t,status){ //上传完成
+			                        if(status==200){
+			                        	plus.uploader.clear();
+			                        	mui.toast("评论成功");
+			                        	document.getElementById("img_showUp").style.display="none";
+			                        	document.getElementById("contens").value='';
+			                        	app.jiazai();
+			                        }else{
+			                            mui.alert("评论失败："+status);
+			                        }
+			                        
+			                    }
+			                );  
+			                //添加其他参数
+			                task.addData("comment_type","2");
+			                task.addData("source_id",self.activeid);
+			                task.addData("pid",self.pid);
+			                task.addData("content",document.getElementById("contens").value);
+			                task.addData("user_id",localStorage.userID);
+			                for (var i=0;i<files.length;i++) {
+			                	task.addFile(files[i].src,{key:"images"+i});
+			                }
+			                
+			                task.start();
+			            }
+//						
+//						var _this=this;
+//						mui.post(pulicHttp+"Comment/createComment",{
+//							comment_type:2,
+//							source_id:self.activeid,//活动id
+//							pid:self.pid,//评论list  id
+//							content:document.getElementById("contens").value,
+//							user_id:localStorage.userID,
+//							images:'http://img0.imgtn.bdimg.com/it/u=2983358032,1731292116&fm=27&gp=0.jpg'
+//						},function(data){
+//							
+//							if(data.status==0){
+//								_this.jiazai();
+//							}
+//							mui.toast(data.msg);
+//						})
+					},
+					jiazai:function(){
+						var _this=this;
+						mui.post(pulicHttp+"Comment/commentPList",{
+							pid:self.pid
+						},function(data){
+							console.log(JSON.stringify(data))
+							for (var i=0;i<data.comment_list.comment_info.length;i++) {
+								if(data.comment_list.comment_info[i].images){
+									data.comment_list.comment_info[i].images=data.comment_list.comment_info[i].images.split(",")
+								}
+							}
+							if(data.comment_list.p_comment_info[0].images){
+								data.comment_list.p_comment_info[0].images=data.comment_list.p_comment_info[0].images.split(",")
+								console.log(data.comment_list.p_comment_info[0].images.length)
+							}
+							_this.plList=data.comment_list.comment_info;
+							_this.p_info=data.comment_list.p_comment_info[0];
+						})
+					},
+					fabulous:function(){
+						var _this=this;
+						
+						mui.post(pulicHttp+"Comment/likeComment",{
+							user_id:localStorage.userID, //用户uuid
+							comment_id:self.pid //评论id
+						},function(data){
+							
+							mui.toast(data.msg);
+							if(data.status==0){
+								_this.p_info.fabulous++;
+							}
+						})
+					}
+				},
+				created:function(){
+					
+					var _this=this;
+					mui.post(pulicHttp+"Comment/commentPList",{
+						pid:self.pid
+					},function(data){
+						
+						console.log(JSON.stringify(data))
+						for (var i=0;i<data.comment_list.comment_info.length;i++) {
+							if(data.comment_list.comment_info[i].images){
+								data.comment_list.comment_info[i].images=data.comment_list.comment_info[i].images.split(",")
+							}
+						}
+						if(data.comment_list.p_comment_info[0].images){
+							data.comment_list.p_comment_info[0].images=data.comment_list.p_comment_info[0].images.split(",")
+							console.log(data.comment_list.p_comment_info[0].images.length)
+						}
+						
+						_this.plList=data.comment_list.comment_info;
+						_this.p_info=data.comment_list.p_comment_info[0];
+						
+					})
+				}
+			})
+			
+			var lfs=null;// 保留上次选择图片列表
+			function galleryImgsSelected(){
+				// 从相册中选择图片
+			    plus.gallery.pick(function(e){
+			    	lfs=e.files;
+			    	var str='';
+			    	if(lfs.length>0){
+			    		for(var i in lfs){
+				    		str+='<img src='+lfs[i]+' class="myimg" />';
+				    	}
+			    		document.getElementById("img_showUp").innerHTML=str;
+			    	}
+			    	document.getElementById("img_showUp").style.display="block";
+			    }, function(e){
+			    },{filter:'image',multiple:true,maximum:3,selected:lfs,system:false,onmaxed:function(){
+					plus.nativeUI.alert('最多只能选择3张图片');
+			    }});// 最多选择3张图片
+			}
+			mui("div").on("tap","#tupian",function(e){
+				e.stopPropagation();
+				galleryImgsSelected();
+			})
+		})()
+		
+	</script>
+</html>

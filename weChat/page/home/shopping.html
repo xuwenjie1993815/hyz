@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.mui-slider{height: 50vw;background: url(../../image/loading.jpg) center;}
+			.shopping-title{line-height: 24px;padding: 6px 0;font-weight: 600;}
+			.monye{font-size: 12px;color: #BABABA;}
+			.mui-progressbar{height: 4px;background: #EEEBEC;}
+			.mui-progressbar span{background: #EA510E;}
+			.canyu{line-height: 16px;}
+			.mui-btn-warning{background: #EC5D20;}
+			.mui-btn-outlined{background: #999999;}
+			.mui-btn{padding: 12px;border: none;}
+			.content{padding: 0 15px 15px 15px;box-sizing: border-box;}
+			.huojiang{padding: 15px;box-sizing: border-box;}
+			.huojiang_img{width: 80px;height: 80px;overflow: hidden;position: relative;}
+			.huojiang_img img{width: 80px;height: 80px;border-radius: 5px;}
+			.huojiang_right{width: 20px;text-align: center;}
+			.huojiang_center{font-size: 12px;color: #ABABAB;line-height: 16px;padding-left: 15px;white-space: nowrap;}
+			.mui-icon-arrowright{color: #CDCDCD;font-size: 16px;}
+			.zhongjiang_perv{width: 120px;line-height: 24px;background: #EB5D1F;position: absolute;top: 10px;font-size: 10px;color: #fff;text-align: center;
+			transform: rotate(-40deg);left: -35px;}
+			.modal_img{width: 87px;height: 87px;}
+			.modal_img img{width: 100%;height: 100%;border-radius: 3px;}
+			.modal_qishu{padding-left: 15px;font-size: 14px;}
+			.over-hi{height: 40px;max-height:40px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2; }
+		</style>
+	</head>
+	<body>
+		<header title="商品详情"></header>
+		<div class="mui-content">
+		    <!--图片轮播-->
+		    <div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+				    <div class="mui-slider">
+					  <div class="mui-slider-group mui-slider-loop">
+					    <!--支持循环，需要重复图片节点-->
+					  </div>
+					  <div class="mui-slider-indicator"></div>
+					</div>
+					<div id="content" v-cloak="">
+						<div class="back-fff content">
+							<div class="shopping-title"><span class="color-org">[第{{listDtate.period_time}}期]</span><span>{{listDtate.product_info}}</span></div>
+							<div class="monye">价值：<span>￥{{listDtate.price}}</span>元</div>
+							<div class="mui-progressbar demo1">
+								<span class="scroo">{{100/(listDtate.target_num/listDtate.now_num)}}</span>
+							</div>
+							<div class="flex just-bween canyu">
+								<div class="mui-text-left fontsize-10">
+									<span>{{listDtate.now_num}}</span>
+									<div>已参与</div>
+								</div>
+								<div class="mui-text-center fontsize-10">
+									<span>{{listDtate.target_num}}</span>
+									<div>总需人数</div>
+								</div>
+								<div class="mui-text-right fontsize-10">
+									<span class="color-blue">{{listDtate.surplus_num}}</span>
+									<div>剩余</div>
+								</div>
+							</div>
+							<div class="flex mt-15">
+								<div class="flex" @click="goumai(listDtate.p_id)"><button type="button" class="mui-btn mui-btn-warning width-100">立即购买</button></div>
+								<div style="width: 15px;"></div>
+								<div class="flex"><button type="button" class="mui-btn mui-btn-outlined-s mui-btn-warning width-100 color-fff">加入购物车</button></div>
+							</div>
+						</div>
+						<ul class="mui-table-view mt-10">
+						    <li class="mui-table-view-cell">
+						        <a :href="'shopping_Record.html?pid='+listDtate.p_id+'&period_id='+listDtate.period_id" class="mui-navigate-right">商品所有购买记录</a>
+						    </li>
+						    <li class="mui-table-view-cell">
+						        <a :href="'avtive_careful.html?pid='+listDtate.period_id" class="mui-navigate-right">参加项目注意事项</a>
+						    </li>
+						    <!--<li class="mui-table-view-cell">
+						        <a href="lucy_peole.html" class="mui-navigate-right">已有<span class="color-org">1</span>个幸运者晒单</a>
+						    </li>-->
+						</ul>
+						<a class="huojiang back-fff flex ali-item mt-10" href="look.html" v-show="zjList.user_name">
+							<div class="huojiang_img">
+								<img :src="'http://101.201.65.154/Uploads/'+zjList.user_img" />
+								<div class="zhongjiang_perv">上期中奖者</div>
+							</div>
+							<div class="flex fl-colum huojiang_center">
+								<div>中奖人：<span class="color-blue">{{zjList.user_name}}</span></div>
+								<div>本期购买：<span>{{zjList.now_num}}</span>人次</div>
+								<div>幸运获奖号码：<span class="color-org">{{zjList.reward_number}}</span></div>
+								<div>揭晓时间：{{zjList.ctime}}</div>
+								<div>购买时间：{{zjList.order_time}}</div>
+							</div>
+							<div class="huojiang_right"><span class="mui-icon mui-icon-arrowright"></span></div>
+						</a>
+					</div>
+					<div class="mt-10"></div>
+				</div>
+			</div>
+		</div>
+		<div class="modals">
+			<div class="modal_flex">
+				<div class="modal_content">
+					<div class="modal_title mui-text-center color-org">加入购物车<span class="mui-icon mui-icon-close"></span></div>
+					<div class="modal_bottom">
+						<div class="flex">
+							<div class="modal_img"><img id="modal_imgs" src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg"/></div>
+							<div class="flex fl-colum just-bween modal_qishu">
+								<div class="over-hi" id="changeshtml"></div>
+								<div class="flex just-bween mt-10 ali-item">
+									<span>购买人次:</span>
+									<div class="mui-numbox" data-numbox-step='1' data-numbox-min='0'>
+									  <button class="mui-btn mui-numbox-btn-minus" type="button">-</button>
+									  <input class="mui-numbox-input" type="number" value="1" />
+									  <button class="mui-btn mui-numbox-btn-plus" type="button">+</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mt-30 flex just-center">
+							<button type="button" class="mui-btn mui-btn-warning width-100 suer">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer></footer>
+	</body>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script>
+		(function(){
+			//商品id
+			
+			var p_id='1';
+			var shoppingid=document.URL.split("?")[1].split("=")[1];
+			var app=new Vue({
+				el:'#content',
+				data:{
+					listDtate:'',
+					zjList:'',
+					period_time:1
+				},
+				methods:{
+					goumai:function(v_id){
+						
+						mui.post(pulicHttp+"Order/buyNow",{
+							user_id:localStorage.userID,
+							product_id:v_id,
+							period_id:shoppingid
+						},function(data){
+							
+							console.log(JSON.stringify(data))
+							if(data.status==0){
+								myOpen("../shopping/paly.html");
+							}
+						})
+					}
+				},
+				created:function(){
+					var _this=this;
+					mui.post(pulicHttp+"product/getDetail",{
+							product_id:shoppingid,
+						},function(data){
+							
+							console.log(JSON.stringify(data))
+							if(data.status==0){
+								_this.listDtate=data.msg;
+								_this.period_time=data.msg.period_time;
+								p_id=data.msg.p_id;
+								document.getElementById("modal_imgs").src=data.msg.images[0];
+								document.querySelector("#changeshtml").innerHTML='<span class="color-org">[第'+data.msg.period_time+'期]</span><span>'+data.msg.product_info+'</span>';
+								//dom更新后执行操作
+								if(data.msg.images){
+									var img=data.msg.images;
+									var myimg='<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="'+img[0]+'" /></a></div>';
+									var silder=''
+									for (var i=0;i<img.length;i++) {
+										myimg+='<div class="mui-slider-item"><a href="#"><img src="'+img[i]+'" /></a></div>';
+										if(i==0){
+											silder+='<div class="mui-indicator mui-active"></div>'
+										}else{
+											silder+='<div class="mui-indicator"></div>'
+										}
+									}
+									myimg+='<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="'+img[img.length-1]+'" /></a></div>';
+									document.getElementsByClassName("mui-slider-group")[0].innerHTML=myimg;
+									document.getElementsByClassName("mui-slider-indicator")[0].innerHTML=silder;
+								}
+								mui.post(pulicHttp+"Reward/rewardInfo",{
+									period_id:--_this.period_time
+								},function(data){
+									if(data.status==0){
+										_this.zjList=data.data;
+									}
+									console.log(JSON.stringify(data))
+								})
+								Vue.nextTick().then(function () {
+								    mui(".scroo").each(function(){
+										var zhi=100-parseFloat(this.innerText);
+										this.style.transform="translate3d(-"+zhi+"%, 0px, 0px)"
+									})
+								    mui("div").on("tap",".mui-btn-outlined-s",function(){
+										document.querySelector(".modals").style.display="block";
+									})
+									mui("div").on("tap",".mui-icon-close",function(){
+										document.querySelector(".modals").style.display="none";
+									})
+									var gallery = mui('.mui-slider');
+										gallery.slider({
+										  interval:3000//自动轮播周期，若为0则不自动播放，默认为0；
+									});
+								})
+							}else{
+								mui.toast(data.msg);
+							}
+						}
+					);
+				}
+			})
+			mui("div").on("tap",".suer",function(e){
+				e.stopPropagation();
+				
+				mui.post(pulicHttp+"order/addCart",{
+						user_id:localStorage.userID,
+						product_id:p_id,
+						period_id:shoppingid,
+						num:mui(".mui-numbox").numbox().getValue()
+				},function(data){
+						
+						mui.toast(data.msg);
+						if(data.status==0){
+							document.querySelector(".modals").style.display="none";
+						}
+					}
+				);
+			})
+			
+			//图片预览
+			/*var images = document.querySelectorAll('.mui-slider-group img');
+			  var urls = [];
+			  for(var i = 0; i < images.length; i++) {
+			    urls.push(images[i].src);
+			  }
+			  // 监听图片的点击
+			  mui('body').on('tap', 'img', function() {
+			    // 查询图片在列表中的位置
+			    // 由于dom节点列表是伪数组，需要处理一下
+			    var index = [].slice.call(images).indexOf(this);
+			    plus.nativeUI.previewImage(urls, {
+			      current: index,
+			      loop: true,
+			      indicator: 'number'
+			    });
+			  });
+			*/
+		})()
+	</script>
+</html>

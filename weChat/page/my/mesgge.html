@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.mui-scroll-wrapper{bottom: 0;}
+			.pad{padding: 10px 5px;margin-top: 10px;}
+			.pad:last-child{margin-bottom: 10px;}
+			.mesgge-img{width: 70px;height: 70px;margin-right: 10px;}
+			.mesgge-img img{width: 100%;height: 100%;border-radius: 50%;}
+			.mesgge-text{width: calc(100% - 80px);}
+		</style>
+	</head>
+	<body>
+		<header title="消息通知" class="liingight-45" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+		    		<div class="content" v-cloak="">
+		    			<div class="flex pad back-fff" v-for="item in listData" @click="open(item.add_time,item.content)">
+		    				<div class="mesgge-img"><img src="../../image/lucy.png"/></div>
+		    				<div class="flex fl-colum mesgge-text just-center">
+		    					<div>中奖通知</div>
+		    					<div class="text_elli">{{item.content}}</div>
+		    				</div>
+		    			</div>
+		    		</div>
+		    	</div>
+	    	</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var app=new Vue({
+				el:'.content',
+				data:{
+					listData:[]
+				},
+				created:function(){
+					var _this=this;
+					
+					mui.post(pulicHttp+"Notice/notice_list",{
+						user_id:localStorage.userID,
+						type:1
+					},function(data){
+						
+						console.log(JSON.stringify(data))
+						_this.listData=data.data
+					})
+				},
+				methods:{
+					open:function(time,val){
+						mui.openWindow({
+						    url:"luck_tongzhi.html",
+						    id:"luck_tongzhi.html",
+						    extras:{
+						    	add_time:time,
+						    	content:val
+						    },
+						    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+						    show:{
+						      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+						      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+						    },
+						})
+					}
+				}
+			})
+		})()
+	</script>
+</html>

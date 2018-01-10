@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.jisuan{padding: 0px 10px;border: 1px solid #F2946B;line-height: 32px;height: 32px;border-radius: 3px;}
+			.td{width: 50%;line-height: 45px;border-top: 1px solid #FFF2DE;}
+			.td:nth-child(odd){border-right: 1px solid #FFF2DE;}
+			.td:nth-child(1),.td:nth-child(2){border-top: none;}
+			.quzhi{padding: 15px;box-sizing: border-box;}
+			.modal_bottom{padding: 25px 15px;}
+			.items{width: 25px;}
+		</style>
+	</head>
+	<body>
+		<header title="计算结果"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+					<div class="liingight-45 flex back-fff pa-15 just-bween ali-item">
+						<span class="color-hui">前五名、末五名的手机号码尾2位信息</span>
+						<div class="color-org jisuan">计算方式</div>
+					</div>
+					<div class="mt-10 back-fff pa-15 flex flex-wrap mui-text-center">
+						<div class="td no-border color-org">用户账号</div>
+						<div class="td color-org">号码尾2位</div>
+						<div class="td color-hui">小明明</div>
+						<div class="td color-blue">45</div>
+						<div class="td color-hui">abcdefgh</div>
+						<div class="td color-blue">56</div>
+						<div class="td color-hui">128****1290</div>
+						<div class="td color-blue">90</div>
+						<div class="td color-hui">小花</div>
+						<div class="td color-blue">05</div>
+						<div class="td color-hui">小白</div>
+						<div class="td color-blue">56</div>
+						<div class="td color-hui">总有一天</div>
+						<div class="td color-blue">54</div>
+						<div class="td color-hui">会变成</div>
+						<div class="td color-blue">23</div>
+						<div class="td color-hui">小黑</div>
+						<div class="td color-blue">45</div>
+						<div class="td color-hui">不会再变成</div>
+						<div class="td color-blue">24</div>
+						<div class="td color-hui">小小白</div>
+						<div class="td color-blue">67</div>
+					</div>
+					<div class="mt-10 back-fff quzhi">
+						<p class="color-org">取以上数值结果得：</p>
+						<p>1.前五位：4556900556     后五位：5423452467<span class="color-hui fontsize-10">(前五位与后五位的号码尾2位合成数)</span></p>
+						<p>2.求和：99894655465<span class="color-hui fontsize-10">(两个合成数字之和)</span></p>
+						<p>3.取余：729<span class="color-hui fontsize-10">(和总需人次数998取余)</span></p>
+						<p>4.计算结果：729<span class="color-hui fontsize-10">(余数+100000=1000000)</span></p>
+					</div>
+				</div>
+			</div>
+			<div class="modals">
+				<div class="modal_flex">
+					<div class="modal_content">
+						<div class="modal_title mui-text-center color-org">计算方法<span class="mui-icon mui-icon-close"></span></div>
+						<div class="modal_bottom">
+							<div class="flex">
+								<div class="items">1</div>
+								<p class="width-100">
+									取同期购买用户的前五名和后五名的<span class="color-blue">手机号末尾2位数</span>并分别合成两个数；
+								</p>
+							</div>
+							<div class="flex">
+								<div class="items">1</div>
+								<p class="width-100">求两个数之<span class="color-blue">和</span>，并与总需人次数<span class="color-blue">取余</span>；</p>
+							</div>
+							<div class="flex">
+								<div class="items">1</div>
+								<p class="width-100">取余过后加上<span class="color-blue">10000</span>得出幸运获奖号码。</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer></footer>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			mui("div").on("tap",".jisuan",function(){
+				document.querySelector(".modals").style.display="block";
+			})
+			mui("div").on("tap",".mui-icon-close",function(){
+				document.querySelector(".modals").style.display="none";
+			})
+		})()
+	</script>
+</html>

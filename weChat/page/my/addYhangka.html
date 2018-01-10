@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			input[type=button]{width: 90%;background: #EA5312;border-color: #EA5312;border-radius: 4px;margin:auto;display: block;color: #fff;}
+			.mui-input-group:after{background-color: inherit;}
+			.mui-input-group{background-color: inherit;}
+			.mui-input-row{background: #fff;}
+			.mui-input-row input{height: 45px;}
+			.mui-input-group .mui-input-row{line-height: 45px;height: 45px;}
+			.mui-input-group .mui-input-row:after{left: 0;}
+			.mui-input-row input:last-child{text-align: right;}
+		</style>
+	</head>
+	<body>
+		<header title="添加银行卡" class="liingight-45" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+				    <form class="mui-input-group mt-10">
+					    <div class="mui-input-row">
+					        <label>持卡人</label>
+					        <input type="text" maxlength="15" id="name" class="mui-input-text" placeholder="请填写">
+					    </div>
+					    <div class="mui-input-row">
+					        <label>卡号</label>
+					        <input type="tel" maxlength="18" id="card" class="mui-input-text" placeholder="请填写">
+					    </div>
+					    <div class="mt-50">
+							<input type="button" class="liingight-45" value="确&nbsp&nbsp定"/>
+						</div>
+					</form>
+		    	</div>
+	    	</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			mui("div").on("tap","input[type=button]",function(e){
+				e.stopPropagation();
+				mui.post(pulicHttp+"Bank/addBankCard",{
+					name:document.getElementById("name").value,
+					card:document.getElementById("card").value,
+					user_id:localStorage.userID
+				},function(data){
+					if(data.status==0){
+						mui.toast(data.msg);
+						localStorage.backYH=document.getElementById("card").value;
+						mui.later(function(){
+							mui.back();
+						},1000)
+					}
+				})
+			})
+		})()
+	</script>
+</html>

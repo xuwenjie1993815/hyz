@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			input[type=button]{width: 90%;background: #EA5312;color: #fff;border-color: #EA5312;border-radius: 4px;margin:auto;display: block;}
+			input[type=text],input[type=password],input[type=tel]{border: none;padding: 5px;margin-bottom: 0;height: 44px;color: #f8f8f8;color: #333;}
+			input[type=radio]{margin: 16px 4px 0 16px;border-radius: 50%;background: #fff;-webkit-appearance: none;border: 1px solid #ddd;padding: 1px;box-sizing: border-box;width: 15px;height: 15px;}
+			input[type=radio]:checked{background: #EC5D20;}
+			input[type=checkbox]{width: 15px;height: 15px;border: 1px solid #CACACA;}
+			input[type=checkbox]:checked{background: #ddd;}
+			span{color: red;}
+			li{display: flex;flex: 1;height:45px;line-height: 45px;margin:5px 15px 0 15px;padding-bottom:5px;border-bottom: 1px solid #ccc;overflow: hidden;}
+			.mui-input-group:before,.mui-input-group:after{background-color: initial;}
+			.mui-table-view-cell{padding: 0;display: none;}
+			.mui-table-view-cell:after{background-color: inherit;}
+			.mui-table-view-cell>a:not(.mui-btn){width: 100%;margin: 0;}
+			.mui-navigate-right{font-size: 17px;}
+			.getCode{border-color: #EA5312;background: #EA5312; color: #fff;}
+			.mui-scroll-wrapper{bottom: 0;}
+		</style>
+	</head>
+	<body>
+		<header title="注册" class="back-fff" data-index = "2"></header>
+		<div class="mui-content">
+			<div class="mui-scroll-wrapper back-fff">
+				<div class="mui-scroll">
+					<form  class="mui-input-group">
+				    	<ul class="mt-30">
+				    		<li>
+				    			<span>*</span>
+				    			<input type="tel" maxlength="11" placeholder="请输入您的手机号：" id="phone"/>
+				    		</li>
+				    		<li style="border-bottom: 0;">
+				    			<span>*</span>
+				    			<div class="flex" style="color: #333;padding-left: 5px;font-size: 17px;">
+				    			请选择注册类型:
+				    			<input type="radio" name="zclx" id="gr" value="1" checked/><label for="gr">个人</label>
+				    			<!--<input type="radio" name="zclx" id="sj" value="2" /><label for="sj">商家</label>-->
+				    			</div>
+				    		</li>
+				    		<li class="mui-table-view-cell">
+				                <a class="mui-navigate-right" href="sellsect_province.html">
+				                	<span>*</span>请选择省份:
+				                </a>
+				          	</li>
+				    		<li>
+				    			<input style="margin-left: 6px;" type="text" placeholder="请输入学校/工作岗位：" id="job"/>
+				    		</li>
+				    		<li>
+				    			<span>*</span>
+				    			<input type="password" maxlength="16" placeholder="请输入密码：" id="pwd"/>
+				    		</li>
+				    		<li>
+				    			<span>*</span>
+				    			<input type="password" maxlength="16"  placeholder="请再次输入密码：" id="confirmPwd"/>
+				    		</li>
+				    		<li class="mui-table-view-cell">
+				                <a class="mui-navigate-right">
+				                	<span>*</span>上传营业执照：   
+				                </a>
+				            </li>
+				    		<li class="flex">
+				    			<span>*</span>
+				    			<input style="width: 70%;" type="tel" id="code" value="" placeholder="请输入验证码："/>
+				    			<button type="button" class="mui-btn getCode">获取验证码</button>
+				    		</li>
+				    	</ul>
+				    	<div class="mt-10 flex pa-15">
+				    		<input type="checkbox" style="margin:2px 5px;"/>我已阅读并同意<a href="xieyi.html" class="color-org">《注册协议》</a>
+				    	</div>
+				    	<div class="mt-50">
+				    		<input type="button" class="liingight-45" value="注册" id="register"/>
+				    	</div>
+				    </form>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/jquery-3.2.1.min.js" ></script>
+	<script type="text/javascript" src="../../lib/md5.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var num=1;
+			mui("li").on("tap","input[type=radio]",function(){
+				num=this.value;
+				var myradio=document.querySelectorAll(".mui-table-view-cell")
+				if(num==2){
+					for (var i=0;i<myradio.length;i++) {
+						myradio[i].style.display="block";
+					}
+				}else{
+					for (var i=0;i<myradio.length;i++) {
+						myradio[i].style.display="none";
+					}
+				}
+			})
+			var numCode=30;
+			function getCode(){
+				if(numCode!=30){
+					mui.toast("请稍后再试");
+					return;
+				}
+				
+				var mydate=new Date();
+				var time=mydate.getTime()+'';
+				mui.post(pulicHttp+"sms/sms_send",{
+					phone:document.querySelector("#phone").value,
+					time:time.substr(0,10),
+					sign:md5(document.querySelector("#phone").value+time.substr(0,10)+"yckjsms")
+				},function(data){
+					
+					console.log(JSON.stringify(data))
+					if(data.status==0){
+						var time=setInterval(function(){
+							document.getElementsByClassName("getCode")[0].innerText=(numCode--)+"秒后再试";
+							if(numCode==0){
+								clearInterval(time);
+								numCode=30;
+								document.getElementsByClassName("getCode")[0].innerText="获取验证码";
+							}
+						},1000);
+					}
+					mui.toast(data.msg)
+				})
+			}
+			mui("div").on("tap",".getCode",function(e){
+				e.stopPropagation();
+				getCode();
+			})
+			mui("div").on("tap","#register",function(e){
+				e.stopPropagation();
+				if(!$("input[type=checkbox]").is(":checked")){
+					mui.toast("请勾选协议")
+					return;
+				}
+				var phone=/^1[3-9][0-9]{9}$/;
+				if(document.querySelector("#phone").value==''||!phone.test(document.querySelector("#phone").value)){
+					mui.toast("请输入正确手机号")
+					return;
+				}
+				
+				var options={};
+				if(num==1){
+					//个人注册
+					options={
+						phone:document.querySelector("#phone").value,
+						type:num,
+						job:document.querySelector("#job").value,
+						pwd:document.querySelector("#pwd").value,
+						confirmPwd:document.querySelector("#confirmPwd").value,
+						code:document.querySelector("#code").value,
+					}
+				}else if(num==2){
+					//商家注册
+					
+				}
+				mui.ajax(pulicHttp+"Registr/index",{
+					data:options,
+					type:'post',//HTTP请求类型	              
+					success:function(data){
+						
+						mui.toast(data.msg);
+						if(data.status==0){
+							mui.alert(data.msg, '提示', function() {
+			                    mui.back();
+			                });
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						mui.toast(type);
+					}
+				})
+			})
+		})()
+	</script>
+</html>

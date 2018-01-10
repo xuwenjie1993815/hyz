@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.list_ul{padding: 15px;box-sizing: border-box;list-style: hangul;}
+			ol{list-style-type:none;counter-reset:sectioncounter;}  
+			ol li:before {  
+			    content:counter(sectioncounter) ">";   
+			    counter-increment:sectioncounter;  
+			}
+			ol li{margin-bottom: 8px;}
+			p{display: inline;} 
+		</style>
+	</head>
+	<body>
+		<header title="活动注意事项"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper back-fff">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+					<ol class="list_ul color-back"></ol>
+				</div>
+			</div>
+		</div>
+		<footer></footer>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var shoppingid=document.URL.split("?")[1].split("=")[1];
+			console.log(shoppingid)
+			
+			mui.post(pulicHttp+"Product/attention",{
+				period_id:shoppingid
+			},function(data){
+				console.log(JSON.stringify(data))
+				
+				if(data.msg){
+					var html=''
+					for (var i=0;i<data.msg.length;i++) {
+						html+='<li><p> '+data.msg[i]+'</p></li>'
+					}
+					document.querySelector(".list_ul").innerHTML=html;
+				}
+				
+			})
+		})()
+	</script>
+</html>

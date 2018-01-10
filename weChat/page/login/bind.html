@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			input[type=button]{width: 90%;background: #EA5312;color: #fff;border-color: #EA5312;border-radius: 4px;margin:auto;display: block;}
+			input[type=tel],input[type=password]{border: none;padding:5px 10px;margin-bottom: 0;height: 44px;}
+			.login_line{margin: 5px 15px 0 15px;padding-bottom:5px;border-bottom: 1px solid #ccc;}
+			.getCode{border-color: #EA5312;background: #EA5312; color: #fff;}
+		</style>
+	</head>
+	<body style="background-color: #fff;">
+		<header title="绑定账号" class="liingight-45" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<form action="/" method="post">
+				    	<div class="mt-50">
+							<div class="flex liingight-45 login_line">
+								<input type="tel" id="phone" maxlength="11"placeholder="请输入手机号"/>
+							</div>
+							<div class="flex liingight-45 login_line">
+								<input type="password" id="mima" maxlength="16" placeholder="请输入密码"/>
+							</div>
+						</div>
+						<div class="mt-50">
+							<input type="button" id="btn" class="liingight-45" value="确定"/>
+						</div>
+				    </form>
+				    <p style="color: red;margin: 30px 15px;">注：未注册的用户，请先注册再绑定</p>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var slef=plus.webview.currentWebview();
+			mui("div").on("tap","#btn",function(e){
+				e.stopPropagation();
+				if(document.getElementById("phone").value==""){
+					mui.toast("请输入手机号");
+					return;
+				}
+				if(document.getElementById("mima").value==""){
+					mui.toast("请输入密码");
+					return;
+				}
+				
+				mui.post(pulicHttp+"Login/bangding",{
+					login_type:slef.login_type,
+					login_id:slef.login_id,
+					tel:document.getElementById("phone").value,
+					pwd:document.getElementById("mima").value,
+				},function(data){
+					console.log(JSON.stringify(data))
+					
+					if(data.status==0){
+//						mui.openWindow({
+//						    url:"../home/index.html",
+//						    id:"../home/index.html",
+//						    extras:{
+//						      	login_type:login_type,
+//						      	login_id:localStorage.OpenID
+//						    },
+//						    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+//						    show:{
+//						      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+//						      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+//						    },
+//						})
+						mui.back()
+					}else if(data.status==1){
+						mui.openWindow({
+						    url:"register.html",
+						    id:"register.html",
+						    extras:{
+						      	
+						    },
+						    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+						    show:{
+						      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+						      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+						    },
+						})
+					}else{
+						mui.toast(data.msg)
+					}
+				})
+			})
+		})()
+	</script>
+</html>

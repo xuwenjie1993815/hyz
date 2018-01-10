@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<meta name="HandheldFriendly" content="true"/>
+		<meta name="MobileOptimized" content="320"/>
+		<title>Hello H5+</title>
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<link rel="stylesheet" href="../../lib/swiper/swiper.min.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+	</head>
+	<body>
+		<div class="swiper-container">
+	        <div class="swiper-wrapper">
+	            <div class="swiper-slide">
+	              	<img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" />
+	            </div>
+	        </div>
+	        <div class="swiper-pagination"></div>
+	    </div>
+	</body>
+	<script type="text/javascript" src="../../lib/swiper/swiper.min.js" ></script>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		var swiper = new Swiper('.swiper-container', {
+		    pagination: '.swiper-pagination',
+		    //左右图标按钮
+		    nextButton: '.swiper-button-next',
+		    prevButton: '.swiper-button-prev',
+		    paginationClickable: true,
+		    spaceBetween: 30,
+		    centeredSlides: true,
+		    //设置时间
+		    autoplay: 2500,
+		    autoplayDisableOnInteraction: false,
+		    loop : true,
+		});
+	</script>
+</html>

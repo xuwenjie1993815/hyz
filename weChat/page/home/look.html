@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.qishusall{height: 45px;line-height: 45px;}
+			.qishu{height: 45px;}
+			.qishu span{width: 105px;display: inline-block;text-align: center;}
+			.mui-slider{height: 50vw;}
+			.shopping-title{line-height: 24px;padding: 6px 0;font-weight: 600;}
+			.monye{font-size: 12px;color: #BABABA;}
+			.mui-progressbar{height: 4px;background: #EEEBEC;}
+			.mui-progressbar span{background: #EA510E;}
+			.canyu{line-height: 16px;}
+			.mui-btn-warning{background: #EEEBEC;color: #A9A9A9;}
+			.mui-btn-outlined{background: #999999;}
+			.mui-btn{padding: 12px 0;border: none;}
+			.content{padding: 0 15px 15px 15px;box-sizing: border-box;}
+			.huojiang{padding: 15px;box-sizing: border-box;margin-top: 56px;}
+			.huojiang_img{width: 80px;height: 80px;overflow: hidden;position: relative;}
+			.huojiang_img img{width: 80px;height: 80px;border-radius: 5px;}
+			.huojiang_right{width: 20px;text-align: center;}
+			.huojiang_center{font-size: 12px;color: #ABABAB;line-height: 16px;padding-left: 15px;white-space: nowrap;}
+			.mui-icon-arrowright{color: #CDCDCD;font-size: 16px;}
+			.zhongjiang_perv{width: 80px;line-height: 24px;background: rgba(0,0,0,0.4);position: absolute;bottom: 0;font-size: 10px;color: #fff;text-align: center;}
+			.jisuan_div{position: relative;}
+			.jisuan{position:absolute;padding: 4px 10px;color: #fff;background: #EBA01F;box-sizing: border-box;right: 0;top: -6px;border-radius: 3px;z-index:0;}
+			.zhongchou{background: #EEEBEC;border-radius: 3px;}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav mui-bar-top">
+		    <div class="color-fff flex just-bween ali-item">
+		    	<div class="fontsize-12"><span class="mui-icon mui-icon-arrowleft"></span></div>
+				<div class="header_title">中奖揭晓</div>
+				<a href="location.html"><div class="fontsize-12"><div class="dingwei"><span class="mui-icon mui-icon mui-icon-location"></span></div>重庆</div></a>
+		    </div>
+		</header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper back-fff pa-15 qishusall">
+				<div class="mui-scroll qishu">
+					<!--这里放置真实显示的DOM内容-->
+				</div>
+			</div>
+			<div class="huojiang back-fff flex" v-cloak="">
+				<div class="huojiang_img">
+					<img :src="hjData.user_img" />
+					<div class="zhongjiang_perv">{{hjData.user_name}}</div>
+				</div>
+				<div class="flex fl-colum huojiang_center just-bween fontsize-10">
+					<div>揭晓时间：{{hjData.ctime}}</div>
+					<div>购买时间：{{hjData.order_time}}</div>
+					<div>本期购买：<span>{{hjData.now_num}}</span>人次</div>
+					<div class="jisuan_div"><span>幸运获奖号码：</span><span class="color-org">{{hjData.reward_number}}</span><a class="jisuan" href="results.html">查看计算结果</a></div>
+				</div>
+			</div>
+			<div class="mt-10"></div>
+			<!--图片轮播-->
+		    <div class="mui-slider">
+			  <div class="mui-slider-group mui-slider-loop">
+			    <!--支持循环，需要重复图片节点-->
+			    <!--<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>
+			    <div class="mui-slider-item"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>
+			    <div class="mui-slider-item"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>
+			    <div class="mui-slider-item"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>
+			    <div class="mui-slider-item"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>-->
+			    <!--支持循环，需要重复图片节点-->
+			    <!--<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>-->
+			  </div>
+			  <div class="mui-slider-indicator"></div>
+			</div>
+			<div class="back-fff content" v-cloak="">
+				<div class="shopping-title"><span class="color-org">[第{{shopList.period_time}}期]</span><span>{{shopList.product_name}}</span></div>
+				<div class="monye">价值：<span>{{shopList.price}}</span>元</div>
+				<div class="mui-progressbar demo1">
+					<span class="scroo">{{100/(shopList.target_num/shopList.now_num)}}</span>
+				</div>
+				<div class="flex just-bween canyu">
+					<div class="mui-text-left fontsize-10">
+						<span>{{shopList.now_num}}</span>
+						<div>已参与</div>
+					</div>
+					<div class="mui-text-center fontsize-10">
+						<span>{{shopList.target_num}}</span>
+						<div>总需人数</div>
+					</div>
+					<div class="mui-text-right fontsize-10">
+						<span class="color-blue">{{shopList.surplus_num}}</span>
+						<div>剩余</div>
+					</div>
+				</div>
+				<div class="mt-10"><button type="button" class="mui-btn mui-btn-warning width-100">本期已揭晓</button></div>
+				<div class="mt-10">
+					<li class="mui-table-view-cell color-org zhongchou">
+				        <a href="kinds.html" class="mui-navigate-right">第{{times}}期正在计划中</a>
+				    </li>
+				</div>
+				<ul class="mui-table-view mt-10">
+				    <li class="mui-table-view-cell">
+				        <a :href="'shopping_Record.html?pid='+shopList.product_id+'&period_id='+shopList.period_id" class="mui-navigate-right">所有商品购买记录</a>
+				    </li>
+				    <li class="mui-table-view-cell">
+				        <a :href="'avtive_careful.html?pid='+shopList.period_id" class="mui-navigate-right">参加项目注意事项</a>
+				    </li>
+				    <!--<li class="mui-table-view-cell">
+				        <a href="lucy_peole.html" class="mui-navigate-right">已有<span class="color-org">1</span>个幸运者晒单</a>
+				    </li>-->
+				</ul>
+			</div>
+			
+			<div class="mt-10"></div>
+		</div>
+		<footer></footer>
+	</body>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var pulicHttp="http://101.201.65.154/";
+			var nav='<nav class="mui-bar mui-bar-tab">'
+			    +'<a class="mui-tab-item mui-active" href="../home/index.html"  id="defaultTab">'
+			        +'<span class="mui-icon mui-icon-home"></span>'
+			        +'<span class="mui-tab-label">首页</span>'
+			    +'</a>'
+			    +'<a class="mui-tab-item" href="../special/index.html">'
+			        +'<span class="mui-icon mui-icon-phone"></span>'
+			        +'<span class="mui-tab-label">专场</span>'
+			    +'</a>'
+			    +'<a class="mui-tab-item" href="../shopping/index.html">'
+			        +'<span class="mui-icon mui-icon-email"></span>'
+			        +'<span class="mui-tab-label">购物车</span>'
+			    +'</a>'
+			    +'<a class="mui-tab-item" href="../my/index.html">'
+			        +'<span class="mui-icon mui-icon-person"></span>'
+			        +'<span class="mui-tab-label">我的好运</span>'
+			    +'</a></nav>'
+			var footer=document.querySelector("footer");
+			if(footer){
+				footer.innerHTML=nav;
+			}else{
+				document.querySelector(".mui-content").style.paddingBottom="0px"
+			}
+			var html='';
+			var length=JSON.parse(localStorage.timeNum)
+			for (var i=length.period_sum;i>=1;i--) {
+				html+='<span title='+length[i]+'>第'+i+'期</span>'
+			}
+			document.querySelector(".qishu").style.width=105*(parseInt(length.period_sum))+'px';
+			document.querySelector(".qishu").innerHTML=html;
+			var app1=new Vue({
+				el:'.huojiang',
+				data:{
+					hjData:{},
+				}
+			})
+			var app2=new Vue({
+				el:'.content',
+				data:{
+					shopList:'',
+					times:length.period_sum+1,
+				}
+			})
+			mui("div").on("tap",".qishu span",function(e){
+				e.stopPropagation();
+				var per_id=this.title
+				huoqu(per_id);
+			})
+			huoqu(length[length.period_sum]);
+			function huoqu(num){
+				
+				mui.post(pulicHttp+"Reward/rewardInfo",{
+					period_id:num
+				},function(data){
+					
+					if(data.status!=0){
+						mui.toast(data.msg);
+						return;
+					}
+					console.log(JSON.stringify(data))
+					app1.hjData=data.data;
+					app2.shopList=data.data;
+					if(data.data.images){
+						var img=data.data.images.split(",");
+						var myimg='<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="'+img[0]+'" /></a></div>';
+						var silder=''
+						for (var i=0;i<img.length;i++) {
+							myimg+='<div class="mui-slider-item"><a href="#"><img src="'+img[i]+'" /></a></div>';
+							if(i==0){
+								silder+='<div class="mui-indicator mui-active"></div>'
+							}else{
+								silder+='<div class="mui-indicator"></div>'
+							}
+						}
+						myimg+='<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="'+img[img.length-1]+'" /></a></div>';
+						document.getElementsByClassName("mui-slider-group")[0].innerHTML=myimg;
+						document.getElementsByClassName("mui-slider-indicator")[0].innerHTML=silder;
+						var gallery = mui('.mui-slider');
+							gallery.slider({
+							  interval:3000//自动轮播周期，若为0则不自动播放，默认为0；
+						});
+						Vue.nextTick(function(){
+							mui(".scroo").each(function(){
+								var zhi=100-parseFloat(this.innerText);
+								this.style.transform="translate3d(-"+zhi+"%, 0px, 0px)"
+							})
+						})
+					}
+				})
+			}
+			//正常页面跳转
+			mui('body').on('tap','a',function(e){
+			//	document.location.replace(this.href)
+				e.stopPropagation()
+				var href=this.href;
+				mui.openWindow({
+				    url:href,
+				    id:href,
+				    extras:{
+				      //自定义扩展参数，可以用来处理页面间传值
+				    },
+				    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+				    show:{
+				      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+				      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+				    },
+				})
+			});
+			//菜单跳转
+			mui('nav').on('tap','a',function(e){
+			//	document.location.replace(this.href)
+				e.stopPropagation()
+				var href=this.href;
+				mui.openWindow({
+				    url:href,
+				    id:href,
+				    extras:{
+				      //自定义扩展参数，可以用来处理页面间传值
+				    },
+				    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+				    show:{
+				      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+				      aniShow:"fade-in",//页面显示动画，默认为”slide-in-right“；
+				    },
+				})
+			});
+			//返回按钮关闭页面
+			mui("header").on("tap",".mui-icon-arrowleft",function(){
+				mui.back();
+			})
+			//启用右滑关闭功能
+			mui.init({
+				swipeBack:true 
+			});
+			mui('.qishusall').scroll({
+				scrollY: false, //是否竖向滚动
+ 				scrollX: true, 
+				deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+			});
+		})()
+	</script>
+</html>

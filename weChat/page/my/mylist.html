@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+		.mui-table-view,.mui-control-content{background-color: inherit;}
+		.mui-scroll-wrapper{bottom: 0;top: 0;}
+		.mui-table-view-cell:after{left: 0;}
+		.mui-bar-popover {width: 25%;}
+		.mui-control-content .mui-loading {margin-top: 50px;}
+		.mui-control-content{min-height: 151vw;}
+		.mr-15{margin-right: 15px;}
+		.lineheight-45{line-height: 45px;}
+		input[type=text]{padding: 5px;height: 31px;}
+		input[type=button]{margin-top: 8px;background-color: #EA5312;color: #ffffff;border: 0;}
+		li{margin-bottom: 10px; background-color: #ffffff;}
+		.ydh{width:50px;height: 50px;border-radius: 50%;overflow: hidden;line-height: 50px;text-align: center;border:1px solid #EA5312;color: #EA5312;}
+		.mui-content{padding-bottom: 0;}
+		.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .mui-slider-item{border-bottom: 0;}
+		.border-top-hui{border-top:1px solid #c8c7cc;}
+		.pt-5{padding-top: 5px;}
+		.mui-segmented-control.mui-segmented-control-inverted~.mui-slider-progress-bar{background-color: #EC5D20;}
+		a{color: inherit;}
+		.li2{padding:11px 15px; background-color: #ffffff;margin-bottom: 10px;}
+		.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{color: #333;}
+		.dingdan-img{width: 80px;height: 110px; margin-right: 10px;position: relative;}
+		.dingdan-active{position: absolute;top: 0;left: 0;width: 100%;background-color:#EA5312;color: #fff;padding-left: 5px;}
+		.sanjiao{width: 0;height: 0;border-top: 10px solid transparent;border-right: 15px solid #fff;border-bottom: 10px solid transparent;position: absolute;top: 0;right: 0;}
+		.dingdan-img img{width: 100%;height: 100%;}
+		.zhiufs{border-top: 1px solid #D9D9D9;margin-top: 10px;padding-top: 10px;}
+		.zhifu-btn{background: #F95E17;color: #fff;padding: 7px 40px;box-sizing: border-box;border-radius: 2px;}
+		.user-data{padding:15px 15px 10px}
+		.head-pl{position: fixed;top: 45px;z-index:99;line-height: 40px;}
+		.head-pl input[type=text]{margin-bottom: 0;}
+		.fb{padding:0 10px;background: #EA5312;color: #fff;height: 32px;line-height: 32px;margin: 4px 5px 0 0;}
+		.mr-10{margin-right: 10px;}
+		.mt-40{margin-top: 40px;}
+		.pl{background: #fff;margin-bottom: 5px;display: flex;flex-direction: column;}
+		.user-img{width: 50px;height: 50px;border-radius: 50%;overflow: hidden;margin-right: 10px;}
+		.mui-scroll-wrapper{bottom: 0;}
+		.plq-text{width:100%;margin: auto;min-height: 120px;border:1px solid #CCCCCC;padding: 5px;}
+		.plq-text span{color: #bbb;}
+		.show_img{width: 100%;}
+		.show_img .imgs{width: 32% !important;}
+		.show_img .imgs:nth-child(3n-1){margin: 0 1% !important;}
+		</style>
+	</head>
+	<body>
+		<header title="我的订单" data-index="2" class="liingight-45"></header>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<a class="mui-control-item" href="#item1mobile">全部</a>
+					<a class="mui-control-item a2" href="#item2mobile">已参与</a>
+					<a class="mui-control-item" href="#item3mobile">待兑奖</a>
+					<a class="mui-control-item" href="#item4mobile">我的评论</a>
+				</div>
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-3"></div>
+				<div class="mui-slider-group">
+					<div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
+						<div id="scroll1" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul id="ul1" v-cloak="">
+									<li class="flex fl-colum li2" v-for="item in list">
+					    				<div class="flex just-arround">
+					    					<div class="dingdan-img">
+					    						<div class="dingdan-active">筹集中<span class="sanjiao"></span></div>
+					    						<img :src="item.images"/>
+					    					</div>
+											<div class="flex1">
+												<div>{{item.title}}</div>
+												<div class="color-hui pt-5">第{{item.period_time}}期     数量：{{item.product_num}}份</div>
+												<div class="color-hui">金额：￥{{item.order_price}}</div>
+											</div>
+					    				</div>
+					    				<div class="flex just-bween zhiufs ali-item">
+					    					<div>{{item.order_time | timeChage}}</div>
+					    					<input @click="openPly" v-if="item.order_status=='0'"  type="button" value="待支付" />
+					    					<input v-if="item.order_status!='0'"  type="button" value="已支付" />
+					    				</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="item2mobile" class="mui-slider-item mui-control-content">
+						<div id="scroll2" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul id="ul2" v-cloak="">
+									<li class="flex fl-colum li2" v-for="item in list">
+					    				<div class="flex just-arround">
+					    					<div class="dingdan-img">
+					    						<div class="dingdan-active">筹集中<span class="sanjiao"></span></div>
+					    						<img :src="item.images"/>
+					    					</div>
+											<div class="flex1">
+												<div>{{item.title}}</div>
+												<div class="color-hui pt-5">第{{item.period_time}}期     数量：{{item.product_num}}份</div>
+												<div class="color-hui">金额：￥{{item.order_price}}</div>
+											</div>
+					    				</div>
+					    				<div class="flex just-bween zhiufs ali-item">
+					    					<div>{{item.order_time | timeChage}}</div>
+					    					<!--<input v-if="item.order_status=='0'"  type="button" value="查看" />-->
+					    					<input v-if="item.order_status!='0'"  type="button" value="已支付" />
+					    				</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="item3mobile" class="mui-slider-item mui-control-content">
+						<div id="scroll3" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul class="mui-table-view" id="ul3" v-cloak="">
+									<li class="mui-table-view-cell" v-for="item in list">
+										<div class="flex fl-colum pb-10">
+											<div>{{item.title}}</div>
+											<div class="color-org flex liingight-45">
+												<div class="mr-15">第{{item.period_time}}期</div>
+												<div>中奖码：18888888888</div>
+											</div>
+											<div class="color-hui">{{item.order_type_name}}</div>
+										</div>
+										<div class="flex just-bween border-top-hui liingight-45 pt-5">
+											<div>{{item.order_time | timeChage}}</div>
+											<!--<input @click="chakan(item.order_id)" type="button" value="查看" />-->
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="item4mobile" class="mui-slider-item mui-control-content">
+						<div id="scroll4" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul id="ul4" v-cloak="">
+									<li class="pl" v-for="item in list">
+				    					<div class="user-data flex">
+				    						<div class="user-img"><img :src="'http://101.201.65.154/Uploads/'+item.user_img" width="50" height="50"/></div>
+				    						<div class="flex fl-colum">
+				    							<div>{{item.user_name}}</div>
+				    							<div>{{item.ctime}}</div>
+				    						</div>
+				    					</div>
+				    					<div class="pa-15">{{item.content}}</div>
+				    					<div class="show_img mt-10 pa-15">
+				    						<img src=""/>
+				    					</div>
+				    					<div class="show_img mt-10 pa-15">
+				    						<img class="imgs" v-for="it in item.images" :src="'http://101.201.65.154/Uploads/'+it"/>
+				    					</div>
+				    					<div class="flex text-center mt-10" style="justify-content: flex-end;">
+				    						<div class="fl-colum mr-10">
+				    							<span class="mui-icon iconfont icon-pinglun"></span>
+				    							<div>{{item.comment_count}}</div>
+				    						</div>
+				    						<div class="fl-colum mr-10">
+				    							<span class="mui-icon iconfont icon-zan"></span>
+				    							<div>{{item.fabulous}}</div>
+				    						</div>
+				    					</div>
+				    				</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../lib/jquery-3.2.1.min.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var header=document.querySelector("header");
+			var pulicHttp="http://101.201.65.154/";
+			if(header){
+				var myclass=header.className;
+				var myindex=header.getAttribute("data-index");
+				var hed='';
+				if(myclass=="back-fff"){
+					hed+='<header class="mui-bar mui-bar-nav back-fff color-org liingight-45">'
+				}else{
+					hed+='<header class="mui-bar mui-bar-nav mui-bar-top color-fff">'
+				}
+			    hed+='<div class="flex just-bween ali-item">'
+			    	+'<div class="fontsize-12"><span class="mui-icon mui-icon-arrowleft"></span></div>'
+					+'<div class="header_title">'+header.title+'</div>'
+				if(myindex==2){
+					hed+='<div style="width:24px;"></div>'
+				}else{
+					var city=localStorage.city;
+					if(!city){city="重庆"}
+					hed+='<a href="location.html"><div class="fontsize-12"><div class="dingwei"><span class="mui-icon mui-icon mui-icon-location"></span></div>'+city+'</div></a>'
+				}
+			    hed+='</div></header>';
+				header.innerHTML=hed;
+			}
+			mui('body').on('tap','.list',function(e){
+				e.stopPropagation()
+				var href=this.href;
+		//		clicked('navigator_status.html');
+				mui.openWindow({
+				    url:href,
+				    id:href,
+				    extras:{
+				      //自定义扩展参数，可以用来处理页面间传值
+				    },
+				    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+				    show:{
+				      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+				      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+				    },
+				})
+			});
+			//返回按钮关闭页面
+			mui("header,div").on("tap",".mui-icon-arrowleft",function(){
+				mui.back();
+			})
+			//启用右滑关闭功能
+			mui.init({
+				swipeBack:true 
+			});
+			//flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+			mui('.mui-scroll-wrapper').scroll({
+				deceleration: 0.0006
+			});
+			var app1=new Vue({
+				el:"#ul1",
+				data:{
+					list:""
+				},
+				filters:{
+					timeChage:function(val){
+						return new Date(parseInt(val*1000)).toLocaleDateString().replace(/:\d{1,2}$/,' ');   
+					}
+				},
+				methods:{
+					openPly:function(){
+						mui.openWindow({
+						    url:"../shopping/paly.html",
+						    id:"../shopping/paly.html",
+						    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+						    show:{
+						      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+						      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+						    },
+						})
+					}
+				},
+				created:function(){
+					
+					var _this=this;
+					mui.post(pulicHttp+"Order/orderList",{user_id:localStorage.userID},function(data){
+						
+						_this.list=data.order_list;
+						console.log(JSON.stringify(data))
+					})
+				}
+			})
+			var app2=new Vue({
+				el:"#ul2",
+				data:{
+					list:""
+				},
+				filters:{
+					timeChage:function(val){
+						return new Date(parseInt(val*1000)).toLocaleDateString().replace(/:\d{1,2}$/,' ');   
+					}
+				},
+			})
+			var app3=new Vue({
+				el:"#ul3",
+				data:{
+					list:""
+				},
+				filters:{
+					timeChage:function(val){
+						return new Date(parseInt(val*1000)).toLocaleDateString().replace(/:\d{1,2}$/,' ');   
+					}
+				},
+				methods:{
+					chakan:function(id){
+						mui.openWindow({
+						    url:"duijiangDetil.html",
+						    id:"duijiangDetil.html",
+						    extras:{
+						    	myid:id
+						    },
+						    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+						    show:{
+						      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+						      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+						    },
+						})
+					}
+				}
+			})
+			var app4=new Vue({
+				el:"#ul4",
+				data:{
+					list:""
+				}
+			})
+			var html2 = '';
+			var html3 = '';
+			var html4 = '';
+			var item2 = document.getElementById('item2mobile');
+			var item3 = document.getElementById('item3mobile');
+			var item4 = document.getElementById('item4mobile');
+			document.getElementById('slider').addEventListener('slide', function(e) {
+				if (e.detail.slideNumber === 1) {
+					if(html2==''){
+						
+						mui.post(pulicHttp+"order/orderList",{
+							user_id:localStorage.userID,
+							order_status:"1"//0已参与  不传获取全部 1获取待兑奖    0已下单 1已付款(已参与) 2已中奖（待兑奖） 3已取消（无效） 4已兑奖 5未中奖
+						},function(data){
+							html2=data.order_list;
+							console.log(JSON.stringify(data))
+							setTimeout(function() {
+								
+								app2.list=html2;
+							}, 150);
+						})
+					}
+				} else if (e.detail.slideNumber === 2) {
+					if(html3==''){
+						
+						mui.post(pulicHttp+"Order/orderList",{
+							user_id:localStorage.userID,
+							order_status:2//0已参与  不传获取全部 1获取待兑奖
+						},function(data){
+							html3=data.order_list;
+							console.log(JSON.stringify(data))
+							setTimeout(function() {
+								app3.list=html3;
+								
+							}, 150);
+						})
+					}
+				} else if (e.detail.slideNumber === 3) {
+					if(html4==''){
+						
+						mui.post(pulicHttp+"Comment/userCommentList",{
+							user_id:localStorage.userID
+						},function(data){
+							console.log(JSON.stringify(data))
+							for (var i=0;i<data.comment_list.length;i++) {
+								if(data.comment_list[i].images){
+									data.comment_list[i].images=data.comment_list[i].images.split(",")
+								}
+							}
+							html4=data.comment_list;
+							setTimeout(function() {
+								app4.list=html4;
+								
+							}, 150);
+							console.log(JSON.stringify(data))
+						})
+					}
+				}
+			});
+			var sliderSegmentedControl = document.getElementById('sliderSegmentedControl');
+//			mui('.mui-input-group').on('change', 'input', function() {
+//				if (this.checked) {
+//					sliderSegmentedControl.className = 'mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-segmented-control-' + this.value;
+//					//force repaint
+//					sliderProgressBar.setAttribute('style', sliderProgressBar.getAttribute('style'));
+//				}
+//			});
+			
+			if(document.URL.lastIndexOf("=")){
+				var ins=document.URL.lastIndexOf("=");
+				if(document.URL[ins+1]<5){
+					mui('#slider').slider().gotoItem(document.URL[ins+1]);
+				}else{
+					mui('#slider').slider().gotoItem(0);
+				}
+			}
+		})()
+	</script>
+</html>

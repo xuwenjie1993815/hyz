@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			li{height: 45px;border-bottom: 1px solid #DADADD;}
+			input[type=button]{width: 90%;background: #EA5312;color: #fff;border-color: #EA5312;border-radius: 4px;margin:50px auto;display: block;line-height: 32px;}
+			input[type=password]{border: 0;font-size: 15px;height: 44px;}
+		</style>
+	</head>
+	<body>
+		<header title="修改密码" class="liingight-45" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+		    		<form class="mt-10">
+		    			<ul>
+			    			<li>
+			    				<input type="password" id="old_pwd" value="" class="input-mima" placeholder="请输入当前密码"/>
+			    			</li>
+			    			<li>
+			    				<input type="password" id="pwd_one" value="" class="input-mima" placeholder="请输入新密码"/>
+			    			</li>
+			    			<li>
+			    				<input type="password" id="pwd_two" value="" class="input-mima" placeholder="请再次输入新密码"/>
+			    			</li>
+			    		</ul>
+		    			<input type="button" value="确认修改"/>
+		    		</form>
+		    	</div>
+	    	</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			mui("div").on("tap","input[type=button]",function(e){
+				e.stopPropagation();
+				mui.post(pulicHttp+"Pass/changePassword",{
+					old_pwd:document.getElementById("old_pwd").value,
+					pwd_one:document.getElementById("pwd_one").value,
+					user_id:localStorage.userID,
+					pwd_two:document.getElementById("pwd_two").value,
+				},function(data){
+					console.log(JSON.stringify(data))
+					mui.toast(data.msg)
+					if(data.status==0){
+						mui.later(function(){
+							mui.back();
+						},1000)
+					}
+				})
+			})
+		})()
+	</script>
+</html>

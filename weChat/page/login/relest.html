@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			input[type=button]{width: 90%;background: #EA5312;color: #fff;border-color: #EA5312;border-radius: 4px;margin:auto;display: block;}
+			input[type=text],input[type=password]{border: none;padding:5px 10px;margin-bottom: 0;height: 44px;}
+			.login_line{margin: 5px 15px 0 15px;padding-bottom:5px;border-bottom: 1px solid #ccc;}
+			.getCode{border-color: #EA5312;background: #EA5312; color: #fff;}
+		</style>
+	</head>
+	<body style="background-color: #fff;">
+		<header title="重置密码" class="back-fff" data-index = "2"></header>
+		<div class="mui-content back-fff">
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<form action="/" method="post">
+				    	<div class="mt-50">
+							<div class="flex liingight-45 login_line">
+								<input type="password" maxlength="16" id="pwd" placeholder="请输入密码"/>
+							</div>
+							<div class="flex liingight-45 login_line just-bween">
+								<input type="password" maxlength="16" id="confirm_pwd" placeholder="请再一次输入密码"/>
+							</div>
+						</div>
+						<div class="mt-50">
+							<input type="button" id="suer" class="liingight-45" value="确定"/>
+						</div>
+				    </form>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			mui("div").on("tap","#suer",function(e){
+				e.stopPropagation();
+				
+				var self=plus.webview.currentWebview();
+				console.log(self.phone)
+				mui.ajax(pulicHttp+"Pass/resetPwd",{
+					data:{
+						phone:self.phone,
+						pwd:document.getElementById("pwd").value,
+						confirm_pwd:document.getElementById("confirm_pwd").value
+					},
+					success:function(data){
+						
+						if(data.status==0){
+							mui.alert("修改成功","提示",function(){
+								mui.back(-100);
+							})
+						}else{
+							mui.toast(data.msg)
+						}
+						
+					},
+					error:function(){
+						console.log("出错啦")
+					}
+				})
+			})
+			
+		})()
+	</script>
+</html>

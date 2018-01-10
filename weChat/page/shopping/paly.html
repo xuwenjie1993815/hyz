@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.pay{margin: 0 15px;}
+			.liingight-24{height: 24px;line-height: 24px;}
+			.liingight-90{height: 90px; line-height: 90px;}
+			.shopping_img{width: 80px;height: 90px;}
+			.shopping_img img{width: 70px;margin: 12px 0;}
+			.fontsize-18{font-size: 18px;}
+			button{width: 90%;background: #EA5312;color: #fff;border-color: #EA5312;border-radius: 4px;margin:auto;display: block;padding: 0;margin-bottom: 50px;}
+			input[type=radio]{width: 20px; height: 20px;display: block;margin-top: 35px;border-radius: 50%;-webkit-appearance: none;background: #DFDBDA;border: none;}
+			input[type=radio]:checked{background: #EC5D20;}
+			.mylist:active{background: rgba(0,0,0,0.1);}
+			.mui-scroll-wrapper{bottom: 0;}
+		</style>
+	</head>
+	<body>
+		<header title="订单支付" data-index="2" class="liingight-45"></header>
+		<div class="mui-content">
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+				
+				    <div class="pay liingight-45">付款信息</div>
+				    <div id="list" v-cloak="">
+				    	<div class="back-fff liingight-45 border-bottom-hui mylist" v-for="item in list" :data-id = "item.order_id">
+					    	<div class="flex just-bween pay">
+						    	<div style="max-width: 50%;">“{{item.title}}”</div>
+						    	<div><span class="color-org">￥{{item.order_price}} </span><span class="fontsize-12 color-hui"> 数量:x{{item.product_num}}</span></div>
+					    	</div>
+					    </div>
+				    </div>
+				    
+				    <div class="back-fff liingight-45">
+				    	<div class="flex just-bween pay">
+					    	<div class="color-org">总金额</div>
+					    	<div class="color-org">￥<span id="monye"></span></div>
+				    	</div>
+				    </div>
+				    <div class="pay liingight-45">付款方式</div>
+				    <div class="back-fff liingight-90 border-bottom-hui" id="alipay">
+				    	<div class="flex just-bween pay">
+					    	<div class="shopping_img">
+					    		<img src="../../image/zhifubao_03.png"/>
+					    	</div>
+					    	<div class="flex fl-colum mt-15">
+					    		<div class="fontsize-18 liingight-24">支付宝</div>
+					    		<div class="color-bbb liingight-24">推荐已安装支付宝的客户使用</div>
+					    	</div>
+					    	<div>
+					    		<input type="radio" name="pay" id="alipayRadio" value="" checked="checked"/>
+					    	</div>
+				    	</div>
+				    </div>
+				    <div class="back-fff liingight-90" id="wxpay">
+				    	<div class="flex just-bween pay">
+					    	<div class="shopping_img">
+					    		<img src="../../image/weixin_03.png"/>
+					    	</div>
+					    	<div class="flex fl-colum mt-15">
+					    		<div class="fontsize-18 liingight-24">微信支付</div>
+					    		<div class="color-bbb liingight-24">推荐已安装微信的客户使用</div>
+					    	</div>
+					    	<div>
+					    		<input type="radio" name="pay" id="wxpayRadio" value=""/>
+					    	</div>
+				    	</div>
+				    </div>
+				    <div class="mt-50">
+				    	<button type="button" class="liingight-45" id="suerPay">确认支付</button>
+				    </div>
+		    	</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			mui.init({
+			  gestureConfig:{
+			   tap: true, //默认为true
+			   longtap: true, //默认为false
+			   release:true
+			  }
+			});
+			var payFangshi="alipay";
+			
+			var app=new Vue({
+				el:"#list",
+				data:{
+					list:'',
+					monye:0,
+				},
+				methods:{
+					myajax:function(){
+						var _this=this;
+						mui.post(pulicHttp+"Order/orderList",{
+							user_id:localStorage.userID,
+							order_status:"0",
+						},function(data){
+							
+							_this.list=data.order_list;
+							document.getElementById("monye").innerText=data.order_price;
+							console.log(JSON.stringify(data))
+						})
+					}
+				},
+				created:function(){
+					var _this=this;
+					_this.myajax();
+				}
+			})
+			Vue.nextTick(function(){
+				mui("div").on("longtap",".mylist",function(e){
+					e.stopPropagation();
+					var order_id=this.getAttribute("data-id");
+					mui.confirm("是否删除","提示",["取消","确定"],function(e){
+						if(e.index==1){
+							
+							mui.post(pulicHttp+"Order/cancelOrder",{
+								user_id:localStorage.userID,
+								order_id:order_id,
+							},function(data){
+								console.log(JSON.stringify(data))
+								
+								if(data.status==0){
+									app.myajax();
+								}
+								mui.toast(data.msg)
+							})
+						}
+					})
+					
+				})
+			})
+			mui("div").on("tap","#alipay",function(){
+				payFangshi=this.id;
+				document.getElementById("alipayRadio").checked=true;
+			})
+			mui("div").on("tap","#wxpay",function(){
+				payFangshi=this.id;
+				document.getElementById("wxpayRadio").checked=true;
+			})
+			var pays={};
+			function plusReady(){
+				// 获取支付通道
+				plus.payment.getChannels(function(channels){
+					for(var i in channels){
+						var channel=channels[i];
+						if(channel.id=='qhpay'||channel.id=='qihoo'){	// 过滤掉不支持的支付通道：暂不支持360相关支付
+							continue;
+						}
+						pays[channel.id]=channel;
+						checkServices(channel);
+					}
+				},function(e){
+					alert('获取支付通道失败：'+e.message);
+				});
+			}
+			plusReady();
+			mui("div").on("tap","#suerPay",function(){
+				var monye=new Number(document.getElementById("monye").innerText);
+				pay(payFangshi,monye);
+			})
+			// 检测是否安装支付服务
+			function checkServices(pc){
+				if(!pc.serviceReady){
+					var txt=null;
+					switch(pc.id){
+						case 'alipay':
+						mui.toast('检测到系统未安装“支付宝快捷支付服务”');
+						break;
+						default:
+						mui.toast('系统未安装“'+pc.description+'”服务');
+						break;
+					}
+					plus.nativeUI.confirm(txt, function(e){
+						if(e.index==0){
+							pc.installService();
+						}
+					}, pc.description);
+				}
+			}
+			var PAYSERVER='http://demo.dcloud.net.cn/payment/?payid=';
+			// 支付
+			function pay(id,money){
+				var url=PAYSERVER;
+				if(id=='alipay'||id=='wxpay'){
+					url+=id;
+				}else{
+					plus.nativeUI.alert('当前环境不支持此支付通道！', null, '提示');
+					return;
+				}
+				var appid=plus.runtime.appid;
+				url+='&appid='+appid+'&total=';
+				
+				var xhr=new XMLHttpRequest();
+				xhr.onreadystatechange=function(){
+					switch(xhr.readyState){
+						case 4:
+						
+						if(xhr.status==200){
+							console.log('----- 请求订单成功 -----');
+							console.log(xhr.responseText);
+							var order=xhr.responseText;
+							plus.payment.request(pays[id],order,function(result){
+								console.log('----- 支付成功 -----');
+								console.log(JSON.stringify(result));
+								plus.nativeUI.alert('支付成功',function(){
+	//								mui.back();
+								},'提示');
+							},function(e){
+								console.log('----- 支付失败 -----');
+	//							console.log('['+e.code+']：'+e.message);
+	//							plus.nativeUI.alert('更多错误信息请参考支付(Payment)规范文档：http://www.html5plus.org/#specification#/specification/Payment.html', null, '支付失败：'+e.code);
+							});
+						}else{
+							console.log('----- 请求订单失败 -----');
+							console.log( xhr.status );
+							plus.nativeUI.alert('获取订单信息失败！', null, '');
+						}
+						break;
+						default:
+						break;
+					}
+				}
+				xhr.open('GET',url+money);
+				xhr.send();
+			}
+		})()
+	</script>
+</html>

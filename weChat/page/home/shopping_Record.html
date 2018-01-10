@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.mui-table-view .mui-media-object{width: 50px;height: 50px;max-width: 50px;border-radius: 50%;}
+			.mui-ellipsis{margin-top: 5px;}
+			.mui-media-body{margin-top: 2px;}
+		</style>
+	</head>
+	<body>
+		<header title="商品购买记录"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell mui-media" v-for="item in listData">
+							<img class="mui-media-object mui-pull-left" :src="item.user_img">
+							<div class="mui-media-body">
+								<div class="color-blue">{{item.user_name}}<span class="fontsize-12 color-hui"> {{item.address}}</span></div>
+								<p class="mui-ellipsis">购买了<span>{{item.num}}</span>人次<span style="float: right;" class="fontsize-10 color-ddd">{{item.order_time}}</span></p>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<footer></footer>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var app=new Vue({
+				el:'.mui-table-view',
+				data:{
+					listData:[],
+				},
+				created:function(){
+					
+					var _this=this;
+					var allid=document.URL.split("?")[1].split("&");
+					var pid=allid[0].split("=")[1];
+					var perid=allid[1].split("=")[1];
+					mui.post(pulicHttp+"Product/productRecord",{
+						product_id:pid,
+						period_id:perid
+					},function(data){
+						
+						_this.listData=data.data
+						console.log(JSON.stringify(data))
+					})
+				}
+			})
+			
+		})()
+	</script>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			input[type=button]{width: 100%;background: #EA5312;border-color: #EA5312;border-radius: 4px;margin:auto;display: block;color: #fff;font-size: 16px;}
+			input[type=text],input[type=password]{border: none;padding: 5px;margin-bottom: 0;height: 44px;}
+			.login_line{margin:15px 15px 0 15px;border-bottom: 1px solid #ccc;}
+			.weixin,.qq{padding: 5px 15px;}
+			.weixin img,.qq img{width: 50px;height: 50px;border-radius: 50%;border:1px solid;overflow: hidden;}
+			.weixin span,.qq span{width: 50px;height: 50px;line-height:48px;font-size:28px;text-align:center;border-radius: 50%;border:1px solid #2AC845;overflow: hidden;color: #2AC845;}
+			.weixin p,.qq p{text-align: center;margin-bottom: 0;}
+			.mui-icon{font-size: 22px;color: #B8B8B8;}
+			.mui-scroll-wrapper{bottom: 0;}
+		</style>
+	</head>
+	<body>
+		<header title="好运兆登录" class="back-fff" data-index = "2"></header>
+		<div class="mui-content">
+			<div class="mui-scroll-wrapper back-fff">
+				<div class="mui-scroll">
+					<form>
+						<div class="mt-100">
+							<div class="flex liingight-45 login_line">
+								<div style="width: 40px;border-right: 1px solid #ccc; text-align: center;"><span class="mui-icon iconfont icon-user"></span></div>
+								<div class="flex"><input type="text" class="width-100" id="phone"  placeholder="请输入用户名/手机号" /></div>
+							</div>
+							<div class="flex liingight-45 login_line">
+								<div style="width: 40px;border-right: 1px solid #ccc; text-align: center;"><span class="mui-icon iconfont icon-mima"></span></div>
+								<div class="flex"><input type="password" class="width-100" id="pwd" placeholder="请输入密码"/></div>
+							</div>
+						</div>
+						<div class="mt-50 pa-15">
+							<input type="button" value="登&nbsp&nbsp录" class="sub_btn liingight-45"/>
+						</div>
+					</form>
+					<div class="mt-50 flex just-bween pa-15">
+						<a href="gotoback.html">忘记密码？</a>
+						<a href="register.html" style="color: #EA5312;">注册&nbsp;</a>
+					</div>
+					<div class="mt-50 flex just-arround">
+						<div class="weixin">
+							<span class="mui-icon mui-icon-weixin"></span>
+							<!--<img src="" style="border-color: #86D587;"/>-->
+							<p class="fontsize-12">微信登录</p>
+						</div>
+						<div class="qq">
+							<span class="mui-icon mui-icon-qq" style="border-color: #007AFF;color: #007AFF;"></span>
+							<!--<img src="" style="border-color: #8BBEFA;"/>-->
+							<p class="fontsize-12">QQ登录</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			//启用右滑关闭功能
+			mui.init({
+				swipeBack:false 
+			});
+			mui("header,div").on("tap",".mui-icon-arrowleft",function(){
+				mui.back(-50);
+			})
+			mui("div").on("tap",".qq",function(e){
+				e.stopPropagation();
+				oath();
+				setTimeout(function(){
+					login("qq")
+				},300)
+			})
+			mui("div").on("tap",".weixin",function(e){
+				e.stopPropagation();
+				oath();
+				setTimeout(function(){
+					login("weixin")
+				},300)
+			})
+			mui("div").on("tap",".sub_btn",function(e){
+				e.stopPropagation();
+				
+				mui.ajax(pulicHttp+"/login/checkLogin",{
+					data:{
+						username:document.querySelector("#phone").value,
+						userpwd:document.querySelector("#pwd").value,
+					},
+					type:'post',//HTTP请求类型	
+					success:function(data){
+						
+						mui.toast(data.msg);
+						if(data.status==0){
+							localStorage.userPhone=data.user_info.tel;
+							localStorage.userID=data.user_info.user_id;
+							localStorage.userInfo=JSON.stringify(data.user_info);
+							mui.later(function(){
+								mui.back();
+							},1000)
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						
+						mui.toast("出错啦...");
+					}
+				})
+			})
+			//获取登录通道
+			var auths={};
+			function oath(){
+				// 获取登录认证通道
+				
+				plus.oauth.getServices(function(services){
+					console.log(JSON.stringify(services))
+					for(var i in services){
+						var service=services[i];
+						auths[service.id]=service;
+					}
+					localStorage.auths=JSON.stringify(auths);
+				},function(e){
+					mui.alert("获取登录认证失败："+e.message);
+				});
+			}
+			var login_type='';
+			function login(id){
+				var auth=auths[id];
+				login_type=id;
+				if(auth){
+					var w=null;
+					if(plus.os.name=="Android"){
+						w=
+					}
+					document.addEventListener("pause",function(){
+						setTimeout(function(){
+							w&&w.close();w=null;
+						},2000);
+					}, false );
+					auth.login(function(){
+						w&&w.close();w=null;
+//						mui.alert(111,JSON.stringify(auth.authResult));
+						userinfo(auth);
+					},function(e){
+						w&&w.close();w=null;
+						mui.alert("登录认证失败：");
+						mui.alert("["+e.code+"]："+e.message);
+						plus.nativeUI.alert("详情错误信息请参考授权登录(OAuth)规范文档：http://www.html5plus.org/#specification#/specification/OAuth.html",null,"登录失败["+e.code+"]："+e.message);
+					});
+				}else{
+					plus.nativeUI.alert("无效的登录认证通道！",null,"登录");
+				}
+			}
+			
+			function userinfo(a){
+				a.getUserInfo(function(){
+//					mui.alert("获取用户信息成功：");
+//					mui.alert(222,JSON.stringify(a.userInfo));
+					localStorage.OpenID=a.userInfo.openid; //获取用户openid
+					if(login_type=="qq"){
+						if(a.userInfo.figureurl_qq_2){
+							localStorage.touXiang=a.userInfo.figureurl_qq_2; //获取用户头像
+						}else{
+							localStorage.touXiang=a.userInfo.figureurl_qq_1; //获取用户头像
+						}
+					}else{
+						localStorage.touXiang=a.userInfo.headimgurl;
+					}
+					var nickname=a.userInfo.nickname||a.userInfo.name||a.userInfo.miliaoNick;  //获取用户名
+//					mui.toast("欢迎“"+nickname+"”登录！");
+					login_type=="qq"?login_type=2:login_type=1;
+					
+					mui.post(pulicHttp+"Login/otherLogin",{
+						login_type:login_type,
+						login_id:localStorage.OpenID
+					},function(data){
+						console.log(login_type,localStorage.OpenID)
+						console.log(JSON.stringify(data))
+						
+						if(data.status==1){
+							mui.openWindow({
+							    url:"bind.html",
+							    id:"bind.html",
+							    extras:{
+							      	login_type:login_type,
+							      	login_id:localStorage.OpenID
+							    },
+							    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+							    show:{
+							      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+							      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+							    },
+							})
+						}else if(data.status==0){
+							localStorage.userPhone=data.user_info.tel;
+							localStorage.userID=data.user_info.user_id;
+							mui.later(function(){
+//								var wobj = plus.webview.getWebviewById("a2");
+//								wobj.reload(true);
+								mui.back();
+							},500)
+						}
+					})
+				},function(e){
+					mui.alert("获取用户信息失败：");
+					mui.alert("["+e.code+"]："+e.message);
+					plus.nativeUI.alert("获取用户信息失败！",null,"登录");
+				});
+			}
+		})()
+	</script>
+</html>

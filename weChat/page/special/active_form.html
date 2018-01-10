@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			form{padding: 15px;box-sizing:border-box ;font-size: 14px;}
+			.baomng li{line-height: 40px;font-size: 16px;position: relative;margin-bottom: 10px;}
+			.baomng span{margin: 0 4px;}
+			.baomng li input{width: auto;font-size: 15px;padding: 10px 6px;margin-left: 8px;margin-bottom: 0;}
+			select{width: 80px;-webkit-appearance: none;border: 1px solid #D2D2D2 !important;height: 40px;margin-bottom: 0;}
+			.xiala{margin-left: -32px;position: relative;margin-top: 13px;color: #999;}
+			input[type=checkbox]{position: relative;margin: 10px 4px 0 8px;border-radius: 2px;}
+			input[type=radio]{position: relative;margin: 10px 4px 0 8px;background: #fff;border: 1px solid #ddd;}
+			input[type=radio]:checked{background: #F95E17;}
+			.baomng li input.renshu{width: 40px;height: 26px;margin-top: 6px;}
+			.mui-scroll-wrapper{bottom: 0;}
+			.mui-btn-warning{background: #F95E17;}
+			.ling-45{line-height: 36px;}
+			.mui-popup-button{color: #D9DAD9;}
+			.mui-popup-button.mui-popup-button-bold{font-weight: 400;color: #F95B11;}
+		</style>
+	</head>
+	<body>
+		<header title="我爱唱歌报名表" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper back-fff">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+					<form>
+						<ul class="baomng">
+							<li class="flex">
+								姓名<span class="color-org">*</span><input type="text" id="name" placeholder="请输入你的姓名"/>
+							</li>
+							<li>
+								性别<span class="color-org">*</span>
+								<select id="sex">
+									<option>男</option>
+									<option>女</option>
+								</select>
+								<i class="mui-icon mui-icon-arrowdown xiala"></i>
+								<div style="float: right;">
+									年龄<span class="color-org">*</span>
+									<select id="age">
+										<option>22</option>
+										<option>21</option>
+									</select>
+									<i class="mui-icon mui-icon-arrowdown xiala"></i>
+								</div>
+							</li>
+							<li>
+								职务<span class="color-org">*</span>
+								<select id="job">
+									<option>学生</option>
+									<option>女</option>
+								</select>
+								<i class="mui-icon mui-icon-arrowdown xiala"></i>
+							</li>
+							<li class="flex">
+								身份证号<span class="color-org">*</span><input type="tel" id="card" placeholder="请输入你的身份证号" />
+							</li>
+							<li class="flex">
+								联系电话<span class="color-org">*</span><input type="tel" id="phone" placeholder="请输入你的联系电话" />
+							</li>
+							<li class="flex">
+								单位<span class="color-org">*</span><input type="text" id="company" placeholder="请输入你的单位" />
+							</li>
+							<li class="flex">
+								地址<span class="color-org">*</span><input type="text" id="address" placeholder="请输入你的地址" />
+							</li>
+							<li class="flex">
+								参赛曲目<span class="color-org">*</span><input type="text" id="qumu" placeholder="请输入你的参赛曲目" />
+							</li>
+							<li class="flex" style="margin-bottom: 0;">
+								演唱形式 &nbsp;&nbsp;
+								<input type="radio" value="独唱" name="c" checked="checked"/>独唱
+								<input type="radio" value="对唱" name="c" />对唱
+								<input type="radio" value="组合" name="c" />组合
+								<input type="radio" value="其他" name="c"/>其他
+							</li>
+							<li class="flex" style="margin-bottom: 0;">
+								自带助演 &nbsp;&nbsp;
+								<input type="radio" name="zidai" value="1"/>是
+								<input type="radio" name="zidai" value="2" checked="checked"/>否
+								助演/组合人数<input type="tel" class="renshu mui-text-center" />
+							</li>
+							<li class="flex" style="margin-bottom: 0;">
+								伴奏音乐 &nbsp;&nbsp;
+								<input type="radio" name="cd" value="CD"/>CD
+								<input type="radio" name="cd" value="U盘"/>U盘
+								<input type="radio" name="cd" value="自带乐队"/>自带乐队
+							</li>
+						</ul>
+						<div style="margin-top: 30px;">
+							<button type="button" class="mui-btn mui-btn-warning width-100 ling-45" id="suer">确定</button>
+						</div>
+					</form>
+					<div class="modals">
+						<div class="mui-popup mui-popup-in" style="display: block;"><div class="mui-popup-inner"><div class="mui-popup-title">提示</div><div class="mui-popup-text"><div>信息已保存<div>报名费用<span class="color-org">￥88</span></div><div>确认支付吗？</div></div></div></div><div class="mui-popup-buttons"><span class="mui-popup-button">取消</span><span class="mui-popup-button mui-popup-button-bold">确认</span></div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/jquery-3.2.1.min.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var activeid=document.URL.split("?")[1].split("=")[1];
+			mui("div").on("tap","#suer",function(e){
+				e.stopPropagation();
+				document.querySelector(".modals").style.display="block";
+			})
+			mui("div").on("tap",".mui-popup-button-bold",function(e){
+				e.stopPropagation();
+				if(checkLogin()){
+					login();
+					return;
+				}
+				var texts={//"龙的传人,独唱,否,2,CD"
+					"qumu":document.getElementById("qumu").value,
+					"xingshi":$("input[name=c]:checked").val(),
+					"zhuyan":$("input[name=zidai]:checked").val(),
+					"mp3":$("input[name=cd]:checked").val(),
+					"popen":$(".renshu").val(),
+				}
+				mui.ajax(pulicHttp+"Activity/enrollment",{
+					data:{
+						user_id:localStorage.userID,
+						activity_id:activeid,
+						name:document.getElementById("name").value,
+						sex:document.getElementById("sex").value,
+						age:document.getElementById("age").value,
+						job:document.getElementById("job").value,
+						card:document.getElementById("card").value,
+						phone:document.getElementById("phone").value,
+						company:document.getElementById("company").value,
+						address:document.getElementById("address").value,
+						djson:JSON.stringify(texts),
+					},
+					type:'post',//HTTP请求类型	
+					success:function(data){
+						console.log(222,JSON.stringify(data))
+						if(data.status==0){
+							mui.alert("报名成功","提示")
+							setTimeout(function(){
+								mui.back();
+							},800)
+						}else if(data.status==2){
+							mui.alert("已经报名","提示");
+						}else{
+							mui.toast("参数错误")
+						}
+					},error:function(){
+						mui.toast("失败了...")
+					}
+				})
+//				mui.openWindow({
+//				    url:"../shopping/paly.html",
+//				    id:"../shopping/paly.html",
+//				    extras:{
+//				      //自定义扩展参数，可以用来处理页面间传值
+//				    },
+//				    createNew:true,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+//				    show:{
+//				      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+//				      aniShow:"pop-in",//页面显示动画，默认为”slide-in-right“；
+//				    },
+//				})
+				document.querySelector(".modals").style.display="none";
+			})
+		})()
+	</script>
+</html>

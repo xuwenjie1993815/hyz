@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.title_nav{line-height: 45px;background: #F1EFF1;color: #727272;}
+			.shopping_img{width: 110px;height: 100px;}
+			.shopping_img img{width: 72px;height: 72px;}
+			.list-shopping>a{padding: 10px 10px 10px 0;}
+			.title_shoping{max-height: 40px;overflow: hidden;text-overflow: ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
+			.mui-progressbar{height: 4px;background: #EEEBEC;}
+			.mui-progressbar span{background: #EA510E;}
+			.canyu{line-height: 16px;}
+			.scroo-all{width: 90%;}
+			.gouwuche{width: 35px;height: 35px;background: orange;margin-left: 10px;margin-top: 5px;border-radius: 5px;line-height: 35px;text-align: center;}
+			.modal{position: fixed;width: 100%;height: 100%;top: 0;left: 0;background: rgba(0,0,0,.5);z-index: 10;display: none;}
+			.msk-modal{width: 90%;margin: auto;position: fixed;top: 0;z-index: 999;left: 5%;line-height: 50px;text-align: center;border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;overflow: hidden;}
+			.mui-scroll{min-height: 100%;}
+			.msk-modal>div:active{background: rgba(0,0,0,0.1);}
+			.sanjiaoall{position: relative;}
+			.sanjiaoUp{width: 0;height: 0;border-left: 5px solid transparent;border-right: 5px solid transparent;border-bottom: 8px solid #D1D1D1;display: inline-block;
+				position: absolute;top: 14px;margin: 0 3px;
+			}
+			.sanjiaoDown{width: 0;height: 0;border-left: 5px solid transparent;border-right: 5px solid transparent;border-top: 8px solid #D1D1D1;display: inline-block;
+				position: absolute;top: 24px;margin: 0 3px;
+			}
+			.active_sanjiao{border-bottom-color: #FF5500;}
+			.active_sanjiao_dowm{border-top-color: #FF5500;}
+		</style>
+	</head>
+	<body>
+		<div class="mui-bar mui-bar-nav mui-bar-top">
+		    <div class="color-fff flex just-bween ali-item">
+		    	<div class="fontsize-12"><span class="mui-icon mui-icon-arrowleft"></span></div>
+				<div class="header_title" style="text-indent: -20px;" id="shoppings">所有商品<span id="icon" style="margin-left: 20px;font-size: 20px;" class="mui-icon mui-icon-arrowdown"></span></div>
+				<a href="location.html"><div class="fontsize-12"><div class="dingwei"><span class="mui-icon mui-icon mui-icon-location"></span></div><span class="dw"></span></div></a>
+		    </div>
+		</div>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="list-shopping" v-cloak>
+						<div class="title_nav flex just-bween pa-15">
+					    	<div class="sanjiaoall" @click="order(1)">价格<span class="sanjiaoUp" :class="{active_sanjiao:oderBy.price==1}"></span><span class="sanjiaoDown" :class="{active_sanjiao_dowm:oderBy.price==0}"></span></div>
+					    	<div class="sanjiaoall" @click="order(2)">时间<span class="sanjiaoUp" :class="{active_sanjiao:oderBy.create_time==1}"></span><span class="sanjiaoDown" :class="{active_sanjiao_dowm:oderBy.create_time==0}"></span></div>
+					    	<div class="sanjiaoall" @click="order(3)" style="margin-right: 10px;">商品期数<span class="sanjiaoUp" :class="{active_sanjiao:oderBy.period_time==1}"></span><span class="sanjiaoDown" :class="{active_sanjiao_dowm:oderBy.period_time==0}"></span></div>
+					    </div>
+				    	<a class="flex back-fff border-bottom-hui" v-for="item in listDtate" :href="'shopping.html?shoppingid='+item.period_id">
+				    		<div class="shopping_img">
+				    			<div style="height: 100px;" class="flex just-center ali-item"><img :src="item.images[0]"/></div>
+				    		</div>
+				    		<div class="flex fl-colum">
+				    			<div>
+					    			<div class="color-back title_shoping"><span>[第{{item.period_time}}期]</span>{{item.product_info}}</div>
+					    		</div>
+					    		<div class="flex">
+					    			<div class="flex fl-colum mt-15">
+					    				<div class="mui-progressbar demo1">
+											<span class="scroo">{{100/(item.target_num/item.now_num)}}</span>
+										</div>
+										<div class="flex just-bween canyu">
+											<div class="mui-text-left fontsize-10">
+												<span>{{item.now_num}}</span>
+												<div>已参与</div>
+											</div>
+											<div class="mui-text-center fontsize-10">
+												<span>{{item.target_num}}</span>
+												<div>总需人数</div>
+											</div>
+											<div class="mui-text-right fontsize-10">
+												<span class="color-blue">{{item.surplus_num}}</span>
+												<div>剩余</div>
+											</div>
+										</div>
+					    			</div>
+					    			<!--<div class="gouwuche"><span class="mui-icon iconfont icon-gouwuche color-fff" style="font-size: 30px;"></span></div>-->
+					    		</div>
+				    		</div>
+				    	</a>
+				    </ul>
+				    <div class="modal">
+				    	<div class="msk-modal back-fff">
+					    	<div class="border-bottom-hui" title="1">所有商品</div>
+					    	<div class="border-bottom-hui" title="2">旅游摄影</div>
+					    	<div class="border-bottom-hui" title="3">旅游项目</div>
+					    	<div class="border-bottom-hui" title="4">健身器材</div>
+					    	<div class="border-bottom-hui" title="5">生活用品</div>
+					    </div>
+				    </div>
+				</div>
+			</div>
+		    
+		</div>
+		<footer></footer>
+	</body>
+	<script type="text/javascript" src="../../lib/jquery-3.2.1.min.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var pageints=1;
+			var app=new Vue({
+				el:'.list-shopping',
+				data:{
+					listDtate:[],
+					shoppingKins:1,
+					oderBy:{
+						price:1,
+						create_time:0,
+						period_time:0,
+					},
+					ints:1
+				},
+				methods:{
+					ajaxData2:function(){
+						var _this=this;
+						
+						mui.post(pulicHttp+"/Product/getProductList",{
+							type:_this.shoppingKins,
+							sequence:JSON.stringify(_this.oderBy),
+							pageSize:8,
+							page:++pageints,
+						},function(data){
+							
+							if(data.status==0){
+								_this.listDtate=_this.listDtate.concat(data.msg);
+								//dom更新后执行操作
+								Vue.nextTick(function(){
+									mui(".scroo").each(function(){
+										var zhi=100-parseFloat(this.innerText);
+										this.style.transform="translate3d(-"+zhi+"%, 0px, 0px)"
+									})
+								})
+							}else if(data.status==1){
+								mui.toast(data.msg);
+							}
+						},"json");
+					},
+					ajaxData:function(){
+						var _this=this;
+						
+						mui.post(pulicHttp+"/Product/getProductList",{
+							type:_this.shoppingKins,
+							sequence:JSON.stringify(_this.oderBy),
+							pageSize:8,
+							page:1,
+						},function(data){
+							
+							console.log(JSON.stringify(data))
+							if(data.status==0){
+								_this.listDtate=data.msg;
+								//dom更新后执行操作
+								Vue.nextTick(function(){
+									mui(".scroo").each(function(){
+										var zhi=100-parseFloat(this.innerText);
+										this.style.transform="translate3d(-"+zhi+"%, 0px, 0px)"
+									})
+								})
+							}
+						},"json");
+					},
+					order:function(num){
+						var _this=this;
+						if(num==1){
+							_this.oderBy.price==1?_this.oderBy.price=0:_this.oderBy.price=1;
+						}else if(num==2){
+							_this.oderBy.create_time==1?_this.oderBy.create_time=0:_this.oderBy.create_time=1;
+						}else if(num==3){
+							_this.oderBy.period_time==1?_this.oderBy.period_time=0:_this.oderBy.period_time=1;
+						}
+						pageints=1;
+						_this.ajaxData();
+					}
+				},
+				created:function(){
+					this.ajaxData();
+					var _this=this;
+					var scroll = mui('.mui-scroll-wrapper').scroll(); 
+				    document.querySelector('.mui-scroll-wrapper' ).addEventListener('scroll', function (e) { 
+				    	e.stopPropagation();
+					    if(e.detail.y==e.detail.maxScrollY){
+					    	_this.ajaxData2();
+						}
+				    }) 
+				}
+			})
+			
+			//下拉菜单
+			var is=true;
+			mui("div").on("tap","#shoppings,.modal",function(e){
+				e.stopPropagation();
+				$(".modal").fadeToggle(300);
+				if(is){
+					document.getElementById("icon").className="mui-icon mui-icon-arrowup";
+					is=false;
+				}else{
+					document.getElementById("icon").className="mui-icon mui-icon-arrowdown";
+					is=true;
+				}
+			})
+			mui("div").on("tap",".msk-modal>div",function(e){
+				e.stopPropagation();
+				app.shoppingKins=this.title;
+				app.listDtate='';
+				pageints=1;
+				app.ajaxData();
+				document.getElementById("icon").className="mui-icon mui-icon-arrowdown";
+				is=true;
+				$(".modal").fadeToggle(300);
+			})
+			document.getElementsByClassName("dw")[0].innerText=localStorage.city||"重庆";
+		})()
+	</script>
+</html>

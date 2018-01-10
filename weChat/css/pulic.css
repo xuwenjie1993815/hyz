@@ -1,0 +1,63 @@
+*{margin: 0;padding: 0;list-style: none;}
+a{color: inherit;display: block;}
+a:active{color: #888;background: rgba(0,0,0,0.1);}
+body{font-size: 15px;color: #333;font-family: "微软雅黑";}
+p{color: inherit;font-size: 15px;}
+.mui-bar-top{background: #EC5D20;}
+.mui-bar-tab .mui-tab-item.mui-active{color: #EA5210;}
+.color-fff{color: #fff;}
+.color-org{color: #EA5312;}
+.color-ddd{color: #ddd;}
+.flex{display: flex;flex: 1;}
+.flex1{flex: 1;}
+.flex2{flex: 2;}
+.flex3{flex: 3;}
+.pa-15{padding: 0 15px;box-sizing: border-box;}
+.just-bween{justify-content: space-between;}
+.just-center{justify-content: center;}
+.just-arround{justify-content: space-around;}
+.fl-colum{flex-direction: column;}
+.ali-item{align-items: center;}
+.fontsize-12{font-size: 12px;}
+.fontsize-15{font-size: 15px;}
+.liingight-45{height: 45px;line-height: 45px;}
+.border-bottom-hui{border-bottom: 1px solid #F1F1F1;}
+.back-fff{background: #fff;}
+.back-org{background: #EA5312;}
+.width-100{width: 100%;}
+.width-80{width: 80%;}
+.width-60{width: 60%;}
+.text-center{text-align: center;}
+.pa-30{padding: 0 30px;}
+.pl-10{padding-left: 10px;}
+.mt-100{margin-top: 100px;}
+.mt-50{margin-top: 50px;}
+.mt-30{margin-top: 30px;}
+.mt-15{margin-top: 15px;}
+.mt-10{margin-top: 10px;}
+.pb-10{padding-bottom: 10px;}
+.text_elli{white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+.mui-bar-nav.mui-bar .mui-icon{margin: 0;padding: 0;}
+.mui-bar .mui-icon{font-size: 18px;}
+.dingwei{position: relative;margin-top: 7px;margin-left: 2px;height: 14px;}
+.flex-wrap{flex-wrap: wrap;}
+.color-blue{color: #6DC5F0;}
+.color-bbb{color: #bbbbbb;}
+.mui-content{padding-bottom: 50px;}
+.fontsize-10{font-size: 10px;}
+.color-back{color: #434443;}
+.box-shadow:{0 1px 2px rgba(0,0,0,.3);}
+.mui-scroll-wrapper{top: 45px;bottom: 50px;}
+.modals{position: fixed;width: 100%;height: 100%;background: rgba(0,0,0,0.6);z-index: 99;top: 0;left: 0;display: none;}
+.modal_flex{display: flex;flex: 1;height: 100%;justify-content: center;align-items: center;}
+.modal_content{width: 90%;margin: auto;background: #fff;height: auto;}
+.modal_title{line-height: 45px;position: relative;border-bottom: 1px solid #F8E1D8;}
+.modal_title span{position: absolute;right: 10px;height: 45px;line-height: 45px;}
+.modal_bottom{padding: 15px;box-sizing: border-box;}
+.color-hui{color: #7D7D7D;}
+.mui-icon-arrowleft{padding: 10px 25px 10px 0 !important;box-sizing: border-box;display: inline-block;}
+.fontsize-18{font-size: 18px;}
+.header_title{font-size: 18px;font-weight: 500;text-indent: -15px;}
+[v-cloak] {
+  display: none;
+}

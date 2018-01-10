@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			button{width: 90%;background: #EA5312;border-color: #EA5312;border-radius: 4px;margin:auto;display: block;color: #fff;line-height: 32px;}
+		</style>
+	</head>
+	<body>
+		<header title="软件设置" class="liingight-45" data-index="2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+		    		<ul class="mui-table-view mt-10">
+						<li class="mui-table-view-cell"><a href="#">清除缓存</a></li>
+				        <li class="mui-table-view-cell"><a href="#">软件升级 <span id="shenji" class="color-hui fontsize-12"></span></a></li>
+				        <li class="mui-table-view-cell">
+							<a href="about.html" class="mui-navigate-right">
+								关于我们
+							</a>
+						</li>
+				        <li class="mui-table-view-cell">
+							<a href="xiugai.html" class="mui-navigate-right">
+								密码修改
+							</a>
+						</li>
+					</ul>
+		    		<button class="mt-50">退出登录</button>
+		    	</div>
+	    	</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var auths=JSON.parse(localStorage.auths);
+			function logoutAll(){
+				
+				for(var i in auths){
+					logout(auths[i]);
+				}
+			}
+			function logout(auth){
+				console.log(JSON.stringify(auth))
+				auth.logout(function(){
+					console.log("注销\""+auth.description+"\"成功");
+				},function(e){
+						console.log("注销\""+auth.description+"\"失败："+e.message);
+				});
+			}
+			mui("div").on("tap","button",function(e){
+				e.stopPropagation();
+				
+				localStorage.userID="";
+				localStorage.userPhone="";
+				localStorage.userInfo="";
+				localStorage.setItem("shopping","");
+				// 注销登录
+//				logoutAll();
+				
+				mui.later(function(){
+					login();
+				},500)
+			})
+			document.getElementById("shenji").innerText="当前版本号："+plus.runtime.version
+		})()
+	</script>
+</html>

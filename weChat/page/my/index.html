@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.mylucky{width: 100%;height: 200px;background: url(../../image/back.jpg) center no-repeat;background-size: 100% 100%;}
+			.head-img{width: 100px;height: 100px;border-radius: 50%;overflow: hidden;margin: 20px auto 0 auto;}
+			.head-img img{width: 100%;}
+			.liingight-30{height: 30px;line-height: 30px;}
+			.mui-table-view-cell:after{left: 0;}
+			.mui-table-view-cell span{margin-right: 10px;color: #fff;border-radius: 50%;width: 28px;height: 28px;text-align: center;line-height: 28px;font-size: 18px;margin-top: 4px;}
+			.zcd .mui-table-view-cell span{background: none; color: #333;margin-right: 0;font-size: 24px;margin-top: 4px;}
+		</style>
+	</head>
+	<body>
+		<header title="我的好运" data-index="2" class="liingight-45"></header>
+		<div class="mui-content">
+			<div class="mui-scroll-wrapper">
+		    	<div class="mui-scroll">
+		    		<div id="content" v-cloak="">
+		    		<div class="mylucky">
+				    	<div class="flex fl-colum text-center" style="width: 150px;margin: auto;">
+				    		<div class="head-img">
+				    			<img :src="myimg"/>
+				    		</div>
+				    		<div class="liingight-30 mt-10">{{name}}</div>
+				    		<div class="liingight-30 color-bbb">{{myadress}}</div>
+				    	</div>
+				    </div>
+				    <ul class="mui-table-view">
+					    <li class="mui-table-view-cell">
+					        <a href="mylist.html"><span style="background: #F5C980;font-size: 20px;" class="mui-icon iconfont icon-juchangxinxiang"></span>我的订单</a>
+					    </li>
+					</ul>
+				    <ul class="mui-table-view flex just-arround zcd">
+					    <li class="mui-table-view-cell">
+					        <a href="mylist.html?id=0" class="mui-text-center"><span class="mui-icon iconfont icon-qianbao1"></span><div>全部</div></a>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a href="mylist.html?id=1" class="mui-text-center"><span class="mui-icon iconfont icon-mingpian"></span><div>已参与</div></a>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a href="mylist.html?id=2" class="mui-text-center"><span style="font-size: 28px;" class="mui-icon iconfont icon-konghezi"></span><div>待兑奖</div></a>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a href="mylist.html?id=3" class="mui-text-center"><span style="font-size: 30px;" class="mui-icon iconfont icon-pinglun"></span><div>我的评论</div></a>
+					    </li>
+					</ul>
+				    <ul class="mui-table-view mt-10">
+					    <li class="mui-table-view-cell">
+					        <a href="daijinjuan.html" class="mui-navigate-right"><span style="background-color: #92D564;font-size: 16px;" class="mui-icon iconfont icon-qianbao"></span>我的代金券</a>
+					    </li>
+					    <!--<li class="mui-table-view-cell">
+					        <a href="daijinjuanDuihuanma.html" class="mui-navigate-right"><span style="background-color: #92D564;font-size: 16px;" class="mui-icon iconfont icon-qianbao"></span>代金券兑换码</a>
+					    </li>-->
+					    <li class="mui-table-view-cell">
+					        <a href="wanshan.html" class="mui-navigate-right"><span style="background-color: #FCA76E;font-size: 20px;" class="mui-icon iconfont icon-jilu"></span>完善资料</a>
+					    </li>
+					    <li class="mui-table-view-cell">
+					        <a href="mesgge.html" class="mui-navigate-right"><span style="background-color: #EF8CBA;" class="mui-icon iconfont icon-xinxi"></span>消息通知</a>
+					    </li>
+					    <!--<li class="mui-table-view-cell">
+					        <a href="#" class="mui-navigate-right"><span style="background-color: #BEAFF2;" class="mui-icon iconfont icon-shuangren"></span>帮助中心</a>
+					    </li>-->
+					    <li class="mui-table-view-cell">
+					        <a href="setting.html" class="mui-navigate-right"><span style="background-color: #4FCDEE;font-size: 20px;" class="mui-icon iconfont icon-shezhi"></span>软件设置</a>
+					    </li>
+					    <!--<li class="mui-table-view-cell">
+					        <a href="mesgge.html" class="mui-navigate-right"><span style="background-color: #EF8CBA;" class="mui-icon iconfont icon-xinxi"></span>中奖通知</a>
+					    </li>-->
+					</ul>
+					</div>
+		    	</div>
+	    	</div>
+		</div>
+		<footer title="3"></footer>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			if(checkLogin()){
+				login();
+				return;
+			}
+			var app=new Vue({
+				el:'#content',
+				data:{
+					name:'未设置姓名',
+					myimg:'',
+					myadress:'未设置位置'
+				},
+				created:function(){
+					var _this=this;
+					var userInfo='';
+					if(localStorage.userInfo!=""){
+						userInfo=JSON.parse(localStorage.userInfo);
+						_this.name=userInfo.user_name;
+						_this.myadress=localStorage.city;//userInfo.city;
+						if(userInfo.user_img!=''){
+							_this.myimg='http://101.201.65.154/Uploads/'+userInfo.user_img;
+						}
+					}else{
+						mui.post(pulicHttp+"Pass/userInfo",{user_id:localStorage.userID},function(data){
+							console.log(JSON.stringify(data))
+							if(data.status==0){
+								_this.info=data.msg;
+								localStorage.userInfo=JSON.stringify(data.msg);
+								userInfo=JSON.parse(localStorage.userInfo);
+								_this.name=userInfo.user_name;
+								_this.myadress=localStorage.city;//userInfo.city;
+								if(userInfo.user_img!=''){
+									_this.myimg='http://101.201.65.154/Uploads/'+userInfo.user_img;
+								}
+								return;
+							}
+						})
+					}
+				},
+			})
+		})()
+	</script>
+</html>

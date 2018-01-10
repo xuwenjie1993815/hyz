@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.imgs{padding: 8px 10px;box-sizing: border-box;}
+			.imgs img{height: 200px;}
+			.mui-bar-top .color-fff{color: #9C3101 !important;}
+			.active_title{color: #fff;}
+		</style>
+	</head>
+	<body>
+		<div class="mui-bar mui-bar-nav mui-bar-top">
+		    <div class="color-fff flex just-arround liingight-45 fontsize-18">
+		    	<div id="bm" class="active_title">报名专场</div>
+		    	<div style="color: #fff;">|</div>
+				<div id="zc">支持专场</div>
+		    </div>
+		</div>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+					<div class="imgs" v-cloak="">
+						<a v-for="item in listImg" :href="usrs+item.activity_id">
+							<img class="width-100" :src="item.images"/>
+						</a>
+					</div>
+					<!--<a href="active.html" v-for="item in listImg">
+							<img class="width-100" src="http://img0.imgtn.bdimg.com/it/u=24056845,2101192373&fm=27&gp=0.jpg"/>
+						</a>-->
+				</div>
+			</div>
+		</div>
+		<footer title="1"></footer>
+	</body>
+	<script type="text/javascript" src="../../lib/vue.js" ></script>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			var app=new Vue({
+				el:'.imgs',
+				data:{
+					listImg:JSON.parse(localStorage.getItem("lsitImg")),
+					usrs:"active_detile.html?activeid=",
+				}
+			})
+			mui.post(pulicHttp+"Activity/activityList",function(data){
+//				console.log(JSON.stringify(data))
+				if(data.status==0){
+					var str='';
+					app.usrs="active_detile.html?activeid=";
+					app.listImg=data.msg;
+					localStorage.setItem("lsitImg",JSON.stringify(data.msg))
+				}
+			});
+			mui("div").on("tap","#bm",function(e){
+				e.stopPropagation();
+				
+				baoming();
+			})
+			mui("div").on("tap","#zc",function(e){
+				e.stopPropagation();
+				zhichi();
+				
+			})
+			function baoming(){
+				
+				mui.later(function(){
+					document.getElementById("bm").className="active_title";
+					document.getElementById("zc").className="";
+					app.usrs="active_detile.html?activeid=";
+					
+				},500)
+			}
+			function zhichi(){
+				
+				mui.later(function(){
+					app.usrs="yongchuansings.html?activeid=";
+					document.getElementById("bm").className="";
+					document.getElementById("zc").className="active_title";
+					
+				},500)
+			}
+		})()
+		
+	</script>
+</html>

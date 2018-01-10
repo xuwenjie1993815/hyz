@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/iconfont.css" />
+		<link rel="stylesheet" href="../../css/pulic.css" />
+		<script type="text/javascript" src="../../js/mui.min.js" ></script>
+		<style type="text/css">
+			.mui-slider{height: 50vw;background: url(../../image/loading.jpg) center;}
+			.mui-scroll-wrapper{bottom: 0;}
+			.jinxing{padding: 2px 8px;background: #F95E17;color: #fff;margin-right: 10px;border-radius: 6px;font-size: 13px;}
+			.gird{width: 50%;padding: 15px 0;color: #D4D4D4;}
+			.gird:nth-child(1),.gird:nth-child(2){border-bottom: 1px solid #EBEBEB;}
+			.gird:nth-child(1),.gird:nth-child(3){border-right: 1px solid #EBEBEB;}
+			.gird_active{color: #F9601B;}
+			.mt-8{margin-top: 6px;}
+			.mui-btn-warning{background: #F95E17;}
+			.ling-45{line-height: 36px;}
+			.mui-scroll{min-height: 100%;}
+			.bar{height: 80vh;width: 90%;border-radius: 5px;position: relative;}
+			.pa{padding: 10px 15px;box-sizing: border-box;}
+			.queding{position: absolute;bottom: 0;width: 100%;border-top: 1px solid #EAECEB;color: #63B5F5;}
+			.queding:active{background: rgba(0,0,0,0.1);}
+		</style>
+	</head>
+	<body>
+		<header title="活动" data-index = "2"></header>
+		<div class="mui-content">
+		    <div class="mui-scroll-wrapper back-fff">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+				    <div class="mui-slider">
+					  <div class="mui-slider-group mui-slider-loop">
+					    <!--支持循环，需要重复图片节点-->
+					    <!--<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>
+					    <div class="mui-slider-item"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>
+					    <div class="mui-slider-item"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>
+					    <div class="mui-slider-item"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>
+					    <div class="mui-slider-item"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>-->
+					    <!--支持循环，需要重复图片节点-->
+					    <!--<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="http://img2.imgtn.bdimg.com/it/u=3556326025,2943004307&fm=27&gp=0.jpg" /></a></div>-->
+					  </div>
+					  <div class="mui-slider-indicator">
+						</div>
+					</div>
+					<div class="flex pa-15 mt-10">
+						<div><span class="jinxing">进行中</span></div>
+						<div class="flex1">
+							<p id="activeTitle"></p>
+						</div>
+					</div>
+					<div class="mt-30 flex flex-wrap pa-15">
+						<div class="gird girds mui-text-center" title="1">
+							<span class="mui-icon iconfont icon-jieshao"></span>
+							<div class="mt-8">活动介绍</div>
+						</div>
+						<a class="gird mui-text-center gird_active" href="jiemudan.html" id="jiemudan">
+							<span class="mui-icon iconfont icon-jilu"></span>
+							<div class="mt-8">节目单</div>
+						</a>
+						<a class="gird mui-text-center" href="pinglun.html" id="pinglun">
+							<span class="mui-icon iconfont icon-pinglun"></span>
+							<div class="mt-8">评论</div>
+						</a>
+						<div class="gird girds mui-text-center" title="2">
+							<span class="mui-icon mui-icon-bars" style="font-size: 17px;"></span>
+							<div class="mt-8">点赞介绍</div>
+						</div>
+					</div>
+					<div style="margin-top: 40px;" class="pa-15">
+						<a href="jiemudan.html"><button type="button" class="mui-btn mui-btn-warning width-100 ling-45" id="suer">确定</button></a>
+					</div>
+					<div class="modals">
+						<div class="modal_flex">
+							<div class="bar back-fff">
+								<div class="flex pa-15 liingight-45 just-bween border-bottom-hui">
+									<div class="active_title">活动介绍</div>
+									<div><span class="mui-icon mui-icon-close"></span></div>
+								</div>
+								<div class="pa">
+									
+								</div>
+								<div class="queding liingight-45 mui-text-center">
+									确 定
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/palic.js" ></script>
+	<script type="text/javascript">
+		(function(){
+			
+			var huodong='';
+			var dianzan='';
+			var gallery = mui('.mui-slider');
+				gallery.slider({
+				  interval:3000//自动轮播周期，若为0则不自动播放，默认为0；
+			});
+			var activeid=document.URL.split("?")[1].split("=")[1];
+			mui.post(pulicHttp+"Activity/supportDetail",{activity_id:activeid},function(data){
+				console.log(JSON.stringify(data));
+				
+				if(data.status==0){
+					document.getElementById("activeTitle").innerHTML=data.msg.title;
+					document.getElementById("jiemudan").href="jiemudan.html?activeID="+data.msg.activity_id;
+					document.getElementById("pinglun").href="pinglun.html?activeID="+data.msg.activity_id;
+					huodong=data.msg.activity_info;
+					dianzan=data.msg.like_info;
+					if(data.msg.images){
+						var img=data.msg.images.split(",");
+						var myimg='<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="'+img[0]+'" /></a></div>';
+						var silder=''
+						for (var i=0;i<img.length;i++) {
+							myimg+='<div class="mui-slider-item"><a href="#"><img src="'+img[i]+'" /></a></div>';
+							if(i==0){
+								silder+='<div class="mui-indicator mui-active"></div>'
+							}else{
+								silder+='<div class="mui-indicator"></div>'
+							}
+						}
+						myimg+='<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="'+img[img.length-1]+'" /></a></div>';
+						document.getElementsByClassName("mui-slider-group")[0].innerHTML=myimg;
+						document.getElementsByClassName("mui-slider-indicator")[0].innerHTML=silder;
+					}
+				}
+			})
+			mui("div").on("tap",".girds",function(e){
+				e.stopPropagation();
+				var title=this.title;
+				if(title==1){
+					document.querySelector(".pa").innerHTML=huodong;
+					document.querySelector(".modals").style.display="block";
+				}else if(title==2){
+					document.querySelector(".active_title").innerText="点赞介绍";
+					document.querySelector(".pa").innerHTML=dianzan;
+					document.querySelector(".modals").style.display="block";
+				}
+			})
+			mui("div").on("tap",".mui-icon-close",function(e){
+				e.stopPropagation();
+				document.querySelector(".modals").style.display="none";
+			})
+		})()
+	</script>
+</html>
