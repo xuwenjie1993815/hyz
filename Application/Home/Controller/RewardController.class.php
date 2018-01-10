@@ -93,4 +93,47 @@ class RewardController extends Controller {
     }
 
     //用户待兑奖列表
+    public function getRewardList(){
+        $user_id = $_POST['user_id'];
+        if (!$user_id) {
+            $ret['status'] = 1;
+            $ret['msg'] = '请先登陆';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        $where['r.user_id'] = $user_id;
+        $where['o.order_status'] = 2;
+        $where['r.reward_status'] = 1;
+        $join = 'hyz_order as o on r.order_id = o.order_id';
+        $reward_list = M('reward')->alias('r')->join($join)->field('r.*,o.activity_id,o.apply_id,o.period_time')->where($where)->order('r.ctime')->select();
+        if (!$reward_list) {
+            $ret['status'] = 2;
+            $ret['msg'] = '空列表';
+            $this->ajaxReturn($ret);
+            die;
+        }
+        foreach ($reward_list as $key => $value) {
+            $reward_list[$key]['ctime'] = D('Support')->check_time($value['ctime']);
+            switch ($value['win_type']) {
+                //商品抽奖订单
+                case '1':
+                    $reward_list[$key]['title'] = M('period')->where(array('period_time' => $value['period_time']))->getField('period_name');
+                    break;
+                //活动
+                case '2':
+                    $reward_list[$key]['title'] = M('activity')->where(array('activity_id' => $value['activity_id']))->getField('activity_name');
+                    break;
+                //点赞
+                case '3':
+                    $activity_id = M('activity')->where(array('apply_id' => $value['apply_id']))->getField('activity_id');
+                    $reward_list[$key]['title'] = M('activity')->where(array('activity_id' => $activity_id))->getField('activity_name');
+                    break;
+            }
+        }
+        $ret['status'] = 0;
+        $ret['msg'] = '获取成功';
+        $ret['data'] = $reward_list;
+        $this->ajaxReturn($ret);
+        die;
+    }
 }
