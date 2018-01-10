@@ -127,7 +127,7 @@ class RewardController extends Controller {
                 case '3':
                     $activity_id = M('activity')->where(array('apply_id' => $value['apply_id']))->getField('activity_id');
                     $reward_list[$key]['title'] = M('activity')->where(array('activity_id' => $activity_id))->getField('activity_name');
-                    break;
+                    break;  
             }
         }
         $ret['status'] = 0;
@@ -136,4 +136,9 @@ class RewardController extends Controller {
         $this->ajaxReturn($ret);
         die;
     }
+
+    //用户自主兑奖todo
+    
+    //用户代金卷列表todo
+    
 }
