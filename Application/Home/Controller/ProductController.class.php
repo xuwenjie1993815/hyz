@@ -78,7 +78,7 @@ class ProductController extends Controller {
 	{
 		$product_id = I('product_id');
 		$product_id = addslashes($product_id);
-		$res = M('period')->alias("a")->field('period_id,p_id,images,period_time,product_info,target_num,now_num,price,period_price')->join("left join hyz_product as b on a.p_id = b.product_id")->where(array('period_id'=>$product_id))->find();
+		$res = M('period')->alias("a")->field('period_id,p_id,images,period_time,product_info,target_num,now_num,price,period_price,product_name')->join("left join hyz_product as b on a.p_id = b.product_id")->where(array('period_id'=>$product_id))->find();
 		if ($res) {
 			$res['surplus_num']=$res['target_num']-$res['now_num'];
             $res['images'] = explode(',', $res['images']);
