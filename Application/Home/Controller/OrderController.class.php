@@ -295,6 +295,7 @@ class OrderController extends Controller{
                 $order_data['tel'] = $user_info['tel'];
                 $order_data['order_note'] = $user_info['order_note'];
                 $r = $model->table($db_prefix . 'order')->add($order_data);
+                $order_id[] = $r;
                 if (!$r) throw_exception('操作失败');
                 //生成订单成功  购物车清空
                 M('cart')->where(array('user_id' => $user_id,'status' => 1))->save(array('status' => 0));
@@ -310,7 +311,7 @@ class OrderController extends Controller{
             $this->ajaxReturn(array(
                 'status' => 0,
                 'msg' => '操作成功',
-                'order_info' => array('order_price' => $price,'product_num' => $product_num,'order_info' => $res_info),
+                'order_info' => array('order_ids'=> implode(',',$order_id),'order_price' => $price,'product_num' => $product_num,'order_info' => $res_info),
             ));
         }catch (Exception $e){
             $model->rollback();
@@ -344,6 +345,47 @@ class OrderController extends Controller{
             die;
         }
 
+        //立即购买跳转支付界面接口
+        $order_id = $_POST['order_id'];
+        if ($order_id) {
+            //判断订单状态是否为'0'已下单,未支付
+            $order_info_nowbuy = M('order')->where(array('order_id' => $order_id))->find();
+            if ($order_info_nowbuy['order_status'] != '0') {
+                $ret['status'] = 1;
+                $ret['msg'] = '订单信息错误';
+                $this->ajaxReturn($ret);
+                die;
+            }
+            if ($order_info_nowbuy['user_id'] != $user_id) {
+                $ret['status'] = 1;
+                $ret['msg'] = '操作错误,无法操作此订单';
+                $this->ajaxReturn($ret);
+                die;
+            }
+        }
+        //购物车进入接口
+        $order_ids = $_POST['order_ids'];
+        if ($order_ids) {
+            //判断订单状态是否为'0'已下单,未支付
+            foreach (explode(',', $order_ids) as $key => $value) {
+                $order_info_nowbuy = M('order')->where(array('order_id' => $value))->find();
+                if ($order_info_nowbuy['order_status'] != '0') {
+                $ret['status'] = 1;
+                $ret['msg'] = '订单信息错误';
+                $this->ajaxReturn($ret);
+                die;
+                }
+                if ($order_info_nowbuy['user_id'] != $user_id) {
+                    $ret['status'] = 1;
+                    $ret['msg'] = '操作错误,无法操作此订单';
+                    $this->ajaxReturn($ret);
+                    die;
+                }
+            }
+            
+            
+        }
+
         //有三种类型的商品  商品抽奖订单（关联product period order）  活动抽奖订单（apply order activity）  点赞抽奖订单（apply order activity）
         //商品抽奖订单
         $join_a = "hyz_product AS p ON o.order_product_id = p.product_id";
@@ -351,6 +393,14 @@ class OrderController extends Controller{
         $order = "o.order_time desc";
         $where['o.user_id'] = $user_id;
         $where['pe.status_period'] = 1;
+
+        if ($order_id) {
+            $where['o.order_id'] = $order_id;
+        }
+        if ($order_ids) {
+            $where['o.order_id'] = array('in' , $order_ids);
+        }
+
         $where['o.order_type'] = 1;//商品抽奖订单
         if ($order_status) {
             $where['o.order_status'] = $order_status;
@@ -379,6 +429,12 @@ class OrderController extends Controller{
         $order = "o.order_time desc";
         $where_apply['a.apply_type'] = 1;
         $where_apply['o.user_id'] = $user_id;
+        if ($order_id) {
+            $where_apply['o.order_id'] = $order_id;
+        }
+        if ($order_ids) {
+            $where_apply['o.order_id'] = array('in' , $order_ids);
+        }
         $where_apply['o.order_type'] = 2;//参与活动订单
         $field_apply = 'o.*, ac.*,a.*';
         $res_apply = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
@@ -497,7 +553,7 @@ class OrderController extends Controller{
     
     //立即购买
     public function buyNow(){
-        $user_id = $_POST['user_id'];
+        $user_id = $_POST['user_id']?:9;
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -506,8 +562,8 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
-        $product_id = $_POST['product_id'];
-        $period_id = $_POST['period_id'];
+        $product_id = $_POST['product_id']?:9;
+        $period_id = $_POST['period_id']?:7;
         if (!$product_id || !$period_id) {
             $ret['status'] = 2;
             $ret['msg'] = '缺少参数';
@@ -572,7 +628,7 @@ class OrderController extends Controller{
         $this->ajaxReturn(array(
             'status' => 0,
             'msg' => '操作成功',
-            'order_info' => array('order_price' => $period_info['period_price'],'product_num' => 1,'product_name' => $period_info['period_name']),
+            'order_info' => array('order_id' => $r,'order_price' => $period_info['period_price'],'product_num' => 1,'product_name' => $period_info['period_name']),
         ));
         }catch (Exception $e){
             $model->rollback();
