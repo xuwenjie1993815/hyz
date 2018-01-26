@@ -53,4 +53,9 @@ class PayController extends Controller {
 		$res =D('Pay')->alipay('564122','fjjfjj',1,'kkk');
 		//$this->ajaxReturn($res);
 	}
+	public function alipayApp()
+	{
+		$res =D('Pay')->alipayApp('0.01','fjjfjj','16333','kkk');
+		//$this->ajaxReturn($res);
+	}
 }
