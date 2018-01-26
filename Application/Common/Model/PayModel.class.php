@@ -529,11 +529,11 @@ class PayModel extends Model {
         $aop = new \AopClient();
         $aop->gatewayUrl = "https://openapi.alipay.com/gateway.do";
         $aop->appId = "2016040601271593";
-        $aop->rsaPrivateKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC015TdJvULPO66idGttF8hRZFqr0HKAMr5Yu1JBIaWlJD49WjIT4muvviGOhMuP8OJwpwU7WvOOufwMLyDE9eC7+o+G+z8wwwFaY+XadSGhhbAQiZltK+WwPcsSpjGEGtJ7bRd91LRg+2661Emgy9ya0slI0py2sRbM0q1pX/lMQIDAQAB';
+        $aop->rsaPrivateKey = 'MIICXgIBAAKBgQDY6Xu8PgNfPiLcs5mN1Hdy536LHmJKwhVUha26ovop0U3VpFI91p9uPT2uD/CEaWao2fxk1Xai7wGkKAPcArfhq2lff2h1FgGgOsEnU2cCPCYfZzkykEuAcLu8FDpTgcmFsOmhkH2M1ggU4PTpxVtk2YhRuDJ4YVFbi96a+s/2TwIDAQABAoGAQ2qmA4a+o457ZV8IvbUofvUGNpT19chGuuNlcJmQ6QhdiaYtzXx0Rt4P2panqW/c8WP29xwFaHSibPPm5y2NGqrGAVdDdI0+eSYZM8vf/JqMVYddNpUitT7e2Yz2L6c2sF/AjA1QbDmL6ycBCO8oRJtDJlTEpiyKcpuQxJ9w+VECQQD8uFFnUsePD9RhfLe2CGWFQVADmUGCCtFFHo4mbFCV4tvEoWo4Y5PZmTEKT7V9aD9xzxo5ViRYxzTiVbGMX/pHAkEA27owzcjWtD1dCn4DCav5uW7uycGs1OAkzPmP9m4FXgPnAtSN49Psd/ahI/MQgoCKWHs/nZcHQ9DOn1ZcSe6fuQJBAIL5T4758tys+ofPqDJaJasrDzneOnoX+x8UV92H8zfLC9TbRv6UdPKoFydd6hRla8Qi7lda0pmEHF9UxCCZOU8CQQC1eQZ7v0dMX23rj32UzFuYwj0nlvTWcDUUsX0sC1wVdOWjmceChfJEdgZKeaKGFgGs6EX3MthGMzujr6DTUujJAkEA+cUqpWh4p51y6jdP8XlAlVFpks91lJ4fuLTHgX1UhpHBfuxaFxhmsqDegbYyJscow09PF3p0nSiDHXAie4DkjA==';
         $aop->format = "json";
         $aop->charset = "UTF-8";
         $aop->signType = "RSA2";
-        $aop->alipayrsaPublicKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB';
+        $aop->alipayrsaPublicKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDY6Xu8PgNfPiLcs5mN1Hdy536LHmJKwhVUha26ovop0U3VpFI91p9uPT2uD/CEaWao2fxk1Xai7wGkKAPcArfhq2lff2h1FgGgOsEnU2cCPCYfZzkykEuAcLu8FDpTgcmFsOmhkH2M1ggU4PTpxVtk2YhRuDJ4YVFbi96a+s/2TwIDAQAB';
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
         $request = new \AlipayTradeAppPayRequest();
 
@@ -547,13 +547,13 @@ class PayModel extends Model {
         //$out_trade_no = date('YmdHis', time());
 
         //SDK已经封装掉了公共参数，这里只需要传入业务参数
-        $bizcontent = '{\"body\":\"".$body."\","
+        $bizcontent = "{\"body\":\"".$body."\","
                         . "\"subject\": \"".$subject."\","
                         . "\"out_trade_no\": \"".$out_trade_no."\","
                         . "\"timeout_express\": \"30m\","
                         . "\"total_amount\": \"".$total."\","
                         . "\"product_code\":\"QUICK_MSECURITY_PAY\""
-                        . "}';
+                        . "}";
         $request->setNotifyUrl($notify_url);
         $request->setBizContent($bizcontent);
         //这里和普通的接口调用不同，使用的是sdkExecute
