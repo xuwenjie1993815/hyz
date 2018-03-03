@@ -99,7 +99,7 @@ class OrderController extends Controller{
         $join_a = "hyz_product AS p ON c.product_id = p.product_id";
         $join_b = "hyz_period AS pe ON c.product_id = pe.p_id";
         $order = "c.ctime desc";
-        $res = M('cart')->alias("c")->join($join_a)->join($join_b)->field('c.*, pe.target_num , pe.now_num , pe.period_time , p.product_name ,p.price ,p.product_info,p.images')->where($where)->order($order)->select();
+        $res = M('cart')->alias("c")->join($join_a)->join($join_b)->field('c.*, pe.target_num , pe.now_num , pe.period_time , p.product_name ,pe.period_price as price ,p.product_info,p.images')->where($where)->order($order)->select();
         if ($res) {
             $data = array('status'=>0,'msg'=>$res);
             $this->ajaxReturn($data);
@@ -259,6 +259,17 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
+        if($_POST['address_id']){
+            //收货地址
+            $address_info = M('address')->where(array('address_id' => $_POST['address_id']))->find();
+            //地址所属用户核对
+            if ($user_id != $address_id) {
+                $ret['status'] = 1;
+                $ret['msg'] = '收货信息错误,请重试';
+                $this->ajaxReturn($ret);
+                die;
+            }
+        }
         $price = 0;
         $product_num = 0;
         $model = M();
@@ -266,14 +277,6 @@ class OrderController extends Controller{
         try{
             $model->startTrans();
             foreach ($res as $k => $v){
-                //期数目标数量判断
-                if ($v['target_num'] - $v['now_num'] < $v['product_num']){
-                    $ret['status'] = 4;
-                    $D_num = $v['target_num']-$v['now_num'];
-                    $ret['msg'] = '购买商品'."'".$v['product_name']."'".'的数量超过目标期数,改商品最多还能购买'.$D_num.'件';
-                    $this->ajaxReturn($ret);
-                    die;
-                }
                 //返回总金额
                 $price += $v['period_price']*$v['product_num'];
                 $product_num += $v['product_num'];
@@ -288,10 +291,10 @@ class OrderController extends Controller{
                 $order_data['order_status'] = 0;
                 $order_data['order_time'] = time();
                 $order_data['addressee'] = $user_info['real_name']?:$user_info['user_name'];
-                $order_data['province'] = $user_info['province'];
-                $order_data['city'] = $user_info['city'];
-                $order_data['county'] = $user_info['county'];
-                $order_data['address'] = $user_info['address'];
+                $order_data['province'] = $address_info['province']?:$user_info['province'];
+                $order_data['city'] = $address_info['city']?:$user_info['city'];
+                $order_data['county'] = $address_info['county']?:$user_info['county'];
+                $order_data['address'] = $address_info['address']?:$user_info['address'];
                 $order_data['tel'] = $user_info['tel'];
                 $order_data['order_note'] = $user_info['order_note'];
                 $r = $model->table($db_prefix . 'order')->add($order_data);
@@ -331,7 +334,7 @@ class OrderController extends Controller{
     }
     //点赞订单列表
     //活动订单列表
-    //订单列表(全部，已参与，待兑奖，我的评论)
+    //订单列表(全部，已参与，待兑奖，我的评论)0已下单 1已付款(已参与) 2已中奖（待兑奖） 3已取消（无效） 4已兑奖 5未中奖
     //order_status 0待支付 1已参与商品订单 2已兑奖商品订单 （为All则获取全部订单）
     public function orderList(){
         $order_status = $_POST['order_status'];
@@ -344,7 +347,6 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
-
         //立即购买跳转支付界面接口
         $order_id = $_POST['order_id'];
         if ($order_id) {
@@ -363,6 +365,7 @@ class OrderController extends Controller{
                 die;
             }
         }
+        
         //购物车进入接口
         $order_ids = $_POST['order_ids'];
         if ($order_ids) {
@@ -382,8 +385,6 @@ class OrderController extends Controller{
                     die;
                 }
             }
-            
-            
         }
 
         //有三种类型的商品  商品抽奖订单（关联product period order）  活动抽奖订单（apply order activity）  点赞抽奖订单（apply order activity）
@@ -393,14 +394,12 @@ class OrderController extends Controller{
         $order = "o.order_time desc";
         $where['o.user_id'] = $user_id;
         $where['pe.status_period'] = 1;
-
         if ($order_id) {
             $where['o.order_id'] = $order_id;
         }
         if ($order_ids) {
             $where['o.order_id'] = array('in' , $order_ids);
         }
-
         $where['o.order_type'] = 1;//商品抽奖订单
         if ($order_status) {
             $where['o.order_status'] = $order_status;
@@ -436,6 +435,11 @@ class OrderController extends Controller{
             $where_apply['o.order_id'] = array('in' , $order_ids);
         }
         $where_apply['o.order_type'] = 2;//参与活动订单
+        if ($order_status) {
+            $where_apply['o.order_status'] = $order_status;
+        }else{
+            $where_apply['o.order_status'] = array('neq',3);
+        }
         $field_apply = 'o.*, ac.*,a.*';
         $res_apply = M('order')->alias("o")->join($join_a)->join($join_b)->field($field_apply)->where($where_apply)->order($order)->select();
         $data_apply = array();
@@ -482,17 +486,17 @@ class OrderController extends Controller{
         $last_names = array_column($order_list, 'order_time');
         array_multisort($last_names,SORT_DESC,$order_list);
         foreach ($order_list as $key => $value) {
-        	switch ($value['order_type']) {
-        		case '1':
-        			$order_list[$key]['order_type_name'] = '商品订单';
-        			break;
-        		case '2':
-        			$order_list[$key]['order_type_name'] = '活动订单';
-        			break;
-        		case '3':
-        			$order_list[$key]['order_type_name'] = '点赞订单';
-        			break;
-        	}
+            switch ($value['order_type']) {
+                case '1':
+                    $order_list[$key]['order_type_name'] = '商品订单';
+                    break;
+                case '2':
+                    $order_list[$key]['order_type_name'] = '活动订单';
+                    break;
+                case '3':
+                    $order_list[$key]['order_type_name'] = '点赞订单';
+                    break;
+            }
         }
 
         if (!$order_list) {
@@ -553,7 +557,7 @@ class OrderController extends Controller{
     
     //立即购买
     public function buyNow(){
-        $user_id = $_POST['user_id']?:9;
+        $user_id = $_POST['user_id'];
         $user_info = M('user')->where(array('user_id' => $user_id))->find();
         //确认用户登陆
         if (!$user_id) {
@@ -562,8 +566,8 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
-        $product_id = $_POST['product_id']?:9;
-        $period_id = $_POST['period_id']?:7;
+        $product_id = $_POST['product_id'];
+        $period_id = $_POST['period_id'];
         if (!$product_id || !$period_id) {
             $ret['status'] = 2;
             $ret['msg'] = '缺少参数';
@@ -603,6 +607,17 @@ class OrderController extends Controller{
             $this->ajaxReturn($ret);
             die;
         }
+        if($_POST['address_id']){
+            //收货地址
+            $address_info = M('address')->where(array('address_id' => $_POST['address_id']))->find();
+            //地址所属用户核对
+            if ($user_id != $address_id) {
+                $ret['status'] = 1;
+                $ret['msg'] = '收货信息错误,请重试';
+                $this->ajaxReturn($ret);
+                die;
+            }
+        }
         $model = M();
         $db_prefix = C('DB_PREFIX');
         try{
@@ -617,10 +632,10 @@ class OrderController extends Controller{
         $order_data['order_status'] = 0;
         $order_data['order_time'] = time();
         $order_data['addressee'] = $user_info['real_name']?:$user_info['user_name'];
-        $order_data['province'] = $user_info['province'];
-        $order_data['city'] = $user_info['city'];
-        $order_data['county'] = $user_info['county'];
-        $order_data['address'] = $user_info['address'];
+        $order_data['province'] = $address_info['province']?:$user_info['province'];
+        $order_data['city'] = $address_info['city']?:$user_info['city'];
+        $order_data['county'] = $address_info['county']?:$user_info['county'];
+        $order_data['address'] = $address_info['address']?:$user_info['address'];
         $order_data['tel'] = $user_info['tel'];
         $order_data['order_note'] = $user_info['order_note'];
         $r = $model->table($db_prefix . 'order')->add($order_data);
